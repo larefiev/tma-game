@@ -1,0 +1,580 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="ru"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Andar Bahar Arcade - Goa Edition&lt;/title&gt;</p>
+<p class="p2"><span class="Apple-converted-space">  </span></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Telegram WebApp SDK --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://telegram.org/js/telegram-web-app.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Tone.js для встроенных аудиоэффектов --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Canvas Confetti для салюта победы --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--bg-dark: #0a0d14;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--panel-bg: rgba(22, 28, 42, 0.85);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--accent-gold: #f3ba2f;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--accent-cyan: #00f2fe;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--neon-green: #00ff87;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--neon-red: #ff3864;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--card-andar: #4facfe;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--card-bahar: #ff0844;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--text-muted: #8b9bb4;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>* {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-sizing: border-box;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>-webkit-user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: radial-gradient(circle at 50% 10%, #1e2638 0%, var(--bg-dark) 100%);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>min-height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>overflow-x: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Верхняя панель */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.header {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 480px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: var(--panel-bg);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>backdrop-filter: blur(10px);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px 16px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(255, 255, 255, 0.1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.user-info {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.avatar {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 36px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 36px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(135deg, var(--accent-gold), #ff7b00);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #000;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.balance-box {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(0, 0, 0, 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 6px 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(243, 186, 47, 0.3);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gap: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.balance-val {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: var(--accent-gold);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Главный стол */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.table-container {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 480px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: radial-gradient(circle at center, #1b3a2b 0%, #0d1e16 100%);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 3px solid #386641;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 8px 24px rgba(0,0,0,0.5);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 24px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 16px 12px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Джокер карта */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.joker-section {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.section-title {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 11px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>letter-spacing: 1px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Карта */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 60px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 86px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #111;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 4px 6px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 4px 10px rgba(0,0,0,0.4);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>animation: flipIn 0.35s ease-out;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card.red { color: #d90429; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card.black { color: #111; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card-empty {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 60px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 86px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 2px dashed rgba(255,255,255,0.25);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 24px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: rgba(255,255,255,0.2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>@keyframes flipIn {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>from { transform: rotateY(90deg) scale(0.8); opacity: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>to { transform: rotateY(0) scale(1); opacity: 1; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Секции Andar &amp; Bahar */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.game-lanes {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex: 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(0, 0, 0, 0.35);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px 8px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 2px solid transparent;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: all 0.2s;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>min-height: 170px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane.andar { border-color: rgba(79, 172, 254, 0.4); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane.bahar { border-color: rgba(255, 8, 68, 0.4); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane.selected.andar {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(79, 172, 254, 0.15);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-color: var(--card-andar);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 16px rgba(79, 172, 254, 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane.selected.bahar {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255, 8, 68, 0.15);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-color: var(--card-bahar);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 16px rgba(255, 8, 68, 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane-badge {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 4px 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.andar .lane-badge { background: var(--card-andar); color: #000; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.bahar .lane-badge { background: var(--card-bahar); color: #fff; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane-cards {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gap: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-height: 120px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.lane-cards .card {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 38px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 54px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 2px 3px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Статусная строка */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.status-banner {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>min-height: 32px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: var(--accent-gold);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Фишки и ставки */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chips-panel {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 480px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-around;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: var(--panel-bg);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid rgba(255,255,255,0.08);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 48px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 48px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: 3px dashed #fff;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 4px 8px rgba(0,0,0,0.5);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: transform 0.15s;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip:active { transform: scale(0.9); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip.active { transform: scale(1.12); border-style: solid; box-shadow: 0 0 14px var(--accent-gold); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip-10<span class="Apple-converted-space">  </span>{ background: #3a86ff; color: #fff; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip-50<span class="Apple-converted-space">  </span>{ background: #8338ec; color: #fff; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip-100 { background: #ff006e; color: #fff; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.chip-500 { background: #fb5607; color: #fff; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Кнопки действий */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.controls {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 480px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex: 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 800;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: all 0.2s;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn-deal {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(135deg, var(--neon-green), #00b894);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #0b1e10;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 4px 14px rgba(0, 255, 135, 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn-deal:disabled {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0.4;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: not-allowed;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn-reset {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: rgba(255,255,255,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 90px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.free-coins {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-top: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: var(--accent-cyan);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-decoration: underline;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Верхняя строка --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="user-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="avatar" id="avatar"&gt;TG&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="username" style="font-weight: 700; font-size: 14px;"&gt;Игрок&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size: 11px; color: var(--text-muted);"&gt;Arcade Mode&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="balance-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span&gt;🪙&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="balance-val" id="balance"&gt;1000&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Игровой стол --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="table-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="joker-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="section-title"&gt;Главная карта (Joker)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="joker-slot"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card-empty"&gt;?&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Стороны Andar и Bahar --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="game-lanes"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="lane andar" id="lane-andar" onclick="selectSide('andar')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lane-badge"&gt;ANDAR (x2)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size: 11px; color: var(--text-muted);" id="andar-bet"&gt;Ставка: 0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lane-cards" id="cards-andar"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="lane bahar" id="lane-bahar" onclick="selectSide('bahar')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lane-badge"&gt;BAHAR (x2)&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size: 11px; color: var(--text-muted);" id="bahar-bet"&gt;Ставка: 0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lane-cards" id="cards-bahar"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="status-banner" id="status"&gt;Выберите сторону и сделайте ставку&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Панель фишек --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="chips-panel"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="chip chip-10 active" onclick="setChip(10, this)"&gt;10&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="chip chip-50" onclick="setChip(50, this)"&gt;50&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="chip chip-100" onclick="setChip(100, this)"&gt;100&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="chip chip-500" onclick="setChip(500, this)"&gt;500&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Кнопки --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-reset" onclick="resetBet()"&gt;Сброс&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-deal" id="deal-btn" onclick="startGame()"&gt;РАЗДАТЬ КАРТЫ&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="free-coins" onclick="addFreeCoins()"&gt;+ Получить бесплатные очки&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Инициализация Telegram Mini App</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const tg = window.Telegram?.WebApp;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (tg) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>tg.ready();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>tg.expand();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (tg.initDataUnsafe?.user) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name || "Игрок";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('avatar').innerText = (tg.initDataUnsafe.user.first_name || "T")[0].toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Звуки через Tone.js</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const synth = new Tone.PolySynth(Tone.Synth).toDestination();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function playBeep(note = "C5") {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (Tone.context.state !== 'running') Tone.start();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>synth.triggerAttackRelease(note, "16n");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} catch (e) {}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function haptic() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Состояние игры</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let balance = parseInt(localStorage.getItem('ab_balance')) || 1000;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let currentChip = 10;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let selectedSide = null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let betAmount = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let isPlaying = false;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const suits = [</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ s: '♠', c: 'black' },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ s: '♥', c: 'red' },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ s: '♦', c: 'red' },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ s: '♣', c: 'black' }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function updateUI() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('balance').innerText = balance;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.setItem('ab_balance', balance);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('andar-bet').innerText = selectedSide === 'andar' ? `Ставка: ${betAmount}` : 'Ставка: 0';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('bahar-bet').innerText = selectedSide === 'bahar' ? `Ставка: ${betAmount}` : 'Ставка: 0';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateUI();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function setChip(val, el) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>haptic();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>currentChip = val;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.chip').forEach(c =&gt; c.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>el.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function selectSide(side) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (isPlaying) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>haptic();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBeep("G4");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (selectedSide === side) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (balance &gt;= currentChip) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>betAmount += currentChip;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>balance -= currentChip;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>balance += betAmount;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>selectedSide = side;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>betAmount = Math.min(currentChip, balance);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>balance -= betAmount;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.lane').forEach(l =&gt; l.classList.remove('selected'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById(`lane-${side}`).classList.add('selected');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = `Выбрано: ${side.toUpperCase()} (${betAmount} очков)`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function resetBet() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (isPlaying) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>haptic();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>balance += betAmount;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>betAmount = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectedSide = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.lane').forEach(l =&gt; l.classList.remove('selected'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Ставки сброшены";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function addFreeCoins() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>haptic();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBeep("E5");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>balance += 500;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateUI();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "+500 виртуальных очков зачислено!";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function getRandomCard() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const r = ranks[Math.floor(Math.random() * ranks.length)];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const s = suits[Math.floor(Math.random() * suits.length)];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return { rank: r, suit: s.s, color: s.c };</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderCard(card, container, isMini = false) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>div.className = `card ${card.color}`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>div.innerHTML = `&lt;div&gt;${card.rank}&lt;/div&gt;&lt;div style="font-size:${isMini ? '14px' : '22px'}; text-align:center;"&gt;${card.suit}&lt;/div&gt;&lt;div style="transform: rotate(180deg);"&gt;${card.rank}&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>container.appendChild(div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return div;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>async function startGame() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (isPlaying) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!selectedSide || betAmount &lt;= 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = "Сделайте ставку на Andar или Bahar!";</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>isPlaying = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('deal-btn').disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('cards-andar').innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('cards-bahar').innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('status').innerText = "Раздача карты Joker...";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Раздача Джокера</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBeep("C5");</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const jokerSlot = document.getElementById('joker-slot');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>jokerSlot.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const jokerCard = getRandomCard();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderCard(jokerCard, jokerSlot);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>await new Promise(r =&gt; setTimeout(r, 900));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>let currentLane = 'andar';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let match = false;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>while (!match) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>haptic();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep(currentLane === 'andar' ? "D5" : "E5");</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const nextCard = getRandomCard();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const container = document.getElementById(`cards-${currentLane}`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderCard(nextCard, container, true);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (nextCard.rank === jokerCard.rank) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>match = true;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>await handleResult(currentLane);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentLane = currentLane === 'andar' ? 'bahar' : 'andar';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await new Promise(r =&gt; setTimeout(r, 650));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>isPlaying = false;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('deal-btn').disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>async function handleResult(winningSide) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const win = selectedSide === winningSide;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (win) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const reward = betAmount * 2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>balance += reward;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `ПОБЕДА! ${winningSide.toUpperCase()} совпал! (+${reward})`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep("G5");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('status').innerText = `Выпал ${winningSide.toUpperCase()}. В этот раз не повезло!`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep("A3");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>betAmount = 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>selectedSide = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('.lane').forEach(l =&gt; l.classList.remove('selected'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>updateUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
