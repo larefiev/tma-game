@@ -11,12 +11,14 @@
 
   <style>
     :root {
-      --bg-main: #0c0f17;
-      --card-bg: #161b26;
+      --bg-main: #0b0e14;
+      --card-bg: #141a24;
       --accent-blue: #0088cc;
       --accent-gold: #f5a623;
-      --text-muted: #8e9ba8;
+      --text-muted: #8b98a5;
       --btn-blue: #007aff;
+      --neon-green: #00ff87;
+      --neon-red: #ff3366;
       --border-color: rgba(255, 255, 255, 0.08);
     }
 
@@ -36,7 +38,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 80px;
+      padding-bottom: 74px;
       overflow-x: hidden;
     }
 
@@ -46,21 +48,17 @@
       justify-content: flex-end;
       align-items: center;
       gap: 10px;
-      padding: 14px 16px;
+      padding: 12px 16px;
     }
 
     .btn-connect {
       background: #007aff;
       color: #fff;
       border: none;
-      outline: none;
       padding: 7px 14px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
       cursor: pointer;
     }
 
@@ -74,57 +72,45 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      color: #fff;
     }
 
-    /* Баннер сообщества */
+    /* Баннер */
     .promo-banner {
-      margin: 0 16px 20px 16px;
-      background: linear-gradient(135deg, #0088cc 0%, #00c6ff 100%);
-      border-radius: 20px;
-      padding: 18px 20px;
+      margin: 0 16px 18px 16px;
+      background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+      border-radius: 18px;
+      padding: 16px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 20px rgba(0, 136, 204, 0.25);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 180, 216, 0.25);
     }
 
     .promo-content h3 {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
+      line-height: 1.25;
       margin-bottom: 8px;
-      line-height: 1.2;
     }
 
     .promo-btn {
       background: #fff;
-      color: #0088cc;
+      color: #0077b6;
       border: none;
       padding: 6px 14px;
       border-radius: 20px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       display: inline-block;
     }
 
-    .promo-art {
-      font-size: 42px;
-      transform: rotate(-10deg);
-    }
-
-    /* Секции игр */
+    /* Сетка игр */
     .section-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       padding: 0 16px;
       margin-bottom: 12px;
       font-size: 17px;
       font-weight: 800;
-      letter-spacing: -0.3px;
     }
 
     .games-row {
@@ -132,90 +118,54 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       padding: 0 16px;
-      margin-bottom: 24px;
     }
 
     .game-card {
       aspect-ratio: 0.85;
       border-radius: 18px;
-      padding: 12px 8px;
+      padding: 12px 6px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
       transition: transform 0.15s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    .game-card:active {
-      transform: scale(0.96);
-    }
+    .game-card:active { transform: scale(0.95); }
+    .game-card.upgrader { background: linear-gradient(145deg, #6a11cb, #2575fc); }
+    .game-card.rocket { background: linear-gradient(145deg, #ff416c, #ff4b2b); }
+    .game-card.pvp { background: linear-gradient(145deg, #11998e, #38ef7d); }
 
-    .game-card.upgrader {
-      background: linear-gradient(145deg, #7f00ff, #e100ff);
-    }
+    .card-icon { font-size: 34px; margin-top: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+    .card-title { font-size: 13px; font-weight: 800; text-align: center; }
 
-    .game-card.rocket {
-      background: linear-gradient(145deg, #ff416c, #ff4b2b);
-    }
-
-    .game-card.pvp {
-      background: linear-gradient(145deg, #00b09b, #96c93d);
-    }
-
-    .card-icon {
-      font-size: 34px;
-      margin-top: 10px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 800;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    /* Модальное окно с игрой */
+    /* Полноэкранные модальные экраны игр */
     .game-screen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: var(--bg-main);
       z-index: 100;
       display: none;
       flex-direction: column;
-      padding: 20px 16px;
-      box-sizing: border-box;
+      padding: 16px;
     }
 
-    .game-screen.active {
-      display: flex;
-    }
+    .game-screen.active { display: flex; }
 
     .screen-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .screen-header h2 {
-      font-size: 20px;
-      font-weight: 800;
+      margin-bottom: 14px;
     }
 
     .close-btn {
       background: rgba(255,255,255,0.1);
       border: none;
       color: #fff;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 12px;
       cursor: pointer;
       font-weight: 700;
@@ -229,13 +179,14 @@
       justify-content: center;
       background: var(--card-bg);
       border-radius: 20px;
-      padding: 20px;
+      padding: 16px;
       border: 1px solid var(--border-color);
       position: relative;
+      overflow: hidden;
     }
 
     .bet-bar {
-      margin-top: 16px;
+      margin-top: 14px;
       display: flex;
       gap: 8px;
       width: 100%;
@@ -254,7 +205,7 @@
     }
 
     .action-btn {
-      flex: 1;
+      flex: 1.2;
       background: var(--btn-blue);
       color: #fff;
       border: none;
@@ -263,10 +214,111 @@
       font-weight: 800;
       cursor: pointer;
       padding: 14px;
+      transition: all 0.2s;
     }
 
-    .action-btn:disabled {
-      opacity: 0.5;
+    /* СТИЛИ АПГРЕЙДА NFT */
+    .nft-selector {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      overflow-x: auto;
+      padding: 8px 4px;
+      margin-bottom: 14px;
+    }
+
+    .nft-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nft-chip.active {
+      border-color: #2575fc;
+      background: rgba(37, 117, 252, 0.2);
+    }
+
+    .radar-box {
+      width: 170px;
+      height: 170px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .radar-circle {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px dashed rgba(255,255,255,0.2);
+    }
+
+    .radar-spinning {
+      border: 3px solid transparent;
+      border-top-color: #00ff87;
+      border-right-color: #2575fc;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .gift-avatar {
+      font-size: 58px;
+      transition: transform 0.3s ease;
+    }
+
+    /* АНИМАЦИЯ РАКЕТКИ */
+    #rocketCanvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+    }
+
+    .crash-overlay {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    /* АНИМАЦИЯ PVP ДУЭЛИ */
+    .pvp-box {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .pvp-card {
+      width: 100px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .dice-rolling {
+      animation: diceShake 0.4s ease infinite alternate;
+    }
+
+    @keyframes diceShake {
+      0% { transform: rotate(-12deg) scale(1.05); }
+      100% { transform: rotate(12deg) scale(0.95); }
     }
 
     /* Нижнее меню */
@@ -276,8 +328,8 @@
       left: 0;
       width: 100%;
       height: 64px;
-      background: rgba(22, 27, 38, 0.95);
-      backdrop-filter: blur(20px);
+      background: rgba(20, 26, 36, 0.95);
+      backdrop-filter: blur(18px);
       border-top: 1px solid var(--border-color);
       display: flex;
       justify-content: space-around;
@@ -296,13 +348,7 @@
       cursor: pointer;
     }
 
-    .nav-item.active {
-      color: #00ff87;
-    }
-
-    .nav-icon {
-      font-size: 18px;
-    }
+    .nav-item.active { color: #00ff87; }
   </style>
 </head>
 <body>
@@ -319,115 +365,134 @@
       <h3>Вступайте в наш<br>чат общения</h3>
       <div class="promo-btn" onclick="openChat()">Вступить</div>
     </div>
-    <div class="promo-art">🥷</div>
+    <div style="font-size: 42px;">🥷</div>
   </div>
 
   <!-- Раздел: Лучшие игры -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
     <div class="game-card upgrader" onclick="openGame('upgrader')">
-      <div class="card-icon">⚡</div>
-      <div class="card-title">Апгрейдер</div>
+      <div class="card-icon">🎁</div>
+      <div class="card-title">NFT Апгрейд</div>
     </div>
     <div class="game-card rocket" onclick="openGame('rocket')">
       <div class="card-icon">🚀</div>
-      <div class="card-title">Ракетка</div>
+      <div class="card-title">Ракетка 98%</div>
     </div>
     <div class="game-card pvp" onclick="openGame('pvp')">
       <div class="card-icon">⚔️</div>
-      <div class="card-title">PVP</div>
+      <div class="card-title">PVP Дуэль</div>
     </div>
   </div>
 
   <!-- Нижняя панель навигации -->
   <div class="bottom-nav">
     <div class="nav-item active">
-      <div class="nav-icon">🏠</div>
+      <div style="font-size: 18px;">🏠</div>
       <span>Главная</span>
     </div>
-    <div class="nav-item" onclick="mockAlert('Кейсы скоро появятся!')">
-      <div class="nav-icon">📦</div>
+    <div class="nav-item" onclick="alert('Кейсы скоро!')">
+      <div style="font-size: 18px;">📦</div>
       <span>Кейсы</span>
     </div>
-    <div class="nav-item" onclick="mockAlert('Таблица лидеров обновляется!')">
-      <div class="nav-icon">🏆</div>
+    <div class="nav-item" onclick="alert('Лидерборд в разработке!')">
+      <div style="font-size: 18px;">🏆</div>
       <span>Лидеры</span>
     </div>
-    <div class="nav-item" onclick="mockAlert('Профиль игрока')">
-      <div class="nav-icon">👤</div>
+    <div class="nav-item" onclick="alert('Профиль игрока')">
+      <div style="font-size: 18px;">👤</div>
       <span>Профиль</span>
     </div>
   </div>
 
-  <!-- ИГРА 1: Апгрейдер -->
+  <!-- МОДАЛЬНОЕ ОКНО 1: АПГРЕЙД NFT ПОДАРКОВ -->
   <div class="game-screen" id="modal-upgrader">
     <div class="screen-header">
-      <h2>⚡ Апгрейдер</h2>
+      <h2>🎁 NFT Апгрейдер</h2>
       <button class="close-btn" onclick="closeGame()">Закрыть</button>
     </div>
-    <div class="play-area">
-      <div id="upg-status" style="font-size: 15px; color: var(--text-muted); margin-bottom: 12px;">Выберите множитель для улучшения</div>
-      <div style="font-size: 54px; margin-bottom: 20px;" id="upg-icon">📦</div>
-      <div style="display: flex; gap: 8px; width: 100%; justify-content: center; margin-bottom: 16px;">
-        <button class="close-btn" onclick="setUpgraderMultiplier(1.5, 60)">x1.5 (60%)</button>
-        <button class="close-btn" onclick="setUpgraderMultiplier(2.0, 45)">x2.0 (45%)</button>
-        <button class="close-btn" onclick="setUpgraderMultiplier(5.0, 18)">x5.0 (18%)</button>
-      </div>
-      <div id="upg-target" style="font-weight: 800; font-size: 16px; color: var(--accent-gold);">Множитель: x2.0 (Шанс: 45%)</div>
+
+    <div class="nft-selector">
+      <div class="nft-chip active" onclick="selectNFT(this, '⭐', 'Telegram Star', 1.5, 65)">⭐ Star (x1.5)</div>
+      <div class="nft-chip" onclick="selectNFT(this, '🕶️', 'Durov Glasses', 2.0, 48)">🕶️ Glasses (x2.0)</div>
+      <div class="nft-chip" onclick="selectNFT(this, '🏆', 'Gold Trophy', 3.5, 28)">🏆 Trophy (x3.5)</div>
+      <div class="nft-chip" onclick="selectNFT(this, '🐸', 'Rare Pepe', 5.0, 19)">🐸 Pepe (x5.0)</div>
+      <div class="nft-chip" onclick="selectNFT(this, '🐻', 'Cyber Bear', 10.0, 9.8)">🐻 Bear (x10)</div>
     </div>
+
+    <div class="play-area">
+      <div class="radar-box">
+        <div class="radar-circle" id="radarRing"></div>
+        <div class="gift-avatar" id="nftAvatar">⭐</div>
+      </div>
+      <div id="upg-item-name" style="font-size: 17px; font-weight: 800;">Telegram Star NFT</div>
+      <div id="upg-chance-tag" style="font-size: 13px; color: #00ff87; margin-top: 4px;">Шанс успеха: 65% (Множитель x1.5)</div>
+      <div id="upg-status" style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Выберите NFT и нажмите «УЛУЧШИТЬ»</div>
+    </div>
+
     <div class="bet-bar">
       <input type="number" id="upg-bet" class="bet-input" value="100">
-      <button class="action-btn" id="upg-btn" onclick="playUpgrader()">АПГРЕЙД</button>
+      <button class="action-btn" id="upg-btn" onclick="upgradeNFT()">УЛУЧШИТЬ</button>
     </div>
   </div>
 
-  <!-- ИГРА 2: Ракетка (Crash) -->
+  <!-- МОДАЛЬНОЕ ОКНО 2: РАКЕТКА (CRASH С RTP 98%) -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-header">
-      <h2>🚀 Ракетка (Crash)</h2>
+      <h2>🚀 Ракетка (RTP 98%)</h2>
       <button class="close-btn" onclick="closeGame()">Закрыть</button>
     </div>
-    <div class="play-area">
-      <div style="font-size: 60px; transition: transform 0.2s;" id="rocket-emoji">🚀</div>
-      <div id="rocket-mult" style="font-size: 38px; font-weight: 900; color: #00ff87; margin-top: 10px;">1.00x</div>
-      <div id="rocket-status" style="font-size: 14px; color: var(--text-muted); margin-top: 6px;">Сделайте ставку и запустите полет</div>
+
+    <div class="play-area" style="padding: 0;">
+      <canvas id="rocketCanvas"></canvas>
+      <div class="crash-overlay">
+        <div id="rocket-mult" style="font-size: 42px; font-weight: 900; color: #fff;">1.00x</div>
+        <div id="rocket-status" style="font-size: 13px; color: var(--text-muted);">Математический RTP 98%</div>
+      </div>
     </div>
+
     <div class="bet-bar">
       <input type="number" id="rocket-bet" class="bet-input" value="100">
       <button class="action-btn" id="rocket-btn" onclick="handleRocketAction()">ВЗЛЁТ</button>
     </div>
   </div>
 
-  <!-- ИГРА 3: PVP (Дуэль) -->
+  <!-- МОДАЛЬНОЕ ОКНО 3: PVP ДУЭЛЬ С АНИМАЦИЕЙ -->
   <div class="game-screen" id="modal-pvp">
     <div class="screen-header">
       <h2>⚔️ PVP Дуэль</h2>
       <button class="close-btn" onclick="closeGame()">Закрыть</button>
     </div>
+
     <div class="play-area">
-      <div style="display: flex; justify-content: space-around; width: 100%; align-items: center;">
-        <div style="text-align: center;">
-          <div style="font-size: 40px;">😎</div>
-          <div style="font-weight: 800; font-size: 14px; margin-top: 4px;">Вы</div>
-          <div id="pvp-user-roll" style="font-size: 24px; font-weight: 800; color: #0088cc;">-</div>
+      <div class="pvp-box">
+        <div class="pvp-card" id="userCard">
+          <div style="font-size: 32px;">😎</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Вы</div>
+          <div id="pvp-user-val" style="font-size: 24px; font-weight: 900; color: #0088cc;">-</div>
         </div>
-        <div style="font-weight: 900; font-size: 20px; color: #ff3864;">VS</div>
-        <div style="text-align: center;">
-          <div style="font-size: 40px;">🤖</div>
-          <div style="font-weight: 800; font-size: 14px; margin-top: 4px;">Бот</div>
-          <div id="pvp-bot-roll" style="font-size: 24px; font-weight: 800; color: #ff3864;">-</div>
+
+        <div style="font-size: 22px; font-weight: 900; color: var(--neon-red);">VS</div>
+
+        <div class="pvp-card" id="botCard">
+          <div style="font-size: 32px;">🤖</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Оппонент</div>
+          <div id="pvp-bot-val" style="font-size: 24px; font-weight: 900; color: var(--neon-red);">-</div>
         </div>
       </div>
-      <div id="pvp-result" style="font-weight: 800; font-size: 16px; margin-top: 24px; color: var(--accent-gold);">Кто выбросит число выше, тот забирает банк x1.95</div>
+
+      <div id="pvp-status" style="font-weight: 800; font-size: 15px; margin-top: 24px; color: var(--accent-gold); text-align: center;">
+        Бросьте кости против соперника!
+      </div>
     </div>
+
     <div class="bet-bar">
       <input type="number" id="pvp-bet" class="bet-input" value="100">
-      <button class="action-btn" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КУБИК</button>
+      <button class="action-btn" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ</button>
     </div>
   </div>
 
   <script>
-    // Интеграция с Telegram
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
@@ -435,7 +500,6 @@
       tg.BackButton.onClick(() => closeGame());
     }
 
-    // Звуки Tone.js
     const synth = new Tone.PolySynth(Tone.Synth).toDestination();
     function playBeep(note = "C5") {
       try {
@@ -448,7 +512,6 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
-    // Баланс
     let balance = parseInt(localStorage.getItem('rg_stars_balance')) || 1000;
     function updateBalance() {
       document.getElementById('balance-stars').innerText = balance;
@@ -458,7 +521,7 @@
 
     function connectWallet() {
       haptic();
-      alert("TON Wallet подключен в демонстрационном режиме!");
+      alert("TON Wallet подключен в тестовом режиме!");
     }
 
     function openChat() {
@@ -466,12 +529,6 @@
       else window.open("https://t.me/telegram", "_blank");
     }
 
-    function mockAlert(msg) {
-      haptic();
-      alert(msg);
-    }
-
-    // Навигация по играм
     let currentGame = null;
     function openGame(gameId) {
       haptic();
@@ -481,31 +538,34 @@
       if (screen) {
         screen.classList.add('active');
         if (tg) tg.BackButton.show();
+        if (gameId === 'rocket') resizeCanvas();
       }
     }
 
     function closeGame() {
-      if (currentGame === 'rocket' && rocketFlight) return; // нельзя закрыть во время полета
+      if (currentGame === 'rocket' && rocketFlight) return;
       document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
       currentGame = null;
       if (tg) tg.BackButton.hide();
     }
 
-    /* ---------------- ИГРА 1: АПГРЕЙДЕР ---------------- */
-    let upgMult = 2.0;
-    let upgChance = 45;
+    /* ---------------- 1. АПГРЕЙД NFT ПОДАРКОВ ---------------- */
+    let currentGift = { icon: '⭐', name: 'Telegram Star', mult: 1.5, chance: 65 };
 
-    function setUpgraderMultiplier(mult, chance) {
+    function selectNFT(el, icon, name, mult, chance) {
       haptic();
-      upgMult = mult;
-      upgChance = chance;
-      document.getElementById('upg-target').innerText = `Множитель: x${mult} (Шанс: ${chance}%)`;
+      document.querySelectorAll('.nft-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentGift = { icon, name, mult, chance };
+      document.getElementById('nftAvatar').innerText = icon;
+      document.getElementById('upg-item-name').innerText = name + ' NFT';
+      document.getElementById('upg-chance-tag').innerText = `Шанс успеха: ${chance}% (Множитель x${mult})`;
     }
 
-    async function playUpgrader() {
+    async function upgradeNFT() {
       const bet = parseInt(document.getElementById('upg-bet').value);
       if (isNaN(bet) || bet <= 0 || bet > balance) {
-        alert("Недостаточно звезд для ставки!");
+        alert("Недостаточно звёзд для улучшения!");
         return;
       }
 
@@ -515,102 +575,212 @@
       playBeep("C5");
 
       const btn = document.getElementById('upg-btn');
-      btn.disabled = true;
-      document.getElementById('upg-status').innerText = "Улучшение предмета...";
-      document.getElementById('upg-icon').innerText = "⏳";
+      const radar = document.getElementById('radarRing');
+      const avatar = document.getElementById('nftAvatar');
+      const status = document.getElementById('upg-status');
 
-      await new Promise(r => setTimeout(r, 1200));
+      btn.disabled = true;
+      radar.classList.add('radar-spinning');
+      avatar.style.transform = "scale(0.85)";
+      status.innerText = "Сканирование и синтез NFT...";
+
+      await new Promise(r => setTimeout(r, 1600));
+
+      radar.classList.remove('radar-spinning');
+      avatar.style.transform = "scale(1)";
 
       const roll = Math.random() * 100;
-      if (roll <= upgChance) {
-        const win = Math.floor(bet * upgMult);
+      if (roll <= currentGift.chance) {
+        const win = Math.floor(bet * currentGift.mult);
         balance += win;
         updateBalance();
-        document.getElementById('upg-icon').innerText = "👑";
-        document.getElementById('upg-status').innerText = `УСПЕХ! Предмет прокачан (+${win} ⭐)`;
-        confetti({ particleCount: 60, spread: 60 });
+        avatar.style.transform = "scale(1.25)";
+        status.innerHTML = `<span style="color:#00ff87; font-weight:800;">УСПЕШНЫЙ АПГРЕЙД! (+${win} ⭐)</span>`;
+        confetti({ particleCount: 70, spread: 60 });
         playBeep("G5");
       } else {
-        document.getElementById('upg-icon').innerText = "💥";
-        document.getElementById('upg-status').innerText = "НЕУДАЧА! Предмет сломан.";
+        avatar.style.transform = "scale(0.6)";
+        avatar.innerText = "💔";
+        status.innerHTML = `<span style="color:var(--neon-red); font-weight:800;">ПРЕДМЕТ СГОРЕЛ В РЕАКТОРЕ!</span>`;
         playBeep("A3");
+        setTimeout(() => {
+          avatar.innerText = currentGift.icon;
+          avatar.style.transform = "scale(1)";
+        }, 1200);
       }
+
       btn.disabled = false;
     }
 
-    /* ---------------- ИГРА 2: РАКЕТКА (CRASH) ---------------- */
+    /* ---------------- 2. РАКЕТКА (CRASH C RTP 98%) ---------------- */
+    const canvas = document.getElementById('rocketCanvas');
+    const ctx = canvas.getContext('2d');
     let rocketFlight = false;
     let rocketTimer = null;
-    let currentMultiplier = 1.0;
-    let crashPoint = 1.0;
-    let rocketBet = 0;
+    let rocketMultiplier = 1.00;
+    let crashPoint = 1.00;
+    let rocketBetAmount = 0;
+    let flightProgress = 0;
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+      drawRocketScene(0, 1.00, false);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Математический генератор краша со строгим RTP = 98%
+    function generate98RtpCrashPoint() {
+      // 2% вероятность мгновенного краша на 1.00x (хаус эдж)
+      if (Math.random() < 0.02) return 1.00;
+      // Честное распределение для RTP 98%
+      const u = Math.random();
+      const crash = 0.98 / (1 - u);
+      return Math.max(1.01, Math.min(100.0, crash));
+    }
+
+    function createExplosion(x, y) {
+      particles = [];
+      for (let i = 0; i < 35; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          alpha: 1,
+          size: Math.random() * 4 + 2,
+          color: Math.random() > 0.5 ? '#ff3366' : '#f5a623'
+        });
+      }
+    }
+
+    function drawRocketScene(progress, mult, crashed) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Фон: сетка
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+
+      const startX = 30;
+      const startY = canvas.height - 30;
+      const curX = startX + (canvas.width - 80) * Math.min(progress, 1);
+      const curY = startY - (canvas.height - 80) * Math.pow(Math.min(progress, 1), 0.85);
+
+      // Траектория полета
+      if (progress > 0) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.quadraticCurveTo(startX + (curX - startX) * 0.4, startY, curX, curY);
+        ctx.strokeStyle = crashed ? "rgba(255, 51, 102, 0.6)" : "rgba(0, 255, 135, 0.7)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+      }
+
+      // Частицы взрыва
+      if (crashed) {
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.alpha -= 0.02;
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      } else {
+        // Отрисовка ракеты
+        ctx.save();
+        ctx.translate(curX, curY);
+        ctx.rotate(-Math.PI / 5);
+        ctx.font = "32px sans-serif";
+        ctx.fillText("🚀", -16, 12);
+        ctx.restore();
+      }
+    }
 
     function handleRocketAction() {
+      const btn = document.getElementById('rocket-btn');
+
       if (!rocketFlight) {
-        // Старт полета
-        rocketBet = parseInt(document.getElementById('rocket-bet').value);
-        if (isNaN(rocketBet) || rocketBet <= 0 || rocketBet > balance) {
-          alert("Недостаточно звезд!");
+        rocketBetAmount = parseInt(document.getElementById('rocket-bet').value);
+        if (isNaN(rocketBetAmount) || rocketBetAmount <= 0 || rocketBetAmount > balance) {
+          alert("Недостаточно звёзд!");
           return;
         }
 
-        balance -= rocketBet;
+        balance -= rocketBetAmount;
         updateBalance();
         haptic();
 
         rocketFlight = true;
-        currentMultiplier = 1.0;
-        crashPoint = (1.05 + Math.random() * 3.5).toFixed(2); // Точка краша от 1.05 до 4.5
+        rocketMultiplier = 1.00;
+        flightProgress = 0;
+        crashPoint = generate98RtpCrashPoint();
 
-        const btn = document.getElementById('rocket-btn');
         btn.innerText = "ЗАБРАТЬ";
-        btn.style.background = "#00ff87";
+        btn.style.background = "var(--neon-green)";
         btn.style.color = "#000";
-
-        document.getElementById('rocket-status').innerText = "Ракета набирает высоту...";
-        document.getElementById('rocket-emoji').innerText = "🚀";
+        document.getElementById('rocket-status').innerText = "Ракета в полёте...";
 
         rocketTimer = setInterval(() => {
-          currentMultiplier += 0.05;
-          document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
+          flightProgress += 0.012;
+          rocketMultiplier = parseFloat((rocketMultiplier + 0.03 * (1 + flightProgress)).toFixed(2));
+          document.getElementById('rocket-mult').innerText = rocketMultiplier.toFixed(2) + "x";
 
-          if (currentMultiplier >= crashPoint) {
-            // Взрыв
+          drawRocketScene(flightProgress, rocketMultiplier, false);
+
+          if (rocketMultiplier >= crashPoint) {
+            // КРАШ
             clearInterval(rocketTimer);
             rocketFlight = false;
-            document.getElementById('rocket-emoji').innerText = "💥";
-            document.getElementById('rocket-status').innerText = `Краш на ${currentMultiplier.toFixed(2)}x! Ставка сгорела.`;
+
+            const curX = 30 + (canvas.width - 80) * Math.min(flightProgress, 1);
+            const curY = (canvas.height - 30) - (canvas.height - 80) * Math.pow(Math.min(flightProgress, 1), 0.85);
+            createExplosion(curX, curY);
+
+            // Анимация взрыва
+            let f = 0;
+            const expInterval = setInterval(() => {
+              drawRocketScene(flightProgress, rocketMultiplier, true);
+              if (++f > 30) clearInterval(expInterval);
+            }, 30);
+
+            document.getElementById('rocket-mult').style.color = "var(--neon-red)";
+            document.getElementById('rocket-status').innerText = `КРАШ НА ${crashPoint.toFixed(2)}x! Ставка сгорела.`;
             btn.innerText = "ВЗЛЁТ";
             btn.style.background = "var(--btn-blue)";
             btn.style.color = "#fff";
             playBeep("A3");
           }
-        }, 120);
+        }, 80);
 
       } else {
-        // Забрать выигрыш
+        // УСПЕШНЫЙ ЗАБОР
         clearInterval(rocketTimer);
         rocketFlight = false;
-        const win = Math.floor(rocketBet * currentMultiplier);
+        const win = Math.floor(rocketBetAmount * rocketMultiplier);
         balance += win;
         updateBalance();
 
-        document.getElementById('rocket-status').innerText = `Вы забрали ${win} ⭐ на ${currentMultiplier.toFixed(2)}x!`;
-        confetti({ particleCount: 70, spread: 70 });
+        document.getElementById('rocket-status').innerHTML = `<span style="color:#00ff87; font-weight:800;">Забрали ${win} ⭐ на ${rocketMultiplier.toFixed(2)}x!</span>`;
+        confetti({ particleCount: 75, spread: 70 });
         playBeep("G5");
 
-        const btn = document.getElementById('rocket-btn');
         btn.innerText = "ВЗЛЁТ";
         btn.style.background = "var(--btn-blue)";
         btn.style.color = "#fff";
       }
     }
 
-    /* ---------------- ИГРА 3: PVP ДУЭЛЬ ---------------- */
+    /* ---------------- 3. PVP ДУЭЛЬ С АНИМАЦИЕЙ ---------------- */
     async function playPvp() {
       const bet = parseInt(document.getElementById('pvp-bet').value);
       if (isNaN(bet) || bet <= 0 || bet > balance) {
-        alert("Недостаточно звезд!");
+        alert("Недостаточно звёзд для дуэли!");
         return;
       }
 
@@ -619,32 +789,51 @@
       haptic();
 
       const btn = document.getElementById('pvp-btn');
+      const uCard = document.getElementById('userCard');
+      const bCard = document.getElementById('botCard');
+      const uVal = document.getElementById('pvp-user-val');
+      const bVal = document.getElementById('pvp-bot-val');
+      const status = document.getElementById('pvp-status');
+
       btn.disabled = true;
-      document.getElementById('pvp-result').innerText = "Бросок кубиков...";
+      uCard.classList.add('dice-rolling');
+      bCard.classList.add('dice-rolling');
+      status.innerText = "Бросок костей...";
 
-      playBeep("C5");
-      await new Promise(r => setTimeout(r, 1000));
+      // Эффект быстрой смены чисел во время броска
+      let rollTicks = 0;
+      const rollInterval = setInterval(() => {
+        uVal.innerText = Math.floor(Math.random() * 99) + 1;
+        bVal.innerText = Math.floor(Math.random() * 99) + 1;
+        playBeep("C5");
+        if (++rollTicks > 12) clearInterval(rollInterval);
+      }, 70);
 
-      const userRoll = Math.floor(Math.random() * 100) + 1;
-      const botRoll = Math.floor(Math.random() * 100) + 1;
+      await new Promise(r => setTimeout(r, 1100));
 
-      document.getElementById('pvp-user-roll').innerText = userRoll;
-      document.getElementById('pvp-bot-roll').innerText = botRoll;
+      uCard.classList.remove('dice-rolling');
+      bCard.classList.remove('dice-rolling');
 
-      if (userRoll > botRoll) {
-        const win = Math.floor(bet * 1.95);
+      const finalUser = Math.floor(Math.random() * 100) + 1;
+      const finalBot = Math.floor(Math.random() * 100) + 1;
+
+      uVal.innerText = finalUser;
+      bVal.innerText = finalBot;
+
+      if (finalUser > finalBot) {
+        const win = Math.floor(bet * 1.96);
         balance += win;
         updateBalance();
-        document.getElementById('pvp-result').innerText = `ВЫ ПОБЕДИЛИ! Банк +${win} ⭐`;
-        confetti({ particleCount: 80, spread: 60 });
+        status.innerHTML = `<span style="color:#00ff87; font-weight:800;">ПОБЕДА! Забрали банк ${win} ⭐</span>`;
+        confetti({ particleCount: 70, spread: 60 });
         playBeep("G5");
-      } else if (userRoll < botRoll) {
-        document.getElementById('pvp-result').innerText = "БОТ ОКАЗАЛСЯ СИЛЬНЕЕ! Попробуйте снова.";
+      } else if (finalUser < finalBot) {
+        status.innerHTML = `<span style="color:var(--neon-red); font-weight:800;">ПОРАЖЕНИЕ! Оппонент победил.</span>`;
         playBeep("A3");
       } else {
         balance += bet;
         updateBalance();
-        document.getElementById('pvp-result').innerText = "НИЧЬЯ! Ставка возвращена.";
+        status.innerText = "НИЧЬЯ! Ставка возвращена.";
       }
 
       btn.disabled = false;
