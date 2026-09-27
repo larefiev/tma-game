@@ -12,7 +12,9 @@
       --accent-cyan: #00f2fe;
       --accent-gold: #ffb703;
       --accent-red: #ff2d55;
+      --accent-green: #2ed573;
       --accent-gold-gradient: linear-gradient(135deg, #ffd166, #ff9e00);
+      --btn-green-gradient: linear-gradient(135deg, #2ed573, #10ac84);
       --text-main: #f0f6fc;
       --text-muted: #8b949e;
       --border-color: rgba(255, 255, 255, 0.08);
@@ -46,6 +48,7 @@
     .brand-logo {
       background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color);
       padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #00f2fe;
+      display: flex; align-items: center; gap: 6px;
     }
 
     .header-right { display: flex; align-items: center; gap: 8px; }
@@ -54,6 +57,7 @@
     .balance-pill {
       background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px;
       border-radius: 16px; font-size: 13px; font-weight: 800; color: var(--accent-gold); cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
     }
 
     .main-container {
@@ -63,6 +67,7 @@
     .promo-banner {
       width: 100%; background: linear-gradient(135deg, #ff9e00 0%, #ff5100 100%);
       border-radius: 20px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255, 110, 0, 0.25);
     }
 
     .section-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
@@ -79,36 +84,58 @@
     .nav-back-row { display: flex; align-items: center; justify-content: space-between; }
     .btn-back { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
 
+    /* ЭКРАН РАКЕТКИ КАК НА ВИДЕО */
     .rocket-screen {
-      width: 100%; height: 240px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%);
+      width: 100%; height: 230px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%);
       border: 1px solid var(--border-color); border-radius: 24px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; position: relative; overflow: hidden;
     }
 
-    .rocket-mult { font-size: 52px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 25px rgba(255, 45, 85, 0.4); z-index: 2; }
-    .rocket-status-sub { font-size: 13px; color: var(--text-muted); font-weight: 700; margin-top: -8px; z-index: 2; }
+    .star-sparkle { position: absolute; background: #fff; border-radius: 50%; opacity: 0.6; }
+
+    .rocket-mult {
+      font-size: 58px; font-weight: 900; color: var(--accent-red);
+      text-shadow: 0 0 25px rgba(255, 45, 85, 0.5); z-index: 2; letter-spacing: -1px;
+    }
 
     .history-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
     .history-strip::-webkit-scrollbar { display: none; }
     .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 14px; font-size: 12px; font-weight: 800; white-space: nowrap; }
 
-    .bet-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .bet-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
     .bet-label { text-align: center; font-size: 13px; color: var(--text-muted); font-weight: 600; }
     .bet-display-row { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 26px; font-weight: 900; color: #fff; }
     .bet-sub-currency { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: -8px; }
 
     .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 16px; font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; }
+    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; }
 
-    .auto-cashout-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 12px; }
-    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .auto-cashout-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 10px; }
+    .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .2s; border-radius: 24px; }
-    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .2s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--accent-cyan); }
-    input:checked + .slider:before { transform: translateX(20px); }
+    input:checked + .slider:before { transform: translateX(18px); }
 
-    .btn-bet-execute { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; background: var(--accent-gold-gradient); color: #000; box-shadow: 0 4px 20px rgba(255, 183, 3, 0.35); }
+    .btn-bet-execute {
+      width: 100%; padding: 15px; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer;
+      background: var(--btn-green-gradient); color: #fff; box-shadow: 0 4px 20px rgba(46, 213, 115, 0.3);
+      transition: transform 0.1s;
+    }
+    .btn-bet-execute:active { transform: scale(0.98); }
+
+    /* СПИСОК УЧАСТНИКОВ КАК НА ВИДЕО */
+    .participants-section {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px;
+      display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;
+    }
+    .participants-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .participant-user { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    .participant-avatar { width: 24px; height: 24px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+    .participant-win { color: var(--accent-red); font-weight: 800; }
+    .participant-win.success { color: var(--accent-green); }
 
     .nav-bar {
       position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px);
@@ -155,7 +182,7 @@
     </div>
   </div>
 
-  <!-- ИГРА РАКЕТКА С ТАЙМЕРОМ, БОТАМИ И УМНЫМ КРАШЕМ -->
+  <!-- ИГРА РАКЕТКА ТОЧЬ-В-ТОЧЬ КАК НА ВИДЕО -->
   <div class="main-container game-view" id="viewRocket">
     <div class="nav-back-row">
       <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
@@ -164,38 +191,49 @@
     </div>
 
     <div class="rocket-screen">
+      <div class="star-sparkle" style="top:50px; left:40px; width:3px; height:3px;"></div>
+      <div class="star-sparkle" style="bottom:60px; right:50px; width:4px; height:4px;"></div>
       <div class="rocket-mult" id="rocketDisplay">1.00x</div>
-      <div class="rocket-status-sub" id="rocketSubText">Ожидание ставок...</div>
     </div>
 
     <div class="history-strip" id="historyStrip">
       <div class="history-pill" style="color:var(--accent-cyan)">1.15x</div>
       <div class="history-pill" style="color:var(--accent-gold)">5.27x</div>
-      <div class="history-pill" style="color:#2ed573">2.08x</div>
+      <div class="history-pill" style="color:var(--accent-green)">2.08x</div>
     </div>
 
-    <!-- СТАВКА 1 -->
+    <!-- СТАВКА -->
     <div class="bet-box">
-      <div class="bet-label">Ставка #1 (Боты ставят автоматически)</div>
+      <div class="bet-label">Введите сумму ставки</div>
       <div class="bet-display-row"><span>⭐</span><span id="betText1">10</span></div>
+      <div class="bet-sub-currency">≈ $<span id="usdText1">0.15</span></div>
+
       <div class="quick-btns-grid">
         <button class="q-btn" onclick="changeBet(1, -10)">-10</button>
         <button class="q-btn" onclick="changeBet(1, 50)">+50</button>
         <button class="q-btn" onclick="changeBet(1, 'max')">MAX</button>
       </div>
-      <button class="btn-action btn-bet-execute" id="btnBet1" onclick="handleRocketBet(1)">Сделать ставку</button>
+
+      <div class="auto-cashout-row">
+        <span>Автовывод</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="autoToggle1">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <button class="btn-action btn-bet-execute" id="btnBet1" onclick="handleRocketBet()">🚀 Сделать ставку</button>
     </div>
 
-    <!-- СТАВКА 2 -->
-    <div class="bet-box">
-      <div class="bet-label">Ставка #2</div>
-      <div class="bet-display-row"><span>⭐</span><span id="betText2">10</span></div>
-      <div class="quick-btns-grid">
-        <button class="q-btn" onclick="changeBet(2, -10)">-10</button>
-        <button class="q-btn" onclick="changeBet(2, 50)">+50</button>
-        <button class="q-btn" onclick="changeBet(2, 'max')">MAX</button>
+    <!-- СПИСОК УЧАСТНИКОВ (БОТЫ КАК НА ВИДЕО) -->
+    <div class="participants-section">
+      <div class="participants-header">
+        <span>Список участников</span>
+        <span id="participantsStatus">⌛ Ожидание</span>
       </div>
-      <button class="btn-action btn-bet-execute" id="btnBet2" onclick="handleRocketBet(2)">Сделать ставку #2</button>
+      <div id="participantsList" style="display:flex; flex-direction:column; gap:6px;">
+        <!-- Динамические строки ботов -->
+      </div>
     </div>
   </div>
 
@@ -209,8 +247,8 @@
   <div class="modal-overlay" id="cashierModal" onclick="closeModal(event)">
     <div class="modal-content">
       <h3 style="margin-bottom:14px; font-weight:800;">Касса Stars</h3>
-      <input type="number" id="depAmount" class="bet-input-field" value="50" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:12px; color:#fff; font-size:16px; margin-bottom:12px;">
-      <button class="btn-action btn-bet-execute" onclick="makeDeposit()">Пополнить через Telegram Stars</button>
+      <input type="number" id="depAmount" value="50" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:12px; color:#fff; font-size:16px; margin-bottom:12px;">
+      <button class="btn-action btn-bet-execute" style="background:var(--accent-gold-gradient); color:#000;" onclick="makeDeposit()">Пополнить через Telegram Stars</button>
     </div>
   </div>
 
@@ -236,19 +274,27 @@
     }
 
     let balance = 0;
-    let bets = { 1: 10, 2: 10 };
-    let rocketState = {
-      1: { active: false, bet: 0, cashedOut: false },
-      2: { active: false, bet: 0, cashedOut: false }
-    };
+    let currentBet = 10;
+    let isBetPlaced = false;
+    let isCashedOut = false;
     
     let globalMult = 1.00;
-    let gamePhase = 'waiting'; // 'waiting' (таймер 5 сек) или 'flying' (полет)
+    let gamePhase = 'waiting'; // 'waiting' (таймер 5 секунд) или 'flying' (полет)
     let waitTimer = 5;
     let mainInterval = null;
     let currentCrashPoint = 1.00;
 
-    const botNames = ['Artem_99', 'CryptoKing', 'Sasha_Star', 'DotaMaster', 'LuckyBoy', 'GaoPlayer', 'TonInvestor', 'Ivan_22'];
+    const botPool = [
+      {name: 'xedoxov #dunux', avatar: '🦊'},
+      {name: 'kitkis', avatar: '🐱'},
+      {name: 'Mr. jokr', avatar: '🃏'},
+      {name: 'Даня', avatar: '⚡'},
+      {name: 'важный', avatar: '👑'},
+      {name: 'Ionu', avatar: '💎'},
+      {name: 'penny', avatar: '🚀'},
+      {name: 'Fenek 🇲🇦', avatar: '🦊'}
+    ];
+    let activeParticipants = [];
 
     async function init() {
       const user = getSafeUser();
@@ -273,12 +319,13 @@
     }
 
     function changeBet(boxId, amount) {
-      if (amount === 'max') bets[boxId] = balance;
-      else bets[boxId] = Math.max(1, bets[boxId] + amount);
-      document.getElementById(`betText${boxId}`).innerText = bets[boxId];
+      if (amount === 'max') currentBet = balance;
+      else currentBet = Math.max(1, currentBet + amount);
+      document.getElementById('betText1').innerText = currentBet;
+      document.getElementById('usdText1').innerText = (currentBet * 0.015).toFixed(2);
     }
 
-    // ИГРОВОЙ ЦИКЛ С ТАЙМЕРОМ И АВТОНОМНЫМ ЗАПУСКОМ
+    // ИГРОВОЙ ЦИКЛ (ТАЙМЕР 5 СЕК + ПОЛЕТ + БОТЫ)
     function startEngineLoop() {
       runWaitingPhase();
     }
@@ -287,61 +334,80 @@
       gamePhase = 'waiting';
       waitTimer = 5;
       globalMult = 1.00;
-      document.getElementById('rocketDisplay').innerText = "1.00x";
-      
-      // Сброс кнопок ставок для нового раунда
-      [1, 2].forEach(id => {
-        rocketState[id].cashedOut = false;
-        if (!rocketState[id].active) {
-          document.getElementById(`btnBet${id}`).innerText = id === 1 ? "Сделать ставку" : "Сделать ставку #2";
-          document.getElementById(`btnBet${id}`).style.background = "var(--accent-gold-gradient)";
-        }
-      });
+      isCashedOut = false;
+      document.getElementById('rocketDisplay').innerText = "5";
+      document.getElementById('participantsStatus').innerText = "⌛ Ожидание";
+
+      // Генерируем ботов для раунда
+      activeParticipants = botPool.sort(() => 0.5 - Math.random()).slice(0, 5).map(b => ({
+        name: b.name,
+        avatar: b.avatar,
+        bet: Math.floor(Math.random() * 80) + 10,
+        cashed: false,
+        cashMultiplier: 0
+      }));
+
+      if (isBetPlaced) {
+        activeParticipants.unshift({
+          name: getSafeUser().first_name || 'Вы',
+          avatar: '⭐',
+          bet: currentBet,
+          cashed: false,
+          cashMultiplier: 0,
+          isUser: true
+        });
+      }
+
+      renderParticipants();
 
       const timerInterval = setInterval(() => {
         waitTimer--;
         if (waitTimer > 0) {
-          document.getElementById('rocketSubText').innerText = `Следующий раунд через ${waitTimer} сек. (Боты ставят)`;
+          document.getElementById('rocketDisplay').innerText = waitTimer;
         } else {
           clearInterval(timerInterval);
-          startFlyingPhase();
+          document.getElementById('rocketDisplay').innerText = "GO";
+          setTimeout(() => startFlyingPhase(), 600);
         }
       }, 1000);
-      document.getElementById('rocketSubText').innerText = `Следующий раунд через 5 сек. (Боты ставят)`;
     }
 
     function startFlyingPhase() {
       gamePhase = 'flying';
-      
-      // УМНАЯ СХЕМА УДЕРЖАНИЯ: Если реальные игроки забрали деньги, ракета может улететь до 1000х!
+      document.getElementById('participantsStatus').innerText = "🎮 Игра окончена";
+
+      // Умная схема удержания (RTP 95% + улет до 1000х если игрок забрал)
       const r = Math.random();
       if (r < 0.04) {
-        currentCrashPoint = 1.00; // Мгновенный краш 4% раундов
+        currentCrashPoint = 1.00;
       } else {
-        // Проверяем, забрал ли реальный игрок ставки
-        const realPlayerCashed = (rocketState[1].active && rocketState[1].cashedOut) || (rocketState[2].active && rocketState[2].cashedOut) || (!rocketState[1].active && !rocketState[2].active);
-        
-        if (realPlayerCashed && Math.random() < 0.35) {
-          // Триггер "улетаем в космос", раз реальный игрок уже вышел
-          currentCrashPoint = parseFloat((150 + Math.random() * 850).toFixed(2)); // от 150х до 1000х!
+        const playerOut = !isBetPlaced || isCashedOut;
+        if (playerOut && Math.random() < 0.4) {
+          currentCrashPoint = parseFloat((120 + Math.random() * 880).toFixed(2)); // Улет в космос до 1000х!
         } else {
-          // Стандартный RTP 95%
           currentCrashPoint = Math.max(1.05, parseFloat((0.95 / (1 - Math.random() * 0.95)).toFixed(2)));
-          if (currentCrashPoint > 45) currentCrashPoint = parseFloat((3 + Math.random() * 25).toFixed(2));
+          if (currentCrashPoint > 40) currentCrashPoint = parseFloat((2 + Math.random() * 25).toFixed(2));
         }
       }
 
       mainInterval = setInterval(() => {
         globalMult += 0.04;
         document.getElementById('rocketDisplay').innerText = globalMult.toFixed(2) + 'x';
-        document.getElementById('rocketSubText').innerText = "🚀 Полет ракеты...";
 
-        // Проверка автовыхода реального игрока
-        [1, 2].forEach(id => {
-          if (rocketState[id].active && !rocketState[id].cashedOut) {
-            // Если игрок нажал забрать
+        // Боты случайно забирают выигрыш по ходу полета
+        activeParticipants.forEach(p => {
+          if (!p.cashed && globalMult >= (1.1 + Math.random() * 3.5)) {
+            p.cashed = true;
+            p.cashMultiplier = parseFloat(globalMult.toFixed(2));
           }
         });
+
+        // Автовывод для реального игрока
+        if (isBetPlaced && !isCashedOut && document.getElementById('autoToggle1').checked && globalMult >= 2.0) {
+          executeCashOut();
+        }
+
+        renderParticipants();
 
         if (globalMult >= currentCrashPoint) {
           triggerCrash();
@@ -353,61 +419,102 @@
       clearInterval(mainInterval);
       gamePhase = 'crashed';
       document.getElementById('rocketDisplay').innerText = "💥 CRASH";
-      document.getElementById('rocketSubText').innerText = `Ракета взорвалась на ${globalMult.toFixed(2)}x`;
 
-      // Проигрыш для тех, кто не успел забрать
-      [1, 2].forEach(id => {
-        if (rocketState[id].active && !rocketState[id].cashedOut) {
-          rocketState[id].active = false;
-          document.getElementById(`btnBet${id}`).innerText = "Проиграно";
-          document.getElementById(`btnBet${id}`).style.background = "#555";
+      activeParticipants.forEach(p => {
+        if (!p.cashed) {
+          p.cashed = true;
+          p.cashMultiplier = 0; // Сгорел
         }
       });
+      renderParticipants();
 
-      // Добавляем в историю
+      if (isBetPlaced && !isCashedOut) {
+        isBetPlaced = false;
+        document.getElementById('btnBet1').innerText = "🚀 Сделать ставку";
+        document.getElementById('btnBet1').style.background = "var(--btn-green-gradient)";
+      }
+
       addHistoryPill(globalMult.toFixed(2) + 'x');
 
-      // Пауза 3 секунды перед новым таймером
       setTimeout(() => {
         runWaitingPhase();
       }, 3000);
     }
 
-    // Обработка нажатия кнопки ставки реальным игроком
-    function handleRocketBet(boxId) {
-      const state = rocketState[boxId];
-      const btn = document.getElementById(`btnBet${boxId}`);
+    function handleRocketBet() {
+      const btn = document.getElementById('btnBet1');
 
       if (gamePhase === 'waiting') {
-        // Ставка во время таймера
-        if (!state.active) {
-          if (bets[boxId] > balance) { alert("Недостаточно средств"); return; }
-          balance -= bets[boxId];
+        if (!isBetPlaced) {
+          if (currentBet > balance) { alert("Недостаточно средств"); return; }
+          balance -= currentBet;
           updateBalance();
-          state.bet = bets[boxId];
-          state.active = true;
-          state.cashedOut = false;
-          btn.innerText = "Отменить / Ждать";
-          btn.style.background = "#0098ea";
+          isBetPlaced = true;
+          btn.innerText = "Отменить ставку";
+          btn.style.background = "#ff4757";
+
+          // Добавляем игрока в текущий список ожидания
+          activeParticipants.unshift({
+            name: getSafeUser().first_name || 'Вы',
+            avatar: '⭐',
+            bet: currentBet,
+            cashed: false,
+            cashMultiplier: 0,
+            isUser: true
+          });
+          renderParticipants();
         } else {
-          balance += state.bet;
+          balance += currentBet;
           updateBalance();
-          state.active = false;
-          btn.innerText = boxId === 1 ? "Сделать ставку" : "Сделать ставку #2";
-          btn.style.background = "var(--accent-gold-gradient)";
+          isBetPlaced = false;
+          btn.innerText = "🚀 Сделать ставку";
+          btn.style.background = "var(--btn-green-gradient)";
+          activeParticipants = activeParticipants.filter(p => !p.isUser);
+          renderParticipants();
         }
       } else if (gamePhase === 'flying') {
-        // Кнопка превращается в «Забрать» прямо во время полета
-        if (state.active && !state.cashedOut) {
-          state.cashedOut = true;
-          state.active = false;
-          const winAmount = Math.floor(state.bet * globalMult);
-          balance += winAmount;
-          updateBalance();
-          btn.innerText = `Забрано (+${winAmount} ⭐)`;
-          btn.style.background = "#2ed573";
+        if (isBetPlaced && !isCashedOut) {
+          executeCashOut();
         }
       }
+    }
+
+    function executeCashOut() {
+      isCashedOut = true;
+      const winAmount = Math.floor(currentBet * globalMult);
+      balance += winAmount;
+      updateBalance();
+
+      const btn = document.getElementById('btnBet1');
+      btn.innerText = `Забрано (+${winAmount} ⭐)`;
+      btn.style.background = "#2ed573";
+
+      // Отмечаем игрока в списке
+      const userP = activeParticipants.find(p => p.isUser);
+      if (userP) {
+        userP.cashed = true;
+        userP.cashMultiplier = parseFloat(globalMult.toFixed(2));
+      }
+      renderParticipants();
+      isBetPlaced = false;
+    }
+
+    function renderParticipants() {
+      const list = document.getElementById('participantsList');
+      list.innerHTML = activeParticipants.map(p => `
+        <div class="participant-row">
+          <div class="participant-user">
+            <div class="participant-avatar">${p.avatar}</div>
+            <span style="${p.isUser ? 'color: var(--accent-cyan);' : ''}">${p.name}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span>⭐ ${p.bet}</span>
+            <span class="participant-win ${p.cashed && p.cashMultiplier > 0 ? 'success' : ''}">
+              ${p.cashed ? (p.cashMultiplier > 0 ? '+' + Math.floor(p.bet * p.cashMultiplier) + ' ⭐ (' + p.cashMultiplier + 'x)' : 'Сгорел') : '⏳'}
+            </span>
+          </div>
+        </div>
+      `).join('');
     }
 
     function addHistoryPill(text) {
