@@ -252,6 +252,19 @@
       border-radius: 6px;
       transition: width 0.3s ease;
     }
+
+    /* Кнопка модератора */
+    .admin-access-btn {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -296,7 +309,12 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: КАССА -->
+  <!-- СКРЫТАЯ КНОПКА МОДЕРАТОРА -->
+  <button class="admin-access-btn" id="btnAdminAccess" onclick="openAdminModal()">
+    🛡️ Окно модератора
+  </button>
+
+  <!-- МОДАЛЬНОЕ ОКНО КАССЫ -->
   <div class="cashier-modal-overlay" id="cashierModal" onclick="handleOverlayClick(event)">
     <div class="cashier-modal">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -309,7 +327,7 @@
         <div class="modal-tab" id="tabWithdraw" onclick="switchCashierTab('withdraw')">Вывод Stars</div>
       </div>
 
-      <!-- ВКЛАДКА: ПОПОЛНЕНИЕ И ПРОМОКОД -->
+      <!-- ВКЛАДКА: ПОПОЛНЕНИЕ -->
       <div id="sectionDeposit">
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Выберите сумму Stars для покупки:</div>
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:14px;">
@@ -320,20 +338,9 @@
 
         <input type="number" id="depositInput" class="bet-input-field" style="margin-bottom:14px;" value="50" min="1">
 
-        <button class="btn-action btn-bet-execute" id="btnDepositExecute" style="margin-bottom:20px;" onclick="createStarsDeposit()">
+        <button class="btn-action btn-bet-execute" id="btnDepositExecute" onclick="createStarsDeposit()">
           Оплатить через Telegram Stars
         </button>
-
-        <!-- БЛОК ПРОМОКОДА -->
-        <div style="border-top:1px solid var(--border-color); padding-top:16px;">
-          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Есть промокод на бесплатные звёзды?</div>
-          <div style="display:flex; gap:8px;">
-            <input type="text" id="promoInput" class="bet-input-field" placeholder="Напр. BONUS100" style="text-transform:uppercase;">
-            <button class="btn-action" style="width:auto; padding:0 20px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid var(--border-color);" onclick="submitPromoCode()">
-              Ввести
-            </button>
-          </div>
-        </div>
       </div>
 
       <!-- ВКЛАДКА: ВЫВОД STARS ЧЕРЕЗ FRAGMENT -->
@@ -369,6 +376,29 @@
     </div>
   </div>
 
+  <!-- МОДАЛЬНОЕ ОКНО: ОКНО МОДЕРАТОРА -->
+  <div class="cashier-modal-overlay" id="adminModal" onclick="handleAdminOverlayClick(event)">
+    <div class="cashier-modal" style="border-top-color: var(--accent-cyan);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-size:18px; font-weight:800; color:var(--accent-cyan);">🛡️ Окно Модератора</h3>
+        <span style="font-size:24px; color:var(--text-muted); cursor:pointer; line-height:1;" onclick="closeAdminModal()">&times;</span>
+      </div>
+
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Сколько звёзд выдать на ваш баланс:</div>
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:12px;">
+        <button class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff; padding:10px; font-size:13px;" onclick="setAdminStars(100)">+100 ⭐</button>
+        <button class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff; padding:10px; font-size:13px;" onclick="setAdminStars(500)">+500 ⭐</button>
+        <button class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff; padding:10px; font-size:13px;" onclick="setAdminStars(1000)">+1000 ⭐</button>
+      </div>
+
+      <input type="number" id="adminStarsInput" class="bet-input-field" style="margin-bottom:14px;" value="100" min="1">
+
+      <button class="btn-action" style="background:var(--accent-cyan); color:#000; font-weight:800;" onclick="submitAdminGiveStars()">
+        Выдать звёзды на баланс
+      </button>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -377,12 +407,12 @@
     }
 
     const BACKEND_URL = 'https://tma-backend-production-d64e.up.railway.app';
+    const ADMIN_TELEGRAM_ID = '944873428';
 
-    // Гарантированное получение ID игрока даже при открытии с десктопа
     function getSafeUser() {
       const user = tg?.initDataUnsafe?.user;
       if (user && user.id) return user;
-      return { id: '944873428', username: 'mittere', first_name: 'Admin' };
+      return { id: ADMIN_TELEGRAM_ID, username: 'mittere', first_name: 'Admin' };
     }
 
     let balance = 0;
@@ -414,8 +444,13 @@
       document.getElementById('userTag').innerText = user.username ? `@${user.username}` : `ID: ${user.id}`;
       document.getElementById('avatarLetter').innerText = (user.first_name || 'U').charAt(0).toUpperCase();
 
+      // Отображаем кнопку модератора только для вашего аккаунта
+      if (String(user.id) === ADMIN_TELEGRAM_ID || user.username === 'mittere') {
+        document.getElementById('btnAdminAccess').style.display = 'block';
+      }
+
       try {
-        const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`, { method: 'GET' });
+        const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`);
         if (res.ok) {
           const data = await res.json();
           balance = data.balance || 0;
@@ -491,6 +526,7 @@
       }, 400);
     }
 
+    // Управление кассой
     function openCashierModal(tab = 'deposit') {
       document.getElementById('cashierModal').style.display = 'flex';
       switchCashierTab(tab);
@@ -515,6 +551,57 @@
 
     function setDepositAmount(num) {
       document.getElementById('depositInput').value = num;
+    }
+
+    // Функции панели модератора
+    function openAdminModal() {
+      document.getElementById('adminModal').style.display = 'flex';
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').style.display = 'none';
+    }
+
+    function handleAdminOverlayClick(e) {
+      if (e.target.id === 'adminModal') closeAdminModal();
+    }
+
+    function setAdminStars(num) {
+      document.getElementById('adminStarsInput').value = num;
+    }
+
+    async function submitAdminGiveStars() {
+      const amount = parseInt(document.getElementById('adminStarsInput').value) || 0;
+      if (amount <= 0) return;
+
+      const user = getSafeUser();
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            adminId: user.id,
+            targetUserId: user.id,
+            amount: amount
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          balance = data.newBalance;
+          updateBalance();
+          haptic();
+          playBeep("G5");
+          alert(`👑 Выдано ${data.addedStars} ⭐! Новый баланс: ${balance} ⭐`);
+          closeAdminModal();
+        } else {
+          alert("Ошибка: " + (data.error || "Не удалось выдать звёзды"));
+        }
+      } catch (err) {
+        alert("Ошибка сети: " + err.message);
+      }
     }
 
     async function createStarsDeposit() {
@@ -549,42 +636,6 @@
       } finally {
         btn.innerText = "Оплатить через Telegram Stars";
         btn.disabled = false;
-      }
-    }
-
-    async function submitPromoCode() {
-      const input = document.getElementById('promoInput');
-      const code = input.value.trim().toUpperCase();
-
-      if (!code) {
-        alert("Введите промокод!");
-        return;
-      }
-
-      const user = getSafeUser();
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/activate-promo`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, promoCode: code })
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          balance = data.newBalance;
-          totalDeposited = data.totalDeposited;
-          updateBalance();
-          haptic();
-          playBeep("G5");
-          alert(`🎁 Промокод активирован! Вам начислено +${data.bonusAmount} ⭐ Stars!`);
-          input.value = "";
-        } else {
-          alert(data.error || "Не удалось применить промокод");
-        }
-      } catch (err) {
-        alert("Ошибка сети: " + err.message);
       }
     }
 
