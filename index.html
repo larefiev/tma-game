@@ -53,7 +53,7 @@
       border-radius: 16px; font-size: 13px; font-weight: 800; color: var(--accent-gold); cursor: pointer;
     }
 
-    .main-container { width: 100%; max-width: 480px; padding: 0 16px; display: flex; flex-direction: column; gap: 16px; }
+    .main-container { width: 100%; max-width: 480px; padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
 
     .section-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
 
@@ -65,97 +65,87 @@
     .game-thumb { width: 100%; height: 75px; background: rgba(0, 0, 0, 0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
     .game-name { font-size: 12px; font-weight: 700; text-align: center; }
 
-    .game-view { display: none; flex-direction: column; gap: 12px; width: 100%; }
+    .game-view { display: none; flex-direction: column; gap: 10px; width: 100%; }
     .nav-back-row { display: flex; align-items: center; justify-content: space-between; }
     .btn-back { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
 
-    /* СЛОТ: ПОЛЕ 5х5 С АНИМАЦИЯМИ */
+    /* СЛОТ: ИДЕАЛЬНО ВПИСАННОЕ ПОЛЕ 5х5 */
     .slot-screen {
-      width: 100%; height: 320px; background: radial-gradient(circle at center, #3b145b 0%, #10051e 100%);
-      border: 2px solid rgba(224, 86, 253, 0.4); border-radius: 24px; display: grid; grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(5, 1fr); gap: 6px; padding: 12px; position: relative; overflow: hidden;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(155, 89, 182, 0.2);
+      width: 100%; height: 260px; background: radial-gradient(circle at center, #3b145b 0%, #10051e 100%);
+      border: 2px solid rgba(224, 86, 253, 0.4); border-radius: 20px; display: grid; grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr); gap: 4px; padding: 8px; position: relative; overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 15px rgba(155, 89, 182, 0.2);
     }
 
     .slot-cell {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
     }
     
-    /* Анимации каскада и победы */
     .slot-cell.win {
       background: rgba(46, 213, 115, 0.35); border-color: var(--accent-green);
-      transform: scale(1.15); box-shadow: 0 0 15px var(--accent-green);
-      animation: pulseWin 0.4s ease infinite alternate;
+      transform: scale(1.1); box-shadow: 0 0 12px var(--accent-green);
     }
     .slot-cell.wild-bonus {
       background: rgba(255, 215, 0, 0.4); border-color: var(--accent-gold);
-      transform: scale(1.2); box-shadow: 0 0 20px var(--accent-gold);
-      animation: glowWild 0.5s ease infinite alternate;
-    }
-    .slot-cell.falling {
-      transform: translateY(-40px); opacity: 0;
+      transform: scale(1.15); box-shadow: 0 0 15px var(--accent-gold);
     }
 
-    @keyframes pulseWin {
-      0% { transform: scale(1.1); }
-      100% { transform: scale(1.2); }
+    /* ПЛАВАЮЩИЙ ИКС НА ЭКРАНЕ */
+    .multiplier-badge {
+      position: absolute; top: 10px; right: 10px; background: rgba(255, 183, 3, 0.2);
+      border: 1px solid var(--accent-gold); padding: 4px 10px; border-radius: 12px;
+      font-size: 13px; font-weight: 900; color: var(--accent-gold); z-index: 10;
+      animation: bounceMult 1s infinite alternate;
     }
-    @keyframes glowWild {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(1.4); }
+    @keyframes bounceMult {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-3px); }
     }
 
-    .slot-controls { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    .slot-win-display { text-align: center; font-size: 20px; font-weight: 900; color: var(--accent-gold); height: 28px; text-shadow: 0 0 10px rgba(255,183,3,0.4); }
+    .slot-controls { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .slot-win-display { text-align: center; font-size: 18px; font-weight: 900; color: var(--accent-gold); height: 24px; text-shadow: 0 0 10px rgba(255,183,3,0.4); }
 
     .btn-spin {
-      width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer;
-      background: var(--btn-green-gradient); color: #fff; box-shadow: 0 4px 20px rgba(46, 213, 115, 0.3);
-      transition: transform 0.1s;
+      width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer;
+      background: var(--btn-green-gradient); color: #fff; box-shadow: 0 4px 16px rgba(46, 213, 115, 0.3);
     }
-    .btn-spin:active { transform: scale(0.98); }
-
     .btn-bonus-buy {
-      width: 100%; padding: 15px; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer;
-      background: var(--btn-purple-gradient); color: #fff; box-shadow: 0 4px 20px rgba(224, 86, 253, 0.4);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform 0.1s, filter 0.2s;
+      width: 100%; padding: 13px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer;
+      background: var(--btn-purple-gradient); color: #fff; box-shadow: 0 4px 16px rgba(224, 86, 253, 0.4);
     }
-    .btn-bonus-buy:active { transform: scale(0.98); }
-    .btn-bonus-buy:hover { filter: brightness(1.1); }
 
-    /* РАКЕТКА ЭКРАН */
+    /* РАКЕТКА */
     .rocket-screen {
-      width: 100%; height: 230px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%);
-      border: 1px solid var(--border-color); border-radius: 24px; display: flex; flex-direction: column;
+      width: 100%; height: 210px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%);
+      border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column;
       align-items: center; justify-content: center; position: relative; overflow: hidden;
     }
-    .rocket-mult { font-size: 58px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 25px rgba(255, 45, 85, 0.5); z-index: 2; }
+    .rocket-mult { font-size: 52px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 20px rgba(255, 45, 85, 0.5); z-index: 2; }
     .history-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
     .history-strip::-webkit-scrollbar { display: none; }
-    .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 14px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; }
 
-    .bet-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-    .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; }
+    .bet-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
 
-    .participants-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
-    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .participants-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
 
     .nav-bar {
       position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0 24px 0; z-index: 1000; max-width: 480px; margin: 0 auto;
-      border-top-left-radius: 28px; border-top-right-radius: 28px;
+      border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0 20px 0; z-index: 1000; max-width: 480px; margin: 0 auto;
+      border-top-left-radius: 24px; border-top-right-radius: 24px;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; background: transparent; border: none; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; background: transparent; border: none; }
     .nav-item.active { color: var(--accent-cyan); }
-    .nav-icon { font-size: 20px; }
+    .nav-icon { font-size: 18px; }
 
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
-    .modal-content { width: 100%; max-width: 480px; background: #141925; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 24px 20px 36px 20px; border-top: 1px solid var(--border-color); }
+    .modal-content { width: 100%; max-width: 480px; background: #141925; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px 16px 30px 16px; border-top: 1px solid var(--border-color); }
   </style>
 </head>
 <body>
@@ -170,12 +160,12 @@
 
   <!-- ГЛАВНОЕ МЕНЮ -->
   <div class="main-container" id="viewHome">
-    <div class="promo-banner" style="background:linear-gradient(135deg, #e056fd, #686de0); border-radius:20px; padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="switchView('slot')">
+    <div class="promo-banner" style="background:linear-gradient(135deg, #e056fd, #686de0); border-radius:18px; padding:14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="switchView('slot')">
       <div>
-        <div style="font-size:18px; font-weight:900; color:#fff;">🍬 Sweet Bonanza Bonus Buy</div>
-        <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Охота за 5 WILD в линию!</div>
+        <div style="font-size:16px; font-weight:900; color:#fff;">🍬 Sweet Bonanza & Multipliers</div>
+        <div style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.9);">5 WILD = 10 Фриспинов + Множители x50!</div>
       </div>
-      <div style="font-size: 40px;">🎁</div>
+      <div style="font-size: 36px;">🎁</div>
     </div>
 
     <div>
@@ -194,12 +184,12 @@
     </div>
   </div>
 
-  <!-- ИГРА 1: РАКЕТКА -->
+  <!-- РАКЕТКА -->
   <div class="main-container game-view" id="viewRocket">
     <div class="nav-back-row">
       <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
-      <span style="font-weight:800; font-size:15px; color:var(--accent-red);">🚀 Ракетка</span>
-      <div style="width: 60px;"></div>
+      <span style="font-weight:800; font-size:14px; color:var(--accent-red);">🚀 Ракетка</span>
+      <div style="width: 50px;"></div>
     </div>
 
     <div class="rocket-screen">
@@ -213,40 +203,42 @@
     </div>
 
     <div class="bet-box">
-      <div style="text-align:center; font-size:13px; color:var(--text-muted);">Ставка в звездах</div>
-      <div style="display:flex; justify-content:center; align-items:center; gap:6px; font-size:26px; font-weight:900;">⭐ <span id="betTextRocket">10</span></div>
+      <div style="text-align:center; font-size:12px; color:var(--text-muted);">Ставка в звездах</div>
+      <div style="display:flex; justify-content:center; align-items:center; gap:6px; font-size:22px; font-weight:900;">⭐ <span id="betTextRocket">10</span></div>
       <div class="quick-btns-grid">
         <button class="q-btn" onclick="changeRocketBet(-10)">-10</button>
         <button class="q-btn" onclick="changeRocketBet(50)">+50</button>
         <button class="q-btn" onclick="changeRocketBet('max')">MAX</button>
       </div>
-      <button class="btn-action" id="btnRocket" style="background:var(--btn-green-gradient); color:#fff; padding:15px; border-radius:16px; font-size:16px; font-weight:800; border:none; cursor:pointer;" onclick="handleRocketBet()">🚀 Сделать ставку</button>
+      <button class="btn-action" id="btnRocket" style="background:var(--btn-green-gradient); color:#fff; padding:13px; border-radius:14px; font-size:15px; font-weight:800; border:none; cursor:pointer;" onclick="handleRocketBet()">🚀 Сделать ставку</button>
     </div>
 
     <div class="participants-section">
-      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); font-weight:700;">
-        <span>Список участников</span><span id="rocketStatus">⌛ Ожидание</span>
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); font-weight:700;">
+        <span>Участники</span><span id="rocketStatus">⌛ Ожидание</span>
       </div>
-      <div id="rocketParticipants" style="display:flex; flex-direction:column; gap:6px;"></div>
+      <div id="rocketParticipants" style="display:flex; flex-direction:column; gap:4px;"></div>
     </div>
   </div>
 
-  <!-- ИГРА 2: SWEET BONANZA С БОНУС БАЕМ И 5 WILD -->
+  <!-- СЛОТ SWEET BONANZA (ФРИСПИНЫ, 5 WILD, МНОЖИТЕЛИ) -->
   <div class="main-container game-view" id="viewSlot">
     <div class="nav-back-row">
       <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
-      <span style="font-weight:800; font-size:15px; color:#e056fd;">🍬 Sweet Bonanza</span>
-      <div style="width: 60px;"></div>
+      <span style="font-weight:800; font-size:14px; color:#e056fd;" id="slotTitleInfo">🍬 Sweet Bonanza</span>
+      <div style="width: 50px;"></div>
     </div>
 
-    <div class="slot-screen" id="slotGrid"></div>
+    <div class="slot-screen" id="slotGrid">
+      <div class="multiplier-badge" id="activeMultBadge">💥 ИКС: x1</div>
+    </div>
 
     <div class="slot-controls">
       <div class="slot-win-display" id="slotWinText">💎 Выигрыш: 0 ⭐</div>
 
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:13px; color:var(--text-muted);">Ставка за спин:</span>
-        <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:18px;">⭐ <span id="slotBetText">20</span></div>
+        <span style="font-size:12px; color:var(--text-muted);">Ставка за спин:</span>
+        <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:16px;">⭐ <span id="slotBetText">20</span></div>
       </div>
 
       <div class="quick-btns-grid">
@@ -255,8 +247,8 @@
         <button class="q-btn" onclick="changeSlotBet('max')">MAX</button>
       </div>
 
-      <button class="btn-spin" onclick="spinSlot(false)">🎰 КРУТИТЬ СПИН</button>
-      <button class="btn-bonus-buy" onclick="spinSlot(true)">🎁 КУПИТЬ БОНУС (5 WILD в линию) [x100]</button>
+      <button class="btn-spin" id="spinBtn" onclick="spinSlot(false)">🎰 КРУТИТЬ СПИН</button>
+      <button class="btn-bonus-buy" onclick="spinSlot(true)">🎁 КУПИТЬ БОНУС (5 WILD + Фриспины) [x100]</button>
     </div>
   </div>
 
@@ -271,29 +263,29 @@
   <!-- МОДАЛКА КАССЫ -->
   <div class="modal-overlay" id="cashierModal" onclick="closeModal(event)">
     <div class="modal-content">
-      <h3 style="margin-bottom:14px; font-weight:800;">Касса Stars</h3>
-      <input type="number" id="depAmount" value="50" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:12px; color:#fff; font-size:16px; margin-bottom:12px;">
-      <button style="width:100%; padding:15px; border:none; border-radius:16px; font-size:16px; font-weight:800; background:var(--accent-gold-gradient); color:#000; cursor:pointer;" onclick="makeDeposit()">Пополнить через Telegram Stars</button>
+      <h3 style="margin-bottom:12px; font-weight:800;">Касса Stars</h3>
+      <input type="number" id="depAmount" value="50" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:10px; color:#fff; font-size:15px; margin-bottom:10px;">
+      <button style="width:100%; padding:14px; border:none; border-radius:14px; font-size:15px; font-weight:800; background:var(--accent-gold-gradient); color:#000; cursor:pointer;" onclick="makeDeposit()">Пополнить через Telegram Stars</button>
     </div>
   </div>
 
   <!-- АДМИН-ПАНЕЛЬ -->
   <div class="modal-overlay" id="adminModal" onclick="closeModal(event)">
     <div class="modal-content" style="border-top-color: var(--accent-cyan);">
-      <h3 style="color:var(--accent-cyan); margin-bottom:12px;">🛡️ VIP Админ-панель</h3>
-      <input type="text" id="adminTargetId" placeholder="Telegram ID (пусто = себе)" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:8px;">
-      <input type="number" id="adminInput" value="100" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:12px;">
-      <button style="width:100%; padding:14px; border:none; border-radius:12px; font-weight:800; background:var(--accent-cyan); color:#000; margin-bottom:16px; cursor:pointer;" onclick="adminGiveStars()">Пополнить баланс ⭐</button>
+      <h3 style="color:var(--accent-cyan); margin-bottom:10px;">🛡️ VIP Админ-панель</h3>
+      <input type="text" id="adminTargetId" placeholder="Telegram ID (пусто = себе)" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:6px;">
+      <input type="number" id="adminInput" value="100" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:10px;">
+      <button style="width:100%; padding:12px; border:none; border-radius:10px; font-weight:800; background:var(--accent-cyan); color:#000; margin-bottom:12px; cursor:pointer;" onclick="adminGiveStars()">Пополнить баланс ⭐</button>
 
-      <div style="border-top:1px solid var(--border-color); padding-top:12px;">
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Управление RTP (%):</div>
-        <select id="adminRtpSelect" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:10px;">
+      <div style="border-top:1px solid var(--border-color); padding-top:10px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Управление RTP (%):</div>
+        <select id="adminRtpSelect" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:8px;">
           <option value="95">Стандартный RTP (95%)</option>
           <option value="50">Жесткий режим (50%)</option>
           <option value="120">Щедрый режим (120%)</option>
           <option value="999">Режим Бога (Гарантия побед)</option>
         </select>
-        <button style="width:100%; padding:12px; border:none; border-radius:10px; font-weight:800; background:var(--accent-gold); color:#000; cursor:pointer;" onclick="saveRtpSettings()">Сохранить RTP</button>
+        <button style="width:100%; padding:10px; border:none; border-radius:8px; font-weight:800; background:var(--accent-gold); color:#000; cursor:pointer;" onclick="saveRtpSettings()">Сохранить RTP</button>
       </div>
     </div>
   </div>
@@ -336,13 +328,15 @@
       document.getElementById('viewSlot').style.display = view === 'slot' ? 'flex' : 'none';
     }
 
-    // --- СЛОТ (SWEET BONANZA С АНИМАЦИЯМИ И БОНУС БАЕМ НА 5 WILD) ---
+    // --- СЛОТ С ФРИСПИНАМИ, 5 WILD И РАНДОМНЫМИ ИКСАМИ ---
     const slotSymbols = ['🍬', '🍭', '🍫', '🍇', '🍉', '🍌', '🍎'];
     let slotBet = 20;
+    let freeSpinsLeft = 0;
+    let currentMultiplier = 1;
 
     function initSlotBoard() {
       const grid = document.getElementById('slotGrid');
-      grid.innerHTML = '';
+      grid.innerHTML = '<div class="multiplier-badge" id="activeMultBadge">💥 ИКС: x1</div>';
       for (let i = 0; i < 25; i++) {
         const cell = document.createElement('div');
         cell.className = 'slot-cell';
@@ -358,63 +352,88 @@
     }
 
     function spinSlot(isBonusBuy) {
-      const cost = isBonusBuy ? slotBet * 100 : slotBet;
-      if (cost > balance) { alert("Недостаточно звезд!"); openCashier(); return; }
+      const cost = isBonusBuy ? slotBet * 100 : (freeSpinsLeft > 0 ? 0 : slotBet);
+      if (!isBonusBuy && freeSpinsLeft === 0 && cost > balance) { alert("Недостаточно звезд!"); openCashier(); return; }
 
-      balance -= cost;
-      updateBalance();
+      if (!isBonusBuy && freeSpinsLeft === 0) {
+        balance -= cost;
+        updateBalance();
+      }
+
+      if (isBonusBuy) {
+        freeSpinsLeft = 10; // 10 фриспинов за бонус бай
+      }
 
       const cells = document.querySelectorAll('.slot-cell');
-      document.getElementById('slotWinText').innerText = isBonusBuy ? "🎁 БОНУС БАЙ: АКТИВИРОВАНЫ 5 WILD!" : "🎰 Каскад символов...";
+      
+      // Рандомный множитель-икс на спин (x2, x5, x10, x25, x50)
+      const possibleMults = [1, 2, 5, 10, 25, 50];
+      currentMultiplier = possibleMults[Math.floor(Math.random() * possibleMults.length)];
+      document.getElementById('activeMultBadge').innerText = `💥 ИКС: x${currentMultiplier}`;
 
-      // Анимация вращения / падения
-      cells.forEach(c => {
-        c.classList.remove('win', 'wild-bonus');
-        c.classList.add('falling');
-      });
+      document.getElementById('slotWinText').innerText = freeSpinsLeft > 0 ? `🎁 ФРИСПИНОВ ОСТАЛОСЬ: ${freeSpinsLeft}` : "🎰 Крутим барабаны...";
+
+      cells.forEach(c => { c.classList.remove('win', 'wild-bonus'); c.style.opacity = '0.3'; });
 
       setTimeout(() => {
-        cells.forEach(c => c.classList.remove('falling'));
-        
-        if (isBonusBuy) {
-          // Гарантированно ставим 5 Wild в среднюю линию (строка 2, индексы 10-14)
+        cells.forEach(c => c.style.opacity = '1');
+
+        if (isBonusBuy || (freeSpinsLeft > 10 && Math.random() < 0.3)) {
+          // Даем 5 WILD в среднюю линию
           cells.forEach((c, idx) => {
             if (idx >= 10 && idx <= 14) {
               c.innerText = '⭐WILD';
               c.classList.add('wild-bonus');
             } else {
-              c.innerText = '🍬';
+              c.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
               c.classList.add('win');
             }
           });
-          const bonusWin = slotBet * (150 + Math.floor(Math.random() * 350)); // Огромный х150-500 win
-          balance += bonusWin;
+          
+          // Выдаем 10 фриспинов при 5 WILD
+          freeSpinsLeft = 10;
+          const rawWin = slotBet * (20 + Math.floor(Math.random() * 40));
+          const totalWin = rawWin * currentMultiplier;
+          balance += totalWin;
           updateBalance();
-          document.getElementById('slotWinText').innerText = `🔥 БОНУСХИТ! Выигрыш: +${bonusWin} ⭐`;
+          document.getElementById('slotWinText').innerText = `🔥 5 WILD! 10 ФРИСПИНОВ! Выигрыш: +${totalWin} ⭐ (x${currentMultiplier})`;
         } else {
-          // Обычный спин по RTP
+          // Обычный или бонусный спин
           cells.forEach(c => {
             c.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
           });
 
           let win = 0;
           const r = Math.random();
-          const winChance = customRtpSetting >= 120 || customRtpSetting === 999 ? 0.8 : (customRtpSetting <= 50 ? 0.15 : 0.45);
+          const winChance = customRtpSetting >= 120 || customRtpSetting === 999 || freeSpinsLeft > 0 ? 0.75 : 0.4;
 
           if (r < winChance || customRtpSetting === 999) {
-            const mult = 3 + Math.floor(Math.random() * 35);
-            win = slotBet * mult;
-            // Подсветка победных ячеек
-            for(let i=0; i<10; i++) {
+            const baseMult = 2 + Math.floor(Math.random() * 15);
+            win = slotBet * baseMult * currentMultiplier; // Умножаем на выпавший икс!
+            for(let i=0; i<8; i++) {
               cells[Math.floor(Math.random() * cells.length)].classList.add('win');
             }
           }
 
           balance += win;
           updateBalance();
-          document.getElementById('slotWinText').innerText = win > 0 ? `🎉 Выигрыш каскада: +${win} ⭐` : `😢 Попробуйте еще раз!`;
+          
+          if (freeSpinsLeft > 0) {
+            freeSpinsLeft--;
+            document.getElementById('slotWinText').innerText = win > 0 ? `🎉 Фриспин win: +${win} ⭐ (x${currentMultiplier})` : `😢 Пустой спин. Осталось: ${freeSpinsLeft}`;
+          } else {
+            document.getElementById('slotWinText').innerText = win > 0 ? `🎉 Выигрыш: +${win} ⭐ (x${currentMultiplier})` : `😢 Попробуйте еще раз!`;
+          }
         }
-      }, 300);
+
+        if (freeSpinsLeft > 0) {
+          document.getElementById('slotTitleInfo').innerText = `🍬 Фриспины (${freeSpinsLeft})`;
+          document.getElementById('spinBtn').innerText = `🎁 СДЕЛАТЬ ФРИСПИН (${freeSpinsLeft})`;
+        } else {
+          document.getElementById('slotTitleInfo').innerText = `🍬 Sweet Bonanza`;
+          document.getElementById('spinBtn').innerText = `🎰 КРУТИТЬ СПИН`;
+        }
+      }, 250);
     }
 
     // --- РАКЕТКА ---
@@ -447,10 +466,10 @@
       rocketMult = 1.00;
       isRocketCashed = false;
       document.getElementById('rocketDisplay').innerText = "5";
-      document.getElementById('rocketStatus').innerText = "⌛ Ожидание ставок";
+      document.getElementById('rocketStatus').innerText = "⌛ Ожидание";
 
       activeBots = bots.sort(() => 0.5 - Math.random()).slice(0, 4).map(b => ({
-        name: b.name, avatar: b.avatar, bet: Math.floor(Math.random() * 50) + 10, cashed: false, mult: 0
+        name: b.name, avatar: b.avatar, bet: Math.floor(Math.random() * 40) + 10, cashed: false, mult: 0
       }));
 
       if (isRocketPlaced) {
@@ -465,14 +484,14 @@
         } else {
           clearInterval(t);
           document.getElementById('rocketDisplay').innerText = "GO";
-          setTimeout(() => runRocketFlying(), 500);
+          setTimeout(() => runRocketFlying(), 400);
         }
       }, 1000);
     }
 
     function runRocketFlying() {
       rocketPhase = 'flying';
-      document.getElementById('rocketStatus').innerText = "🎮 Полет ракеты";
+      document.getElementById('rocketStatus').innerText = "🎮 Полет";
 
       if (customRtpSetting === 999) {
         crashPoint = 300 + Math.random() * 700;
@@ -557,10 +576,10 @@
     function renderBots() {
       document.getElementById('rocketParticipants').innerHTML = activeBots.map(b => `
         <div class="participant-row">
-          <div style="display:flex; align-items:center; gap:8px; font-weight:700;">
+          <div style="display:flex; align-items:center; gap:6px; font-weight:700;">
             <div>${b.avatar}</div><span style="${b.isUser ? 'color:var(--accent-cyan)' : ''}">${b.name}</span>
           </div>
-          <div style="display:flex; gap:10px;">
+          <div style="display:flex; gap:8px;">
             <span>⭐ ${b.bet}</span>
             <span style="color:${b.cashed && b.mult > 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">
               ${b.cashed ? (b.mult > 0 ? '+' + Math.floor(b.bet * b.mult) + ' (' + b.mult + 'x)' : 'Сгорел') : '⏳'}
@@ -570,7 +589,7 @@
       `).join('');
     }
 
-    // --- АДМИНКА И КАССА ---
+    // --- МОДАЛКИ И АДМИНКА ---
     function openCashier() { document.getElementById('cashierModal').style.display = 'flex'; }
     function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
     function checkAdminAccess() {
