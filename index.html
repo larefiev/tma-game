@@ -48,7 +48,7 @@
     .brand-logo {
       background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color);
       padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #00f2fe;
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 6px; cursor: pointer;
     }
 
     .header-right { display: flex; align-items: center; gap: 8px; }
@@ -125,7 +125,7 @@
     }
     .btn-bet-execute:active { transform: scale(0.98); }
 
-    /* СПИСОК УЧАСТНИКОВ КАК НА ВИДЕО */
+    /* СПИСОК УЧАСТНИКОВ */
     .participants-section {
       background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px;
       display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;
@@ -153,7 +153,7 @@
 <body>
 
   <header class="header">
-    <div class="brand-logo">🎮 Random Games</div>
+    <div class="brand-logo" onclick="checkAdminAccess()">🎮 Random Games</div>
     <div class="header-right">
       <button class="btn-connect" onclick="alert('Кошелек подключен!')">Connect</button>
       <div class="balance-pill" onclick="openCashier()">⭐ <span id="balanceText">0</span> Stars</div>
@@ -182,7 +182,7 @@
     </div>
   </div>
 
-  <!-- ИГРА РАКЕТКА ТОЧЬ-В-ТОЧЬ КАК НА ВИДЕО -->
+  <!-- ИГРА РАКЕТКА -->
   <div class="main-container game-view" id="viewRocket">
     <div class="nav-back-row">
       <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
@@ -225,7 +225,7 @@
       <button class="btn-action btn-bet-execute" id="btnBet1" onclick="handleRocketBet()">🚀 Сделать ставку</button>
     </div>
 
-    <!-- СПИСОК УЧАСТНИКОВ (БОТЫ КАК НА ВИДЕО) -->
+    <!-- СПИСОК УЧАСТНИКОВ -->
     <div class="participants-section">
       <div class="participants-header">
         <span>Список участников</span>
@@ -242,6 +242,7 @@
     <button class="nav-item" onclick="openAdminModal()"><span class="nav-icon">👤</span>Профиль</button>
   </nav>
 
+  <!-- МОДАЛКА КАССЫ -->
   <div class="modal-overlay" id="cashierModal" onclick="closeModal(event)">
     <div class="modal-content">
       <h3 style="margin-bottom:14px; font-weight:800;">Касса Stars</h3>
@@ -250,11 +251,26 @@
     </div>
   </div>
 
+  <!-- РАСШИРЕННАЯ АДМИН-ПАНЕЛЬ (БАЛАНС И НАСТРОЙКА RTP) -->
   <div class="modal-overlay" id="adminModal" onclick="closeModal(event)">
     <div class="modal-content" style="border-top-color: var(--accent-cyan);">
-      <h3 style="color:var(--accent-cyan); margin-bottom:12px;">👤 Модерация баланса</h3>
-      <input type="number" id="adminInput" value="100" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:12px; color:#fff; font-size:16px; margin-bottom:12px;">
-      <button class="btn-action" style="background:var(--accent-cyan); color:#000;" onclick="adminGiveStars()">Выдать баланс</button>
+      <h3 style="color:var(--accent-cyan); margin-bottom:12px;">🛡️ VIP Панель Администратора</h3>
+      
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Выдать баланс (себе или ID игрока):</div>
+      <input type="text" id="adminTargetId" placeholder="Telegram ID (оставьте пустым для себя)" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:8px;">
+      <input type="number" id="adminInput" value="100" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:12px;">
+      <button class="btn-action" style="background:var(--accent-cyan); color:#000; margin-bottom:16px;" onclick="adminGiveStars()">Пополнить баланс ⭐</button>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Управление RTP игры (%):</div>
+        <select id="adminRtpSelect" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:10px; color:#fff; font-size:14px; margin-bottom:10px;">
+          <option value="95">Стандартный RTP (95%)</option>
+          <option value="50">Жесткий режим (RTP 50%)</option>
+          <option value="120">Щедрый режим (RTP 120%)</option>
+          <option value="999">Режим Бога (Всегда победа до 1000x)</option>
+        </select>
+        <button class="btn-action" style="background:var(--accent-gold); color:#000;" onclick="saveRtpSettings()">Сохранить RTP</button>
+      </div>
     </div>
   </div>
 
@@ -281,6 +297,7 @@
     let waitTimer = 5;
     let mainInterval = null;
     let currentCrashPoint = 1.00;
+    let customRtpSetting = 95; // Дефолтный RTP
 
     const botPool = [
       {name: 'xedoxov #dunux', avatar: '🦊'},
@@ -372,16 +389,24 @@
       gamePhase = 'flying';
       document.getElementById('participantsStatus').innerText = "🎮 Игра окончена";
 
-      const r = Math.random();
-      if (r < 0.04) {
-        currentCrashPoint = 1.00;
+      // Логика с учетом админского RTP
+      if (customRtpSetting === 999) {
+        currentCrashPoint = 500 + Math.random() * 500; // Режим бога до 1000x
       } else {
-        const playerOut = !isBetPlaced || isCashedOut;
-        if (playerOut && Math.random() < 0.4) {
-          currentCrashPoint = parseFloat((120 + Math.random() * 880).toFixed(2)); 
+        const r = Math.random();
+        const failChance = customRtpSetting <= 50 ? 0.15 : 0.04;
+        if (r < failChance) {
+          currentCrashPoint = 1.00;
         } else {
-          currentCrashPoint = Math.max(1.05, parseFloat((0.95 / (1 - Math.random() * 0.95)).toFixed(2)));
-          if (currentCrashPoint > 40) currentCrashPoint = parseFloat((2 + Math.random() * 25).toFixed(2));
+          const playerOut = !isBetPlaced || isCashedOut;
+          const highMultiplierChance = customRtpSetting >= 120 ? 0.7 : 0.4;
+          if (playerOut && Math.random() < highMultiplierChance) {
+            currentCrashPoint = parseFloat((120 + Math.random() * 880).toFixed(2)); 
+          } else {
+            const effectiveRtp = customRtpSetting / 100;
+            currentCrashPoint = Math.max(1.05, parseFloat((effectiveRtp / (1 - Math.random() * 0.95)).toFixed(2)));
+            if (currentCrashPoint > 40) currentCrashPoint = parseFloat((2 + Math.random() * 25).toFixed(2));
+          }
         }
       }
 
@@ -519,17 +544,42 @@
 
     function openCashier() { document.getElementById('cashierModal').style.display = 'flex'; }
     function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+    function checkAdminAccess() {
+      const user = getSafeUser();
+      if (String(user.id) === ADMIN_TELEGRAM_ID || user.username === 'mittere') {
+        openAdminModal();
+      } else {
+        alert('Доступно только администратору.');
+      }
+    }
     function closeModal(e) { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; }
 
     async function adminGiveStars() {
       const amt = parseInt(document.getElementById('adminInput').value) || 0;
+      const targetId = document.getElementById('adminTargetId').value.trim();
       const user = getSafeUser();
       const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ adminId: user.id, targetUserId: user.id, amount: amt })
+        body: JSON.stringify({ adminId: user.id, targetUserId: targetId || user.id, amount: amt })
       });
       const data = await res.json();
-      if(data.success) { balance = data.newBalance; updateBalance(); alert('Баланс пополнен!'); document.getElementById('adminModal').style.display='none'; }
+      if(data.success) {
+        if (!targetId || String(targetId) === String(user.id)) {
+          balance = data.newBalance;
+          updateBalance();
+        }
+        alert('Баланс успешно выдан!');
+        document.getElementById('adminModal').style.display='none';
+      } else {
+        alert(data.error || 'Ошибка выдачи');
+      }
+    }
+
+    function saveRtpSettings() {
+      const select = document.getElementById('adminRtpSelect');
+      customRtpSetting = parseInt(select.value);
+      alert(`Настройки RTP обновлены! Текущий RTP: ${customRtpSetting === 999 ? 'Режим Бога' : customRtpSetting + '%'}`);
+      document.getElementById('adminModal').style.display = 'none';
     }
 
     async function makeDeposit() {
