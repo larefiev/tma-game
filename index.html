@@ -274,7 +274,7 @@
       border: 1px solid var(--border-color);
     }
 
-    /* АРЕНА CRUSH С ДИНАМИЧЕСКИМ КОСМОСОМ */
+    /* АРЕНА CRUSH */
     .flight-arena {
       position: relative;
       width: 100%;
@@ -287,11 +287,12 @@
       justify-content: center;
       align-items: center;
       border-bottom: 1px solid rgba(0, 242, 254, 0.15);
-      transition: background 1.5s ease;
+      transition: background 0.3s linear;
     }
 
     #threeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+    /* НЕОНОВЫЙ МНОЖИТЕЛЬ С ПЛАВНЫМ ПЕРЕЛИВОМ */
     .mult-display {
       position: relative;
       z-index: 5;
@@ -302,7 +303,7 @@
       text-shadow: 0 0 20px rgba(0, 255, 135, 0.6), 0 4px 25px rgba(0,0,0,0.9);
       margin-bottom: 25px;
       pointer-events: none;
-      transition: color 0.3s ease, text-shadow 0.3s ease;
+      transition: color 0.1s linear, text-shadow 0.1s linear;
     }
 
     /* ТАЙМЕР ОЖИДАНИЯ */
@@ -538,7 +539,7 @@
     }
     .btn-bet-execute:active { transform: scale(0.97); }
 
-    /* МЕНЮ СТАВОК И СГОРЕВШИХ БОТОВ */
+    /* МЕНЮ СТАВОК */
     .players-container {
       margin: 2px 12px 20px 12px;
       background: var(--card-bg);
@@ -610,7 +611,7 @@
       gap: 4px;
     }
 
-    /* МОДАЛЬНОЕ ОКНО КОЛЕСА ФОРТУНЫ */
+    /* КОЛЕСО ФОРТУНЫ */
     .wheel-modal {
       position: fixed;
       inset: 0;
@@ -978,7 +979,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН CRUSH: 3D С ЭВОЛЮЦИОНИРУЮЩИМ НЕБОМ И ДИНАМИЧЕСКИМИ СТАВКАМИ -->
+  <!-- ЭКРАН CRUSH: ПЛАВНЫЙ НЕОН, ПЛАВНЫЙ ФОН, НОВАЯ 3D-РАКЕТА -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -1001,7 +1002,7 @@
         <div class="timer-sub-tag">СТАРТ РАУНДА</div>
       </div>
 
-      <!-- НЕОНОВЫЙ МНОЖИТЕЛЬ -->
+      <!-- ПЛАВНЫЙ НЕОНОВЫЙ МНОЖИТЕЛЬ -->
       <div class="mult-display" id="rocket-mult">1.00x</div>
 
       <div class="history-row" id="historyRow">
@@ -1087,7 +1088,7 @@
       </div>
     </div>
 
-    <!-- МЕНЮ ИГРОКОВ: ДИНАМИЧЕСКИЙ РОСТ В РЕАЛЬНОМ ВРЕМЕНИ -->
+    <!-- МЕНЮ ИГРОКОВ -->
     <div class="players-container">
       <div class="players-header">
         <span>Игроки в раунде (<span id="totalPlayersCount">10</span>)</span>
@@ -1193,12 +1194,12 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
-    /* ---------------- НАДЁЖНОЕ ХРАНИЛИЩЕ БАЛАНСА ---------------- */
+    /* ---------------- ИЗОЛИРОВАННОЕ УПРАВЛЕНИЕ БАЛАНСОМ ---------------- */
     let rawBalance = parseInt(localStorage.getItem('rg_stars_balance'));
     let balance = (isNaN(rawBalance) || rawBalance < 0) ? 1000 : rawBalance;
 
     function updateBalance() {
-      if (isNaN(balance) || balance < 0) balance = 0;
+      balance = Math.max(0, Math.floor(balance));
       document.getElementById('balance-stars').innerText = balance;
       document.getElementById('mcBalanceVal').innerText = balance;
       localStorage.setItem('rg_stars_balance', balance);
@@ -1378,8 +1379,8 @@
       }, 6200);
     }
 
-    /* ---------------- THREE.JS: ЭВОЛЮЦИЯ НЕБА + ДИАГОНАЛЬНЫЙ ПОЛЕТ ---------------- */
-    let scene, camera, renderer, rocketGroup, celestialBody, celestialCorona, starPoints, flameMesh1, flameMesh2;
+    /* ---------------- THREE.JS: НОВЫЙ ДИЗАЙН COSMIC INTERCEPTOR X-1 ---------------- */
+    let scene, camera, renderer, rocketGroup, celestialBody, celestialCorona, starPoints, flameMesh1, flameMesh2, plasmaCore;
     let threeInitialized = false;
 
     const START_POS = { x: -6.5, y: -4.2, z: 0 };
@@ -1406,18 +1407,18 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.95);
       scene.add(ambLight);
 
-      const dirLight = new THREE.DirectionalLight(0x00f2fe, 2.5);
+      const dirLight = new THREE.DirectionalLight(0x00f2fe, 2.8);
       dirLight.position.set(12, 18, 12);
       scene.add(dirLight);
 
-      const backLight = new THREE.DirectionalLight(0x9b51e0, 2.0);
+      const backLight = new THREE.DirectionalLight(0x9b51e0, 2.2);
       backLight.position.set(-10, -10, -5);
       scene.add(backLight);
 
-      // 1. КОСМИЧЕСКОЕ ЗВЕЗДНОЕ НЕБО (800 ЗВЁЗД)
+      // Звездное поле
       const starsCount = 800;
       const starsGeo = new THREE.BufferGeometry();
       const starPositions = new Float32Array(starsCount * 3);
@@ -1438,20 +1439,19 @@
       starPoints = new THREE.Points(starsGeo, starsMat);
       scene.add(starPoints);
 
-      // 2. ДИНАМИЧЕСКИЙ КОСМИЧЕСКИЙ ОБЪЕКТ (ЛУНА ➔ СВЕРХНОВАЯ ➔ СОЛНЦЕ)
+      // Космический объект
       const cGeo = new THREE.SphereGeometry(5.0, 32, 32);
       const cMat = new THREE.MeshStandardMaterial({
         color: 0x141d2e,
         roughness: 0.6,
         metalness: 0.3,
         emissive: 0x050c18,
-        emissiveIntensity: 0.3
+        emissiveIntensity: 0.2
       });
       celestialBody = new THREE.Mesh(cGeo, cMat);
       celestialBody.position.set(9.2, -0.2, -8);
       scene.add(celestialBody);
 
-      // Плазменная корона
       const coronaGeo = new THREE.RingGeometry(5.2, 7.5, 32);
       const coronaMat = new THREE.MeshBasicMaterial({
         color: 0x00f2fe,
@@ -1463,24 +1463,26 @@
       celestialCorona.position.set(9.2, -0.2, -8.1);
       scene.add(celestialCorona);
 
-      // 3. ГРУППА РАКЕТЫ
+      // МОДЕЛЬ COSMIC INTERCEPTOR X-1
       rocketGroup = new THREE.Group();
 
-      const noseGeo = new THREE.ConeGeometry(0.85, 2.0, 6);
+      // Заостренный агрессивный нос (Octahedron/Cone hybrid)
+      const noseGeo = new THREE.ConeGeometry(0.75, 2.2, 8);
       const noseMat = new THREE.MeshStandardMaterial({
         color: 0x00f2fe,
-        metalness: 0.85,
-        roughness: 0.15,
+        metalness: 0.9,
+        roughness: 0.1,
         flatShading: true
       });
       const nose = new THREE.Mesh(noseGeo, noseMat);
-      nose.position.y = 2.0;
+      nose.position.y = 2.1;
       rocketGroup.add(nose);
 
-      const bodyGeo = new THREE.CylinderGeometry(0.85, 0.75, 2.4, 6);
+      // Основной граненый стелс-фюзеляж
+      const bodyGeo = new THREE.CylinderGeometry(0.85, 0.7, 2.5, 8);
       const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0x0f172a,
-        metalness: 0.6,
+        color: 0x0b1320,
+        metalness: 0.8,
         roughness: 0.2,
         flatShading: true
       });
@@ -1488,69 +1490,97 @@
       body.position.y = -0.1;
       rocketGroup.add(body);
 
-      const lineGeo = new THREE.BoxGeometry(0.08, 2.2, 0.08);
-      const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
-      const l1 = new THREE.Mesh(lineGeo, lineMat);
-      l1.position.set(0.8, -0.1, 0);
-      rocketGroup.add(l1);
-      const l2 = new THREE.Mesh(lineGeo, lineMat);
-      l2.position.set(-0.8, -0.1, 0);
-      rocketGroup.add(l2);
-
-      const glassGeo = new THREE.SphereGeometry(0.48, 16, 16);
+      // Сдвоенный фонарь кабины
+      const glassGeo = new THREE.SphereGeometry(0.44, 16, 16);
       const glassMat = new THREE.MeshStandardMaterial({
         color: 0xffd166,
         emissive: 0xff9e00,
-        emissiveIntensity: 0.6,
-        metalness: 0.9,
-        roughness: 0.1
+        emissiveIntensity: 0.7,
+        metalness: 0.95,
+        roughness: 0.05
       });
       const glass = new THREE.Mesh(glassGeo, glassMat);
-      glass.position.set(0, 0.5, 0.72);
+      glass.position.set(0, 0.65, 0.7);
       rocketGroup.add(glass);
 
-      const wingShape = new THREE.BoxGeometry(0.1, 1.4, 1.4);
+      // Боковые реактивные дефлекторы (неоновые воздухозаборники)
+      const deflGeo = new THREE.BoxGeometry(0.18, 1.8, 0.35);
+      const deflMat = new THREE.MeshStandardMaterial({ color: 0x1c2b42, metalness: 0.7 });
+
+      const dLeft = new THREE.Mesh(deflGeo, deflMat);
+      dLeft.position.set(-0.85, 0, 0.3);
+      rocketGroup.add(dLeft);
+
+      const dRight = new THREE.Mesh(deflGeo, deflMat);
+      dRight.position.set(0.85, 0, 0.3);
+      rocketGroup.add(dRight);
+
+      // Стреловидные гипер-крылья со скосом
+      const wingGeo = new THREE.BoxGeometry(0.1, 1.6, 1.5);
       const wingMat = new THREE.MeshStandardMaterial({
         color: 0x7928ca,
-        metalness: 0.7,
+        metalness: 0.8,
         roughness: 0.2,
         flatShading: true
       });
 
-      const wRight = new THREE.Mesh(wingShape, wingMat);
-      wRight.position.set(1.2, -0.6, 0);
-      wRight.rotation.z = -0.2;
+      const wRight = new THREE.Mesh(wingGeo, wingMat);
+      wRight.position.set(1.3, -0.6, 0);
+      wRight.rotation.z = -0.22;
       rocketGroup.add(wRight);
 
-      const wLeft = new THREE.Mesh(wingShape, wingMat);
-      wLeft.position.set(-1.2, -0.6, 0);
-      wLeft.rotation.z = 0.2;
+      const wLeft = new THREE.Mesh(wingGeo, wingMat);
+      wLeft.position.set(-1.3, -0.6, 0);
+      wLeft.rotation.z = 0.22;
       rocketGroup.add(wLeft);
 
-      const nozzleGeo = new THREE.CylinderGeometry(0.32, 0.38, 0.5, 12);
-      const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+      // Неоновые светящиеся полосы на кончиках крыльев
+      const tipGeo = new THREE.BoxGeometry(0.12, 1.6, 0.1);
+      const tipMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
+      const tR = new THREE.Mesh(tipGeo, tipMat);
+      tR.position.set(1.36, -0.6, 0.7);
+      tR.rotation.z = -0.22;
+      rocketGroup.add(tR);
 
-      const noz1 = new THREE.Mesh(nozzleGeo, nozzleMat);
-      noz1.position.set(0.35, -1.4, 0);
-      rocketGroup.add(noz1);
+      const tL = new THREE.Mesh(tipGeo, tipMat);
+      tL.position.set(-1.36, -0.6, 0.7);
+      tL.rotation.z = 0.22;
+      rocketGroup.add(tL);
 
-      const noz2 = new THREE.Mesh(nozzleGeo, nozzleMat);
-      noz2.position.set(-0.35, -1.4, 0);
-      rocketGroup.add(noz2);
+      // Сопла двигателей
+      const nozzleGeo = new THREE.CylinderGeometry(0.3, 0.38, 0.55, 12);
+      const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x111827, metalness: 0.95, roughness: 0.15 });
 
-      const flameGeo = new THREE.ConeGeometry(0.38, 1.8, 16);
+      const n1 = new THREE.Mesh(nozzleGeo, nozzleMat);
+      n1.position.set(0.36, -1.45, 0);
+      rocketGroup.add(n1);
+
+      const n2 = new THREE.Mesh(nozzleGeo, nozzleMat);
+      n2.position.set(-0.36, -1.45, 0);
+      rocketGroup.add(n2);
+
+      // Плазменные реактивные струи
+      const flameGeo = new THREE.ConeGeometry(0.36, 1.9, 16);
       const flameMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
 
       flameMesh1 = new THREE.Mesh(flameGeo, flameMat);
-      flameMesh1.position.set(0.35, -2.4, 0);
+      flameMesh1.position.set(0.36, -2.45, 0);
       flameMesh1.rotation.x = Math.PI;
       rocketGroup.add(flameMesh1);
 
       flameMesh2 = new THREE.Mesh(flameGeo, flameMat);
-      flameMesh2.position.set(-0.35, -2.4, 0);
+      flameMesh2.position.set(-0.36, -2.45, 0);
       flameMesh2.rotation.x = Math.PI;
       rocketGroup.add(flameMesh2);
 
+      // Плазменное внутреннее ядро между соплами
+      const coreGeo = new THREE.SphereGeometry(0.25, 12, 12);
+      const coreMat = new THREE.MeshBasicMaterial({ color: 0xff007f });
+      plasmaCore = new THREE.Mesh(coreGeo, coreMat);
+      plasmaCore.position.set(0, -1.4, 0.2);
+      rocketGroup.add(plasmaCore);
+
+      // Вектор наклона полета по диагонали
       rocketGroup.rotation.z = -Math.PI / 3.4;
       rocketGroup.rotation.x = 0.15;
       rocketGroup.rotation.y = 0.1;
@@ -1573,7 +1603,7 @@
     function animateThree() {
       requestAnimationFrame(animateThree);
 
-      if (celestialBody) celestialBody.rotation.y += 0.002;
+      if (celestialBody) celestialBody.rotation.y += 0.0018;
       if (celestialCorona) celestialCorona.rotation.z += 0.003;
 
       if (starPoints) {
@@ -1588,6 +1618,8 @@
         if (flightPhase === 'flying') {
           flameMesh1.visible = true;
           flameMesh2.visible = true;
+          plasmaCore.visible = true;
+
           const s = 1 + Math.random() * 0.45;
           flameMesh1.scale.set(s, 1 + Math.random() * 0.8, s);
           flameMesh2.scale.set(s, 1 + Math.random() * 0.8, s);
@@ -1601,77 +1633,86 @@
         } else {
           flameMesh1.visible = false;
           flameMesh2.visible = false;
+          plasmaCore.visible = false;
           rocketGroup.position.set(START_POS.x, START_POS.y, 0);
         }
       }
       renderer.render(scene, camera);
     }
 
-    /* ---------------- ДИНАМИЧЕСКИЙ ФОН И СВЕЧЕНИЕ КОСМОСА ---------------- */
-    function updateCosmicEnvironment(mult) {
-      const arena = document.getElementById('flightArena');
-
-      if (!celestialBody || !celestialCorona) return;
-
-      if (mult >= 15.0) {
-        // ЭТАП 4 (15x+): ПЫЛАЮЩЕЕ СОЛНЦЕ / СВЕРХНОВАЯ
-        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #4a1505 0%, #1f0814 55%, #050208 100%)';
-        celestialBody.material.color.setHex(0xffaa00);
-        celestialBody.material.emissive.setHex(0xff3300);
-        celestialBody.material.emissiveIntensity = 1.2;
-        celestialCorona.material.color.setHex(0xffd166);
-        celestialCorona.material.opacity = 0.55;
-      } else if (mult >= 7.0) {
-        // ЭТАП 3 (7x-15x): СПИРАЛЬНАЯ ГАЛАКТИКА И КВАЗАР
-        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #20083b 0%, #0d0624 55%, #03040a 100%)';
-        celestialBody.material.color.setHex(0x9b51e0);
-        celestialBody.material.emissive.setHex(0x7928ca);
-        celestialBody.material.emissiveIntensity = 0.8;
-        celestialCorona.material.color.setHex(0xb76eff);
-        celestialCorona.material.opacity = 0.4;
-      } else if (mult >= 3.0) {
-        // ЭТАП 2 (3x-7x): ТУМАННОСТЬ И КРАСНЫЙ ГИГАНТ
-        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #0a233a 0%, #0a1324 55%, #03060d 100%)';
-        celestialBody.material.color.setHex(0x00b4d8);
-        celestialBody.material.emissive.setHex(0x0077b6);
-        celestialBody.material.emissiveIntensity = 0.5;
-        celestialCorona.material.color.setHex(0x00f2fe);
-        celestialCorona.material.opacity = 0.25;
-      } else {
-        // ЭТАП 1 (1x-3x): ОРБИТА ЛУНЫ
-        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #101828 0%, #060a12 50%, #030408 100%)';
-        celestialBody.material.color.setHex(0x141d2e);
-        celestialBody.material.emissive.setHex(0x050c18);
-        celestialBody.material.emissiveIntensity = 0.2;
-        celestialCorona.material.color.setHex(0x00f2fe);
-        celestialCorona.material.opacity = 0.15;
-      }
+    /* ---------------- МАТЕМАТИЧЕСКАЯ ИНТЕРПОЛЯЦИЯ ЦВЕТА (LERP) ---------------- */
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
     }
 
-    function updateMultiplierNeonColor(mult, isCrashed = false) {
+    function lerpColor(c1, c2, t) {
+      return {
+        r: Math.round(lerp(c1.r, c2.r, t)),
+        g: Math.round(lerp(c1.g, c2.g, t)),
+        b: Math.round(lerp(c1.b, c2.b, t))
+      };
+    }
+
+    // Палитра ключевых точек для непрерывного переливания:
+    // 1.0x -> 00ff87 (зеленый)
+    // 2.5x -> 00b4d8 (циан)
+    // 5.0x -> b76eff (фиолетовый)
+    // 10.0x+ -> ffd166 (золотой)
+    const COLOR_STOPS = [
+      { mult: 1.0,  c: { r: 0,   g: 255, b: 135 } },
+      { mult: 2.5,  c: { r: 0,   g: 180, b: 216 } },
+      { mult: 5.0,  c: { r: 183, g: 110, b: 255 } },
+      { mult: 10.0, c: { r: 255, g: 209, b: 102 } }
+    ];
+
+    function getInterpolatedColor(mult) {
+      if (mult <= COLOR_STOPS[0].mult) return COLOR_STOPS[0].c;
+      if (mult >= COLOR_STOPS[COLOR_STOPS.length - 1].mult) return COLOR_STOPS[COLOR_STOPS.length - 1].c;
+
+      for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
+        if (mult >= COLOR_STOPS[i].mult && mult <= COLOR_STOPS[i + 1].mult) {
+          const t = (mult - COLOR_STOPS[i].mult) / (COLOR_STOPS[i + 1].mult - COLOR_STOPS[i].mult);
+          return lerpColor(COLOR_STOPS[i].c, COLOR_STOPS[i + 1].c, t);
+        }
+      }
+      return COLOR_STOPS[0].c;
+    }
+
+    function updateDynamicVisuals(mult, isCrashed = false) {
       const display = document.getElementById('rocket-mult');
+      const arena = document.getElementById('flightArena');
+
       if (isCrashed) {
         display.style.color = "var(--accent-red)";
         display.style.textShadow = "0 0 25px rgba(255, 51, 102, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
+        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #30060e 0%, #150308 50%, #030408 100%)';
         return;
       }
 
-      if (mult >= 10.0) {
-        display.style.color = "var(--accent-gold)";
-        display.style.textShadow = "0 0 25px rgba(255, 209, 102, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
-      } else if (mult >= 5.0) {
-        display.style.color = "var(--accent-purple)";
-        display.style.textShadow = "0 0 25px rgba(183, 110, 255, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
-      } else if (mult >= 2.0) {
-        display.style.color = "var(--accent-cyan)";
-        display.style.textShadow = "0 0 25px rgba(0, 180, 216, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
-      } else {
-        display.style.color = "var(--accent-green)";
-        display.style.textShadow = "0 0 25px rgba(0, 255, 135, 0.7), 0 4px 30px rgba(0,0,0,0.9)";
+      const col = getInterpolatedColor(mult);
+      const rgbStr = `rgb(${col.r}, ${col.g}, ${col.b})`;
+      const glowStr = `rgba(${col.r}, ${col.g}, ${col.b}, 0.7)`;
+
+      // Плавный цвет и свечение иксов
+      display.style.color = rgbStr;
+      display.style.textShadow = `0 0 24px ${glowStr}, 0 4px 28px rgba(0,0,0,0.9)`;
+
+      // Плавный космический фон в зависимости от спектра
+      const bgR = Math.round(col.r * 0.12);
+      const bgG = Math.round(col.g * 0.12);
+      const bgB = Math.round(col.b * 0.18);
+      arena.style.background = `radial-gradient(ellipse at 85% 30%, rgb(${bgR + 12}, ${bgG + 16}, ${bgB + 28}) 0%, rgb(${bgR}, ${bgG}, ${bgB}) 50%, #030408 100%)`;
+
+      // Реакция 3D-планеты
+      if (celestialBody && celestialCorona) {
+        celestialBody.material.color.setRGB(col.r / 255 * 0.7, col.g / 255 * 0.7, col.b / 255 * 0.7);
+        celestialBody.material.emissive.setRGB(col.r / 255 * 0.4, col.g / 255 * 0.4, col.b / 255 * 0.4);
+        celestialCorona.material.color.setRGB(col.r / 255, col.g / 255, col.b / 255);
+        celestialCorona.material.opacity = Math.min(0.65, 0.15 + (mult - 1) * 0.03);
       }
     }
 
-    /* ---------------- CRUSH: СТАВКИ И ДИНАМИЧЕСКИЙ РОСТ ---------------- */
+    /* ---------------- CRUSH: СТАВКИ, БОТЫ И БЕЗУПРЕЧНЫЙ БАЛАНС ---------------- */
     let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
@@ -1874,7 +1915,6 @@
       renderPlayersList();
     }
 
-    /* РЕНДЕР И ОБНОВЛЕНИЕ РАСТУЩИХ СТАВОК */
     function renderPlayersList() {
       const container = document.getElementById('playersList');
       container.innerHTML = '';
@@ -1950,7 +1990,7 @@
       hasExtendedFlight = false;
       flightProgressNormalized = 0;
 
-      updateCosmicEnvironment(1.00);
+      updateDynamicVisuals(1.00, false);
 
       document.getElementById('rocket-mult').style.display = "none";
       document.getElementById('timerOverlay').style.display = "flex";
@@ -1960,6 +2000,7 @@
       const totalDash = 283;
       circleBar.style.strokeDashoffset = "0";
 
+      // Безопасный перенос ставок из очереди
       [1, 2].forEach(id => {
         if (panelState[id].queued) {
           panelState[id].placed = true;
@@ -2002,7 +2043,7 @@
       flightProgressNormalized = 0;
 
       document.getElementById('rocket-mult').innerText = "1.00x";
-      updateMultiplierNeonColor(1.00, false);
+      updateDynamicVisuals(1.00, false);
 
       updatePanelButtonUI(1);
       updatePanelButtonUI(2);
@@ -2014,13 +2055,10 @@
         currentMultiplier = parseFloat((currentMultiplier + step).toFixed(2));
         document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
 
-        // 1. Динамический неоновый цвет икса
-        updateMultiplierNeonColor(currentMultiplier, false);
+        // Плавная динамическая смена цвета и фона
+        updateDynamicVisuals(currentMultiplier, false);
 
-        // 2. Динамическая космическая эволюция фона
-        updateCosmicEnvironment(currentMultiplier);
-
-        // 3. Динамический рост ставок в реальном времени в таблице
+        // Динамический рост ставок
         updateLiveGrowingBets();
 
         flightProgressNormalized += 0.008;
@@ -2047,7 +2085,7 @@
             }
           });
 
-          updateMultiplierNeonColor(crashTarget, true);
+          updateDynamicVisuals(crashTarget, true);
           document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
 
           markBurnedPlayers();
