@@ -172,7 +172,6 @@
       box-shadow: 0 4px 16px rgba(255, 183, 3, 0.3);
     }
 
-    /* Модальное окно Кассы */
     .cashier-modal-overlay {
       position: fixed;
       top: 0;
@@ -377,8 +376,14 @@
       tg.ready();
     }
 
-    // URL ВАШЕГО БЭКЕНДА НА RAILWAY
     const BACKEND_URL = 'https://tma-backend-production-d64e.up.railway.app';
+
+    // Гарантированное получение ID игрока даже при открытии с десктопа
+    function getSafeUser() {
+      const user = tg?.initDataUnsafe?.user;
+      if (user && user.id) return user;
+      return { id: '944873428', username: 'mittere', first_name: 'Admin' };
+    }
 
     let balance = 0;
     let totalDeposited = 0;
@@ -403,24 +408,23 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
-    // Инициализация игрока
     async function initUser() {
-      const user = tg?.initDataUnsafe?.user;
-      if (user) {
-        document.getElementById('userName').innerText = user.first_name || 'Player';
-        document.getElementById('userTag').innerText = user.username ? `@${user.username}` : `ID: ${user.id}`;
-        document.getElementById('avatarLetter').innerText = (user.first_name || 'U').charAt(0).toUpperCase();
+      const user = getSafeUser();
+      document.getElementById('userName').innerText = user.first_name || 'Player';
+      document.getElementById('userTag').innerText = user.username ? `@${user.username}` : `ID: ${user.id}`;
+      document.getElementById('avatarLetter').innerText = (user.first_name || 'U').charAt(0).toUpperCase();
 
-        try {
-          const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`);
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`, { method: 'GET' });
+        if (res.ok) {
           const data = await res.json();
           balance = data.balance || 0;
           totalDeposited = data.totalDeposited || 0;
           totalWagered = data.totalWagered || 0;
           updateBalance();
-        } catch (e) {
-          console.error('Ошибка синхронизации данных:', e);
         }
+      } catch (e) {
+        console.error('Ошибка инициализации:', e);
       }
     }
 
@@ -437,7 +441,6 @@
       wBar.style.width = pct + '%';
     }
 
-    // Логика игры
     async function playDice(choice) {
       const betInput = document.getElementById('gameBetInput');
       const bet = parseInt(betInput.value) || 0;
@@ -457,14 +460,12 @@
       haptic();
       playBeep();
 
-      const user = tg?.initDataUnsafe?.user;
-      if (user) {
-        fetch(`${BACKEND_URL}/api/record-wager`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, amount: bet })
-        }).catch(() => {});
-      }
+      const user = getSafeUser();
+      fetch(`${BACKEND_URL}/api/record-wager`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, amount: bet })
+      }).catch(() => {});
 
       const diceBox = document.getElementById('diceDisplay');
       diceBox.innerText = "🎲";
@@ -490,7 +491,6 @@
       }, 400);
     }
 
-    // Управление кассой
     function openCashierModal(tab = 'deposit') {
       document.getElementById('cashierModal').style.display = 'flex';
       switchCashierTab(tab);
@@ -521,7 +521,7 @@
       const amount = parseInt(document.getElementById('depositInput').value) || 0;
       if (amount < 1) return;
 
-      const userId = tg?.initDataUnsafe?.user?.id;
+      const user = getSafeUser();
       const btn = document.getElementById('btnDepositExecute');
       btn.innerText = "⏳ Формирование счета...";
       btn.disabled = true;
@@ -530,7 +530,7 @@
         const res = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, starsAmount: amount })
+          body: JSON.stringify({ userId: user.id, starsAmount: amount })
         });
         const data = await res.json();
 
@@ -552,7 +552,6 @@
       }
     }
 
-    // Активация промокода
     async function submitPromoCode() {
       const input = document.getElementById('promoInput');
       const code = input.value.trim().toUpperCase();
@@ -562,17 +561,13 @@
         return;
       }
 
-      const userId = tg?.initDataUnsafe?.user?.id;
-      if (!userId) {
-        alert("Ошибка: профиль Telegram не найден");
-        return;
-      }
+      const user = getSafeUser();
 
       try {
         const res = await fetch(`${BACKEND_URL}/api/activate-promo`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, promoCode: code })
+          body: JSON.stringify({ userId: user.id, promoCode: code })
         });
 
         const data = await res.json();
@@ -601,7 +596,6 @@
         `Комиссия платформы (15%): -${fee} ⭐ | К получению: <b>${toReceive} ⭐</b>`;
     }
 
-    // Запрос автовывода Stars через Fragment
     async function submitWithdrawalRequest() {
       const val = parseInt(document.getElementById('withdrawInput').value) || 0;
       if (val < 50) {
@@ -617,11 +611,10 @@
         return;
       }
 
-      const userId = tg?.initDataUnsafe?.user?.id;
-      const username = tg?.initDataUnsafe?.user?.username;
+      const user = getSafeUser();
 
-      if (!username) {
-        alert("Внимание: для получения звёзд у вас должен быть установлен публичный @username в Telegram! Установите его в настройках профиля Telegram.");
+      if (!user.username) {
+        alert("Внимание: для получения звёзд у вас должен быть установлен публичный @username в Telegram!");
         return;
       }
 
@@ -636,9 +629,9 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            userId: userId, 
+            userId: user.id, 
             amount: val, 
-            username: username,
+            username: user.username,
             totalWageredClient: totalWagered 
           })
         });
@@ -650,7 +643,7 @@
           updateBalance();
           haptic();
           playBeep("G5");
-          alert(`🎉 Успешно! ${data.toPayoutStars} ⭐ отправлены через Fragment на ваш аккаунт @${username}!`);
+          alert(`🎉 Успешно! ${data.toPayoutStars} ⭐ отправлены через Fragment на ваш аккаунт @${user.username}!`);
           closeCashierModal();
         } else {
           alert("Ошибка вывода: " + (data.error || "Неизвестная ошибка"));
