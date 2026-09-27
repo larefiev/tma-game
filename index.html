@@ -845,7 +845,7 @@
           <div class="dep-preset-btn" onclick="selectDepStars(2500)">2500 ⭐</div>
         </div>
         <input type="number" id="customDepInput" class="bet-input-field" style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; margin-bottom:12px;" value="100" min="10" step="10">
-        <button class="btn-bet-execute" style="padding:14px;" onclick="initiateStarsPayment()">
+        <button class="btn-bet-execute" id="btnDepositExecute" style="padding:14px;" onclick="initiateStarsPayment()">
           ⭐ Купить звёзды через Telegram
         </button>
       </div>
@@ -1101,6 +1101,9 @@
   </div>
 
   <script>
+    // АКТИВНЫЙ БЭКЕНД РАЗВЕРНУТЫЙ НА RAILWAY
+    const BACKEND_URL = 'https://tma-backend-production-d65d.up.railway.app';
+
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
@@ -1168,6 +1171,30 @@
     }
     updateBalance();
 
+    // Синхронизация данных с сервера Railway
+    async function syncUserDataWithServer() {
+      const userId = tg?.initDataUnsafe?.user?.id;
+      if (!userId) return;
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/user/${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.balance === 'number') {
+            balance = data.balance;
+            totalDeposited = data.totalDeposited || 0;
+            totalWagered = data.totalWagered || 0;
+            localStorage.setItem('rg_total_deposited', totalDeposited);
+            localStorage.setItem('rg_total_wagered', totalWagered);
+            updateBalance();
+          }
+        }
+      } catch (e) {
+        console.warn("Синхронизация баланса:", e);
+      }
+    }
+    syncUserDataWithServer();
+
     /* ---------------- КАССА (ДЕПОЗИТ И ВЫВОД) ---------------- */
     function openCashierModal(tab = 'deposit') {
       haptic();
@@ -1206,7 +1233,7 @@
       document.getElementById('customDepInput').value = amount;
     }
 
-    // Инициализация платежа в Telegram Stars
+    // Инициализация РЕАЛЬНОГО платежа в Telegram Stars через бэкенд
     async function initiateStarsPayment() {
       const amount = parseInt(document.getElementById('customDepInput').value) || 0;
       if (amount < 10) {
@@ -1214,41 +1241,57 @@
         return;
       }
 
-      haptic();
+      const userId = tg?.initDataUnsafe?.user?.id;
+      if (!userId) {
+        alert("Откройте игру через Telegram бота для проведения реального платежа!");
+        return;
+      }
 
-      // Если подключен бот с эндпоинтом создания инвойса:
-      if (tg && tg.openInvoice) {
-        /*
-          В реальном режиме Mini App отправляет запрос к вашему бэкенду:
-          const res = await fetch('/api/create-stars-invoice', {
-            method: 'POST',
-            body: JSON.stringify({ amount: amount, user_id: tg.initDataUnsafe?.user?.id })
+      haptic();
+      const depBtn = document.getElementById('btnDepositExecute');
+      const originalText = depBtn.innerText;
+      depBtn.innerText = "⏳ Формирование счета...";
+      depBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: userId, starsAmount: amount })
+        });
+
+        const data = await res.json();
+
+        if (data.invoiceLink && tg.openInvoice) {
+          tg.openInvoice(data.invoiceLink, async (status) => {
+            if (status === 'paid') {
+              balance += amount;
+              totalDeposited += amount;
+              localStorage.setItem('rg_total_deposited', totalDeposited);
+              updateBalance();
+
+              confetti({ particleCount: 90, spread: 70 });
+              playBeep("G5");
+
+              alert(`🎉 Оплата ${amount} ⭐ успешно завершена! Чек отправлен вам в чат бота.`);
+              closeCashierModal();
+
+              setTimeout(syncUserDataWithServer, 1000);
+            } else if (status === 'cancelled') {
+              alert("Оплата была отменена.");
+            } else if (status === 'failed') {
+              alert("Не удалось провести платёж.");
+            }
           });
-          const { invoiceLink } = await res.json();
-          tg.openInvoice(invoiceLink, (status) => {
-             if (status === 'paid') { ... }
-          });
-        */
-        // Тестовый нативный режим Telegram Stars:
-        if (confirm(`Подтвердить оплату счета в Telegram Stars на сумму ${amount} ⭐?`)) {
-          balance += amount;
-          totalDeposited += amount;
-          localStorage.setItem('rg_total_deposited', totalDeposited);
-          updateBalance();
-          confetti({ particleCount: 75, spread: 70 });
-          playBeep("G5");
-          alert(`Успешно начислено +${amount} ⭐ на игровой баланс!`);
-          closeCashierModal();
+        } else {
+          alert("Ошибка создания ссылки на оплату Stars.");
         }
-      } else {
-        // Браузерный режим / эмуляция
-        balance += amount;
-        totalDeposited += amount;
-        localStorage.setItem('rg_total_deposited', totalDeposited);
-        updateBalance();
-        confetti({ particleCount: 75, spread: 70 });
-        alert(`[Demo Stars] Пополнено на ${amount} ⭐!`);
-        closeCashierModal();
+      } catch (err) {
+        console.error(err);
+        alert("Ошибка соединения с платёжным сервером Railway.");
+      } finally {
+        depBtn.innerText = originalText;
+        depBtn.disabled = false;
       }
     }
 
@@ -1260,7 +1303,7 @@
         `Комиссия платформы (15%): -${fee} ⭐ | К получению: <b>${toReceive} ⭐</b>`;
     }
 
-    function submitWithdrawalRequest() {
+    async function submitWithdrawalRequest() {
       const val = parseInt(document.getElementById('withdrawInput').value) || 0;
       if (val <= 0 || val > balance) {
         alert("Недостаточно звёзд на балансе!");
@@ -1271,13 +1314,15 @@
         return;
       }
 
+      const userId = tg?.initDataUnsafe?.user?.id;
       const fee = Math.floor(val * 0.15);
       const toReceive = val - fee;
 
-      balance -= val;
-      updateBalance();
       haptic();
       playBeep("C5");
+
+      balance -= val;
+      updateBalance();
 
       alert(`Заявка на вывод ${toReceive} ⭐ (с учетом комиссии 15%) успешно создана и передана на выплату!`);
       closeCashierModal();
@@ -1681,7 +1726,7 @@
 
       for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
         if (mult >= COLOR_STOPS[i].mult && mult <= COLOR_STOPS[i + 1].mult) {
-          const t = (mult - COLOR_STOPS[i].mult) / (COLOR_STOPS[i + 1].mult - COLOR_STOPS[i].mult);
+          const t = (mult - COLOR_STOPS[i].mult) / (COLOR_STOPS[i + 1].mult - COLOR_STOPS[i + 1].mult);
           return lerpColor(COLOR_STOPS[i].c, COLOR_STOPS[i + 1].c, t);
         }
       }
@@ -1825,7 +1870,7 @@
         if (p.placed) return;
         if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
         balance -= betVal;
-        registerBetWager(betVal); // Учитываем ставку в отыгрыш 100%
+        registerBetWager(betVal);
         updateBalance();
         p.placed = true;
         p.amount = betVal;
