@@ -48,7 +48,7 @@
       border: 1px solid var(--border-color);
       border-radius: 20px;
       backdrop-filter: blur(12px);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .user-profile {
@@ -102,6 +102,34 @@
       color: var(--accent-gold);
     }
 
+    /* Переключатель игр */
+    .game-switcher {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .switcher-btn {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: 14px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .switcher-btn.active {
+      background: rgba(0, 242, 254, 0.12);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
     .game-area {
       width: 100%;
       max-width: 480px;
@@ -117,19 +145,22 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
-    .dice-container {
-      width: 100px;
-      height: 100px;
+    .game-screen {
+      width: 100%;
+      height: 140px;
       background: rgba(255, 255, 255, 0.04);
       border: 2px dashed rgba(0, 242, 254, 0.4);
       border-radius: 20px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 48px;
+      font-size: 40px;
       font-weight: 900;
       color: var(--accent-cyan);
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
+      position: relative;
+      overflow: hidden;
     }
 
     .controls-panel {
@@ -283,9 +314,15 @@
     </div>
   </div>
 
-  <!-- ИГРОВАЯ ОБЛАСТЬ -->
-  <div class="game-area">
-    <div class="dice-container" id="diceDisplay">🎲</div>
+  <!-- ПЕРЕКЛЮЧАТЕЛЬ ИГР -->
+  <div class="game-switcher">
+    <button class="switcher-btn active" id="btnModeDice" onclick="switchGameMode('dice')">🎲 Кости</button>
+    <button class="switcher-btn" id="btnModeRocket" onclick="switchGameMode('rocket')">🚀 Ракетка</button>
+  </div>
+
+  <!-- ИГРОВАЯ ОБЛАСТЬ: КОСТИ -->
+  <div class="game-area" id="sectionDice">
+    <div class="game-screen" id="diceDisplay">🎲</div>
     <div style="text-align:center;">
       <div style="font-size:18px; font-weight:800; margin-bottom:4px;" id="gameResultTitle">Угадай чёт / нечёт</div>
       <div style="font-size:12px; color:var(--text-muted);">Коэффициент x1.95</div>
@@ -305,6 +342,26 @@
           Нечётное (1, 3, 5)
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ИГРОВАЯ ОБЛАСТЬ: РАКЕТКА (CRASH) -->
+  <div class="game-area" id="sectionRocket" style="display:none;">
+    <div class="game-screen" id="rocketDisplay" style="color: #ffb703;">1.00x</div>
+    <div style="text-align:center;">
+      <div style="font-size:18px; font-weight:800; margin-bottom:4px;" id="rocketTitle">Заберите выигрыщ до взрыва!</div>
+      <div style="font-size:12px; color:var(--text-muted);">Множитель растет каждую секунду</div>
+    </div>
+
+    <div class="controls-panel">
+      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);">
+        <span>Ставка в звёздах:</span>
+      </div>
+      <input type="number" id="rocketBetInput" class="bet-input-field" value="10" min="1" step="1">
+
+      <button class="btn-action btn-bet-execute" id="btnRocketAction" onclick="handleRocketButton()">
+        🚀 Запустить ракетку
+      </button>
     </div>
   </div>
 
@@ -342,7 +399,7 @@
         </button>
       </div>
 
-      <!-- ВКЛАДКА: ВЫВОД STARS ЧЕРЕЗ FRAGMENT -->
+      <!-- ВКЛАДКА: ВЫВОД STARS -->
       <div id="sectionWithdraw" style="display:none;">
         <div class="wager-status-box">
           <div style="display:flex; justify-content:space-between; font-size:12px;">
@@ -365,11 +422,11 @@
         </div>
 
         <div style="font-size:11px; color:#00f2fe; margin-bottom:14px; line-height:1.4;">
-          ⭐ Звёзды отправляются напрямую на ваш аккаунт через Fragment.
+          ⭐ Заявка на вывод отправляется администратору в Telegram.
         </div>
 
         <button class="btn-action btn-bet-execute" id="btnRequestWithdraw" onclick="submitWithdrawalRequest()">
-          ⭐ Вывести Stars на аккаунт
+          ⭐ Запросить вывод Stars
         </button>
       </div>
     </div>
@@ -418,6 +475,12 @@
     let totalDeposited = 0;
     let totalWagered = 0;
 
+    // Состояние ракетки
+    let rocketInterval = null;
+    let currentMultiplier = 1.00;
+    let isRocketActive = false;
+    let rocketBetAmount = 0;
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(note = "C5") {
       try {
@@ -435,6 +498,14 @@
 
     function haptic() {
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+    }
+
+    function switchGameMode(mode) {
+      const isDice = mode === 'dice';
+      document.getElementById('btnModeDice').classList.toggle('active', isDice);
+      document.getElementById('btnModeRocket').classList.toggle('active', !isDice);
+      document.getElementById('sectionDice').style.display = isDice ? 'flex' : 'none';
+      document.getElementById('sectionRocket').style.display = isDice ? 'none' : 'flex';
     }
 
     async function initUser() {
@@ -522,6 +593,75 @@
         }
         updateBalance();
       }, 400);
+    }
+
+    // ЛОГИКА ИГРЫ «РАКЕТКА» (CRASH)
+    function handleRocketButton() {
+      const btn = document.getElementById('btnRocketAction');
+      if (!isRocketActive) {
+        // Запуск полета
+        const betInput = document.getElementById('rocketBetInput');
+        rocketBetAmount = parseInt(betInput.value) || 0;
+
+        if (rocketBetAmount < 1) {
+          alert("Минимальная ставка — 1 ⭐");
+          return;
+        }
+        if (rocketBetAmount > balance) {
+          openCashierModal('deposit');
+          return;
+        }
+
+        balance -= rocketBetAmount;
+        totalWagered += rocketBetAmount;
+        updateBalance();
+        haptic();
+
+        const user = getSafeUser();
+        fetch(`${BACKEND_URL}/api/record-wager`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, amount: rocketBetAmount })
+        }).catch(() => {});
+
+        isRocketActive = true;
+        currentMultiplier = 1.00;
+        btn.innerText = "🛑 Забрать выигрыш";
+        btn.style.background = "linear-gradient(135deg, #00f2fe, #4facشف)";
+        document.getElementById('rocketTitle').innerText = "🚀 Ракета летит...";
+
+        const crashPoint = 1.1 + Math.random() * 2.5; // Случайный краш от 1.1x до 3.6x
+
+        rocketInterval = setInterval(() => {
+          currentMultiplier += 0.03;
+          document.getElementById('rocketDisplay').innerText = currentMultiplier.toFixed(2) + 'x';
+
+          if (currentMultiplier >= crashPoint) {
+            // Крах!
+            clearInterval(rocketInterval);
+            isRocketActive = false;
+            document.getElementById('rocketDisplay').innerText = "💥 CRASH";
+            document.getElementById('rocketTitle').innerText = `Ракета взорвалась на ${crashPoint.toFixed(2)}x! Вы проиграли.`;
+            btn.innerText = "🚀 Запустить ракетку";
+            btn.style.background = "var(--accent-gold-gradient)";
+            playBeep("C4");
+          }
+        }, 100);
+
+      } else {
+        // Кнопка «Забрать выигрыш»
+        clearInterval(rocketInterval);
+        isRocketActive = false;
+        const winAmount = Math.floor(rocketBetAmount * currentMultiplier);
+        balance += winAmount;
+        updateBalance();
+        haptic();
+        playBeep("G5");
+
+        document.getElementById('rocketTitle').innerText = `🎉 Вы забрали на ${currentMultiplier.toFixed(2)}x (+${winAmount} ⭐)!`;
+        btn.innerText = "🚀 Запустить ракетку";
+        btn.style.background = "var(--accent-gold-gradient)";
+      }
     }
 
     function openCashierModal(tab = 'deposit') {
@@ -679,7 +819,7 @@
       const btnW = document.getElementById('btnRequestWithdraw');
       const originalText = btnW.innerText;
 
-      btnW.innerText = "⏳ Покупка Stars через Fragment...";
+      btnW.innerText = "⏳ Отправка заявки...";
       btnW.disabled = true;
 
       try {
@@ -701,7 +841,7 @@
           updateBalance();
           haptic();
           playBeep("G5");
-          alert(`🎉 Успешно! ${data.toPayoutStars} ⭐ отправлены через Fragment на ваш аккаунт @${user.username}!`);
+          alert(`🎉 Заявка на вывод ${data.toPayoutStars} ⭐ успешно отправлена администратору! Ожидайте поступления.`);
           closeCashierModal();
         } else {
           alert("Ошибка вывода: " + (data.error || "Неизвестная ошибка"));
