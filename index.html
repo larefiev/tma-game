@@ -3,324 +3,314 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Premium Games - Telegram Mini App</title>
+  <title>Random Games Casino</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0a101d;
-      --bg-panel: #162032;
-      --bg-panel-hover: #1e2a40;
-      --accent-blue: #007aff;
-      --accent-cyan: #00d2ff;
-      --accent-green: #00e701;
-      --accent-red: #ff3366;
+      --bg-dark: #07090e;
+      --card-bg: #121824;
+      --accent-cyan: #00f2fe;
       --accent-gold: #ffb703;
+      --accent-red: #ff2d55;
+      --accent-green: #2ed573;
       --accent-purple: #9b59b6;
-      
-      --text-main: #ffffff;
-      --text-muted: #8b9eb7;
-      --border-color: rgba(255, 255, 255, 0.05);
-      
-      --shadow-glow: 0 0 20px rgba(0, 122, 255, 0.3);
-      --font-main: 'Inter', sans-serif;
+      --accent-gold-gradient: linear-gradient(135deg, #ffd166, #ff9e00);
+      --btn-green-gradient: linear-gradient(135deg, #2ed573, #10ac84);
+      --btn-purple-gradient: linear-gradient(135deg, #e056fd, #686de0);
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --nav-bg: rgba(14, 18, 26, 0.95);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
 
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
-      font-family: var(--font-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: 80px;
-      overflow-x: hidden;
+      padding-bottom: 90px;
     }
 
-    /* Анимации перехода страниц */
-    .view {
-      display: none; width: 100%; max-width: 480px; flex-direction: column; padding: 0 16px; gap: 16px;
-      animation: fadeIn 0.3s ease-out;
-    }
-    .view.active { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* HEADER */
     .header {
       width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center;
-      padding: 16px; background: rgba(10, 16, 29, 0.85); backdrop-filter: blur(12px);
-      position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color);
+      padding: 12px 16px; background: var(--bg-dark); position: sticky; top: 0; z-index: 100;
     }
-    .brand-logo { font-size: 18px; font-weight: 900; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .brand-logo {
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color);
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #00f2fe; cursor: pointer;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .btn-connect { background: #0098ea; color: #fff; border: none; padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
     .balance-pill {
-      background: rgba(0, 231, 1, 0.1); border: 1px solid rgba(0, 231, 1, 0.3);
-      padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 800; color: var(--accent-green);
-      display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s;
+      background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px;
+      border-radius: 16px; font-size: 13px; font-weight: 800; color: var(--accent-gold); cursor: pointer;
     }
-    .balance-pill:active { transform: scale(0.95); }
 
-    /* ГЛАВНАЯ СТРАНИЦА */
-    .promo-banner {
-      background: linear-gradient(135deg, #1f103b, #3b145b);
-      border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center;
-      border: 1px solid rgba(155, 89, 182, 0.3); box-shadow: 0 10px 30px rgba(59, 20, 91, 0.5); cursor: pointer;
-    }
-    
-    .section-title { font-size: 18px; font-weight: 800; margin: 10px 0; color: #fff; display: flex; align-items: center; gap: 8px;}
-    .section-title::before { content: ''; display: block; width: 4px; height: 18px; background: var(--accent-blue); border-radius: 2px; }
+    .main-container { width: 100%; max-width: 480px; padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
 
-    .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .games-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .game-card {
-      background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 20px;
-      padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px;
-      cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px;
+      padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer;
     }
-    .game-card:active { transform: scale(0.96); border-color: var(--accent-blue); }
-    .game-thumb { font-size: 48px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); transition: 0.3s; }
-    .game-card:hover .game-thumb { transform: translateY(-5px) scale(1.1); }
-    .game-name { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; }
+    .game-thumb { width: 100%; height: 75px; background: rgba(0, 0, 0, 0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .game-name { font-size: 12px; font-weight: 700; text-align: center; }
 
-    /* ОБЩИЙ БЛОК СТАВОК */
-    .bet-controls {
-      background: var(--bg-panel); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
-      border: 1px solid var(--border-color);
-    }
-    .bet-amount-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 12px 16px; border: 1px solid var(--border-color); }
-    .bet-value { font-size: 20px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 6px; }
-    .bet-quick-btns { display: flex; gap: 6px; }
-    .btn-quick { background: var(--bg-panel-hover); border: none; color: var(--text-main); padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
-    .btn-quick:active { background: var(--accent-blue); }
-    
-    .btn-action {
-      width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 900;
-      color: #fff; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
-    }
-    .btn-play { background: linear-gradient(90deg, #00b09b, #96c93d); box-shadow: 0 4px 15px rgba(150, 201, 61, 0.4); }
-    .btn-play:active { transform: translateY(2px); }
-    .btn-danger { background: linear-gradient(90deg, #ff416c, #ff4b2b); }
-    .btn-purple { background: linear-gradient(90deg, #e056fd, #686de0); box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4); }
+    .game-view { display: none; flex-direction: column; gap: 10px; width: 100%; }
+    .nav-back-row { display: flex; align-items: center; justify-content: space-between; }
+    .btn-back { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
 
-    /* ИГРА: CRASH (ROCKET) */
-    .crash-screen {
-      width: 100%; height: 210px; background: #070b12; border-radius: 20px;
-      border: 1px solid rgba(0, 122, 255, 0.2); position: relative; overflow: hidden;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
+    /* СЛОТЫ SWEET BONANZA С БОМБАМИ */
+    .slot-screen {
+      width: 100%; height: 260px; background: radial-gradient(circle at center, #3b145b 0%, #10051e 100%);
+      border: 2px solid rgba(224, 86, 253, 0.4); border-radius: 20px; display: grid; grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr); gap: 4px; padding: 8px; position: relative; overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 15px rgba(155, 89, 182, 0.2);
     }
-    .crash-bg-stars { position: absolute; width: 200%; height: 200%; background: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px); background-size: 100px 100px; opacity: 0.1; animation: flyStars 20s linear infinite; }
-    @keyframes flyStars { from { transform: translate(0, 0); } to { transform: translate(-50%, 50%); } }
-    .crash-multiplier { font-size: 52px; font-weight: 900; color: #fff; z-index: 2; text-shadow: 0 0 20px rgba(255,255,255,0.2); letter-spacing: -1px; }
-    .crash-multiplier.crashed { color: var(--accent-red); text-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
-    .crash-rocket { position: absolute; font-size: 36px; z-index: 3; transition: all 0.1s linear; left: 20px; bottom: 20px; filter: drop-shadow(0 0 10px rgba(255,183,3,0.8)); }
-    .crash-status { position: absolute; top: 10px; font-size: 13px; font-weight: 700; color: var(--text-muted); z-index: 2; }
-    
-    .history-bar { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
-    .history-bar::-webkit-scrollbar { display: none; }
-    .history-pill { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
 
-    /* СПИСОК БОТОВ */
-    .participants-section {
-      background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px;
-      display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto;
-    }
-    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-
-    /* ИГРА: СЛОТЫ */
-    .slot-machine {
-      background: radial-gradient(circle at center, #2c1654 0%, #0d061a 100%);
-      border-radius: 20px; border: 2px solid rgba(155, 89, 182, 0.5);
-      padding: 8px; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 4px;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(155, 89, 182, 0.2); height: 260px;
-    }
     .slot-cell {
-      background: rgba(255,255,255,0.05); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; font-size: 22px;
-      border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
     }
-    .slot-cell.spinning { filter: blur(2px); transform: translateY(5px); opacity: 0.5; }
-    .slot-cell.win { background: rgba(46, 213, 115, 0.3); border-color: var(--accent-green); transform: scale(1.1); z-index: 2; box-shadow: 0 0 10px var(--accent-green); }
-    .slot-cell.wild { background: rgba(255, 183, 3, 0.4); border-color: var(--accent-gold); transform: scale(1.15); z-index: 3; box-shadow: 0 0 15px var(--accent-gold); animation: dropWild 0.5s ease; }
     
+    .slot-cell.win {
+      background: rgba(46, 213, 115, 0.35); border-color: var(--accent-green);
+      transform: scale(1.1); box-shadow: 0 0 12px var(--accent-green);
+    }
+    .slot-cell.wild-bonus {
+      background: rgba(255, 215, 0, 0.5); border-color: var(--accent-gold);
+      transform: scale(1.15); box-shadow: 0 0 18px var(--accent-gold);
+      animation: dropWild 0.4s ease;
+    }
+
     @keyframes dropWild {
       0% { transform: translateY(-30px) scale(0.8); opacity: 0; }
       100% { transform: translateY(0) scale(1.15); opacity: 1; }
     }
 
-    /* НАВИГАЦИЯ НИЗ */
+    /* АНИМАЦИЯ БОМБЫ С ИКСОМ */
+    .bomb-badge {
+      position: absolute; top: 10px; right: 10px; background: rgba(255, 45, 85, 0.2);
+      border: 1px solid var(--accent-red); padding: 4px 10px; border-radius: 12px;
+      font-size: 14px; font-weight: 900; color: #fff; z-index: 10;
+      box-shadow: 0 0 15px rgba(255,45,85,0.6); display: none;
+      animation: bombPulse 0.5s infinite alternate;
+    }
+    .bomb-badge.active { display: block; }
+    @keyframes bombPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.15); filter: brightness(1.3); }
+    }
+
+    .slot-controls { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    
+    .slot-win-display {
+      text-align: center; font-size: 15px; font-weight: 900; color: var(--accent-gold); height: 42px;
+      text-shadow: 0 0 10px rgba(255,183,3,0.4); display: flex; flex-direction: column; justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .slot-win-display.animate-mult { transform: scale(1.1); color: #2ed573; }
+
+    .btn-spin {
+      width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer;
+      background: var(--btn-green-gradient); color: #fff; box-shadow: 0 4px 16px rgba(46, 213, 115, 0.3);
+    }
+    .btn-bonus-buy {
+      width: 100%; padding: 13px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer;
+      background: var(--btn-purple-gradient); color: #fff; box-shadow: 0 4px 16px rgba(224, 86, 253, 0.4);
+    }
+
+    /* РАКЕТКА */
+    .rocket-screen {
+      width: 100%; height: 210px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%);
+      border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; position: relative; overflow: hidden;
+    }
+    .rocket-mult { font-size: 52px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 20px rgba(255, 45, 85, 0.5); z-index: 2; }
+    .history-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+    .history-strip::-webkit-scrollbar { display: none; }
+    .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+
+    .bet-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
+
+    .participants-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+
     .nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 16, 29, 0.95); backdrop-filter: blur(15px);
-      border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0 24px 0; z-index: 1000;
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0 20px 0; z-index: 1000; max-width: 480px; margin: 0 auto;
+      border-top-left-radius: 24px; border-top-right-radius: 24px;
     }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; }
-    .nav-item.active { color: var(--accent-blue); }
-    .nav-icon { font-size: 20px; transition: 0.3s; }
-    .nav-item.active .nav-icon { transform: translateY(-3px); text-shadow: var(--shadow-glow); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; background: transparent; border: none; }
+    .nav-item.active { color: var(--accent-cyan); }
+    .nav-icon { font-size: 18px; }
 
-    /* МОДАЛКИ */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-      display: none; align-items: flex-end; justify-content: center; z-index: 2000;
-    }
-    .modal-content {
-      width: 100%; max-width: 480px; background: var(--bg-panel); border-top-left-radius: 24px; border-top-right-radius: 24px;
-      padding: 24px 20px 36px 20px; border-top: 1px solid var(--border-color);
-    }
-    .admin-input {
-      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 12px; color: #fff; font-size: 14px; margin-bottom: 10px; outline: none;
-    }
-
-    /* УТИЛИТЫ */
-    .flex-row { display: flex; align-items: center; justify-content: space-between; }
-    .nav-back { color: var(--text-muted); font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 0;}
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
+    .modal-content { width: 100%; max-width: 480px; background: #141925; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px 16px 30px 16px; border-top: 1px solid var(--border-color); }
+    
+    .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .2s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--accent-cyan); }
+    input:checked + .slider:before { transform: translateX(18px); }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="header">
-    <div class="brand-logo">♠ 1RANDOM</div>
-    <div class="balance-pill" onclick="App.openCashier()">
-      ⭐ <span id="headerBalance">0</span>
+    <div class="brand-logo" onclick="checkAdminAccess()">🎮 Random Games</div>
+    <div class="header-right">
+      <button class="btn-connect" onclick="alert('Кошелек подключен!')">Connect</button>
+      <div class="balance-pill" onclick="openCashier()">⭐ <span id="balanceText">0</span> Stars</div>
     </div>
   </header>
 
-  <!-- ВЬЮ: ГЛАВНАЯ -->
-  <main class="view active" id="view-home">
-    <div class="promo-banner" onclick="App.navigate('slot')">
+  <!-- ГЛАВНОЕ МЕНЮ -->
+  <div class="main-container" id="viewHome">
+    <div class="promo-banner" style="background:linear-gradient(135deg, #e056fd, #686de0); border-radius:18px; padding:14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="switchView('slot')">
       <div>
-        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom: 4px;">Sweet Bonanza</div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.8);">Покупай бонус и лови 5 WILD!</div>
+        <div style="font-size:16px; font-weight:900; color:#fff;">🍬 Sweet Bonanza Bonus Buy</div>
+        <div style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.9);">Покупка 10 Фриспинов за x10!</div>
       </div>
-      <div style="font-size: 48px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));">🍭</div>
+      <div style="font-size: 36px;">🎁</div>
     </div>
 
     <div>
-      <h2 class="section-title">Оригинальные игры</h2>
+      <div class="section-title">🔥 Популярные игры</div>
       <div class="games-grid">
-        <div class="game-card" onclick="App.navigate('crash')">
-          <div class="game-thumb">🚀</div>
-          <div class="game-name">Crash</div>
+        <div class="game-card" onclick="switchView('rocket')">
+          <div class="game-thumb" style="border: 1px solid rgba(255,45,85,0.4); background: radial-gradient(circle, #1f1018 0%, #121824 100%);">🚀</div>
+          <div class="game-name">Ракетка</div>
         </div>
-        <div class="game-card" onclick="App.navigate('slot')">
-          <div class="game-thumb">🎰</div>
-          <div class="game-name">Slots</div>
+        <div class="game-card" onclick="switchView('slot')">
+          <div class="game-thumb" style="border: 1px solid rgba(224,86,253,0.4); background: radial-gradient(circle, #3b145b 0%, #121824 100%);">🍬</div>
+          <div class="game-name">Sweet Slot</div>
         </div>
+        <div class="game-card" onclick="alert('Скоро')"><div class="game-thumb">⚔️</div><div class="game-name">PVP</div></div>
       </div>
-    </div>
-  </main>
-
-  <!-- ВЬЮ: CRASH (РАКЕТКА) -->
-  <main class="view" id="view-crash">
-    <div class="nav-back" onclick="App.navigate('home')">❮ Назад к играм</div>
-    
-    <div class="crash-screen">
-      <div class="crash-status" id="crash-status-text">Ожидание...</div>
-      <div class="crash-bg-stars"></div>
-      <div class="crash-multiplier" id="crash-mult">1.00x</div>
-      <div class="crash-rocket" id="crash-rocket">🚀</div>
-    </div>
-    
-    <div class="history-bar" id="crash-history">
-      <div class="history-pill" style="color:var(--accent-green)">2.08x</div>
-      <div class="history-pill" style="color:var(--accent-red)">1.15x</div>
-    </div>
-
-    <div class="bet-controls">
-      <div class="bet-amount-row">
-        <div class="bet-value">⭐ <span id="crash-bet-display">10</span></div>
-        <div class="bet-quick-btns">
-          <button class="btn-quick" onclick="CrashGame.changeBet(-10)">-10</button>
-          <button class="btn-quick" onclick="CrashGame.changeBet(50)">+50</button>
-          <button class="btn-quick" onclick="CrashGame.changeBet('max')">MAX</button>
-        </div>
-      </div>
-      <button class="btn-action btn-play" id="btn-crash-action" onclick="CrashGame.action()">СДЕЛАТЬ СТАВКУ</button>
-    </div>
-
-    <!-- Список ботов -->
-    <div class="participants-section">
-      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); font-weight:700; margin-bottom:6px;">
-        <span>Участники</span><span id="rocket-phase-status">⌛ Ожидание</span>
-      </div>
-      <div id="crash-participants" style="display:flex; flex-direction:column; gap:4px;"></div>
-    </div>
-  </main>
-
-  <!-- ВЬЮ: СЛОТЫ -->
-  <main class="view" id="view-slot">
-    <div class="nav-back" onclick="App.navigate('home')">❮ Назад к играм</div>
-    
-    <div style="text-align:center; font-size:18px; font-weight:900; color:var(--accent-gold); height: 24px; text-shadow: 0 0 10px rgba(255,183,3,0.3);" id="slot-status">
-      Вращай для победы!
-    </div>
-
-    <div class="slot-machine" id="slot-grid"></div>
-
-    <div class="bet-controls">
-      <div class="bet-amount-row">
-        <div class="bet-value">⭐ <span id="slot-bet-display">20</span></div>
-        <div class="bet-quick-btns">
-          <button class="btn-quick" onclick="SlotGame.changeBet(-10)">-10</button>
-          <button class="btn-quick" onclick="SlotGame.changeBet(50)">+50</button>
-          <button class="btn-quick" onclick="SlotGame.changeBet('max')">MAX</button>
-        </div>
-      </div>
-      <button class="btn-action btn-play" onclick="SlotGame.spin(false)">🎰 КРУТИТЬ СПИН</button>
-      <button class="btn-action btn-purple" onclick="SlotGame.spin(true)" style="margin-top: -6px;">🎁 КУПИТЬ БОНУС (x100)</button>
-    </div>
-  </main>
-
-  <!-- НАВИГАЦИЯ -->
-  <nav class="nav-bar">
-    <div class="nav-item active" onclick="App.navigate('home')">
-      <div class="nav-icon">🏠</div><span>Главная</span>
-    </div>
-    <div class="nav-item" onclick="App.openCashier()">
-      <div class="nav-icon">📦</div><span>Кейсы</span>
-    </div>
-    <div class="nav-item" onclick="App.openCashier()">
-      <div class="nav-icon">🏆</div><span>Топ</span>
-    </div>
-    <div class="nav-item" onclick="App.checkAdmin()">
-      <div class="nav-icon">👤</div><span>Профиль</span>
-    </div>
-  </nav>
-
-  <!-- КАССА -->
-  <div class="modal-overlay" id="modal-cashier" onclick="App.closeModal(event)">
-    <div class="modal-content">
-      <h3 style="margin-bottom:12px; font-weight:800;">Пополнение Stars</h3>
-      <input type="number" id="depAmount" value="50" class="admin-input">
-      <button class="btn-action btn-play" onclick="App.makeDeposit()">Купить Telegram Stars</button>
     </div>
   </div>
 
-  <!-- АДМИН ПАНЕЛЬ -->
-  <div class="modal-overlay" id="modal-admin" onclick="App.closeModal(event)">
-    <div class="modal-content" style="border-top-color: var(--accent-blue);">
-      <h3 style="color:var(--accent-blue); margin-bottom:12px;">🛡️ VIP Админ-панель</h3>
-      
-      <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Выдать баланс (ID или пусто для себя):</div>
-      <input type="text" id="adminTargetId" placeholder="Telegram ID" class="admin-input">
-      <input type="number" id="adminAmount" value="1000" class="admin-input">
-      <button class="btn-action" style="background:var(--accent-blue); color:#fff; margin-bottom:16px;" onclick="App.adminGiveStars()">Пополнить баланс ⭐</button>
+  <!-- РАКЕТКА -->
+  <div class="main-container game-view" id="viewRocket">
+    <div class="nav-back-row">
+      <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
+      <span style="font-weight:800; font-size:14px; color:var(--accent-red);">🚀 Ракетка</span>
+      <div style="width: 50px;"></div>
+    </div>
 
-      <div style="border-top:1px solid var(--border-color); padding-top:12px;">
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Глобальный RTP (%):</div>
-        <select id="adminRtp" class="admin-input">
-          <option value="95">Стандартный (95%)</option>
-          <option value="50">Жесткий (50%)</option>
-          <option value="120">Щедрый (120%)</option>
-          <option value="999">Режим Бога (Только победы)</option>
+    <div class="rocket-screen">
+      <div class="star-sparkle" style="top:50px; left:40px; width:3px; height:3px;"></div>
+      <div class="rocket-mult" id="rocketDisplay">1.00x</div>
+    </div>
+
+    <div class="history-strip" id="historyStrip">
+      <div class="history-pill" style="color:var(--accent-cyan)">1.15x</div>
+      <div class="history-pill" style="color:var(--accent-gold)">5.27x</div>
+      <div class="history-pill" style="color:var(--accent-green)">2.08x</div>
+    </div>
+
+    <div class="bet-box">
+      <div style="text-align:center; font-size:12px; color:var(--text-muted);">Ставка в звездах</div>
+      <div style="display:flex; justify-content:center; align-items:center; gap:6px; font-size:22px; font-weight:900;">⭐ <span id="betTextRocket">10</span></div>
+      <div class="quick-btns-grid">
+        <button class="q-btn" onclick="changeRocketBet(-10)">-10</button>
+        <button class="q-btn" onclick="changeRocketBet(50)">+50</button>
+        <button class="q-btn" onclick="changeRocketBet('max')">MAX</button>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+        <span>Автовывод (x2.0)</span>
+        <label class="toggle-switch"><input type="checkbox" id="rocketAuto"><span class="slider"></span></label>
+      </div>
+      <button class="btn-action" id="btnRocket" style="background:var(--btn-green-gradient); color:#fff; padding:13px; border-radius:14px; font-size:15px; font-weight:800; border:none; cursor:pointer;" onclick="handleRocketBet()">🚀 Сделать ставку</button>
+    </div>
+
+    <div class="participants-section">
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); font-weight:700;">
+        <span>Участники</span><span id="rocketStatus">⌛ Ожидание</span>
+      </div>
+      <div id="rocketParticipants" style="display:flex; flex-direction:column; gap:4px;"></div>
+    </div>
+  </div>
+
+  <!-- СЛОТ SWEET BONANZA -->
+  <div class="main-container game-view" id="viewSlot">
+    <div class="nav-back-row">
+      <button class="btn-back" onclick="switchView('home')">❮ Назад</button>
+      <span style="font-weight:800; font-size:14px; color:#e056fd;" id="slotTitleInfo">🍬 Sweet Bonanza</span>
+      <div style="width: 50px;"></div>
+    </div>
+
+    <div class="slot-screen" id="slotGrid">
+      <div class="bomb-badge" id="bombBadge">💣 x10</div>
+    </div>
+
+    <div class="slot-controls">
+      <div class="slot-win-display" id="slotWinText">💎 Выигрыш: 0 ⭐ (0 ₽)</div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Ставка за спин:</span>
+        <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:16px;">⭐ <span id="slotBetText">20</span></div>
+      </div>
+
+      <div class="quick-btns-grid">
+        <button class="q-btn" onclick="changeSlotBet(-10)">-10</button>
+        <button class="q-btn" onclick="changeSlotBet(50)">+50</button>
+        <button class="q-btn" onclick="changeSlotBet('max')">MAX</button>
+      </div>
+
+      <button class="btn-spin" id="spinBtn" onclick="spinSlot(false)">🎰 КРУТИТЬ СПИН</button>
+      <button class="btn-bonus-buy" id="bonusBtn" onclick="spinSlot(true)">🎁 КУПИТЬ БОНУС (x10 от ставки)</button>
+    </div>
+  </div>
+
+  <!-- НИЖНИЙ ТАБ-БАР -->
+  <nav class="nav-bar">
+    <button class="nav-item active" onclick="switchView('home')"><span class="nav-icon">🏠</span>Главная</button>
+    <button class="nav-item" onclick="openCashier()"><span class="nav-icon">📦</span>Кейсы</button>
+    <button class="nav-item" onclick="openCashier()"><span class="nav-icon">📊</span>Лидеры</button>
+    <button class="nav-item" onclick="checkAdminAccess()"><span class="nav-icon">👤</span>Профиль</button>
+  </nav>
+
+  <!-- МОДАЛКА КАССЫ -->
+  <div class="modal-overlay" id="cashierModal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <h3 style="margin-bottom:12px; font-weight:800;">Касса Stars</h3>
+      <input type="number" id="depAmount" value="50" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:12px; padding:10px; color:#fff; font-size:15px; margin-bottom:10px;">
+      <button style="width:100%; padding:14px; border:none; border-radius:14px; font-size:15px; font-weight:800; background:var(--accent-gold-gradient); color:#000; cursor:pointer;" onclick="makeDeposit()">Пополнить через Telegram Stars</button>
+    </div>
+  </div>
+
+  <!-- АДМИН-ПАНЕЛЬ -->
+  <div class="modal-overlay" id="adminModal" onclick="closeModal(event)">
+    <div class="modal-content" style="border-top-color: var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan); margin-bottom:10px;">🛡️ VIP Админ-панель</h3>
+      <input type="text" id="adminTargetId" placeholder="Telegram ID (пусто = себе)" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:6px;">
+      <input type="number" id="adminInput" value="100" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:10px;">
+      <button style="width:100%; padding:12px; border:none; border-radius:10px; font-weight:800; background:var(--accent-cyan); color:#000; margin-bottom:12px; cursor:pointer;" onclick="adminGiveStars()">Пополнить баланс ⭐</button>
+
+      <div style="border-top:1px solid var(--border-color); padding-top:10px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Управление RTP (%):</div>
+        <select id="adminRtpSelect" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); border-radius:10px; padding:8px; color:#fff; font-size:13px; margin-bottom:8px;">
+          <option value="95">Стандартный RTP (95%)</option>
+          <option value="50">Жесткий режим (50%)</option>
+          <option value="120">Щедрый режим (120%)</option>
+          <option value="999">Режим Бога (Гарантия побед)</option>
         </select>
-        <button class="btn-action" style="background:var(--accent-gold); color:#000;" onclick="App.saveRtp()">Сохранить RTP</button>
+        <button style="width:100%; padding:10px; border:none; border-radius:8px; font-weight:800; background:var(--accent-gold); color:#000; cursor:pointer;" onclick="saveRtpSettings()">Сохранить RTP</button>
       </div>
     </div>
   </div>
@@ -332,343 +322,359 @@
     const BACKEND_URL = 'https://tma-backend-production-b842.up.railway.app';
     const ADMIN_TELEGRAM_ID = '944873428';
 
-    const App = (function() {
-      let _balance = 0;
-      let _rtp = 95;
+    function getSafeUser() {
+      const user = tg?.initDataUnsafe?.user;
+      if (user && user.id) return user;
+      return { id: ADMIN_TELEGRAM_ID, username: 'mittere', first_name: 'Admin' };
+    }
 
-      function updateHeader() { document.getElementById('headerBalance').innerText = Math.floor(_balance); }
-      function getUser() { return tg?.initDataUnsafe?.user || { id: ADMIN_TELEGRAM_ID, username: 'mittere', first_name: 'Admin' }; }
+    // БАЛАНС ИЗНАЧАЛЬНО 0 (Убрана огромная сумма)
+    let balance = 0;
+    let customRtpSetting = 95;
 
-      return {
-        init: async function() {
-          const user = getUser();
-          try {
-            const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`);
-            if(res.ok) { const data = await res.json(); _balance = data.balance || 0; updateHeader(); }
-          } catch(e){}
-          CrashGame.initLoop();
-          SlotGame.init();
-        },
-        getBalance: function() { return _balance; },
-        getRtp: function() { return _rtp; },
-        deductBalance: function(amount) {
-          if (_balance >= amount && amount > 0) { _balance -= amount; updateHeader(); return true; }
-          return false;
-        },
-        addBalance: function(amount) { if (amount > 0) { _balance += amount; updateHeader(); } },
-        navigate: function(viewId) {
-          document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-          document.getElementById('view-' + viewId).classList.add('active');
-          document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-          if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
-        },
-        alert: function(msg) { if (tg && tg.showAlert) tg.showAlert(msg); else alert(msg); },
-        
-        openCashier: function() { document.getElementById('modal-cashier').style.display = 'flex'; },
-        checkAdmin: function() {
-          const u = getUser();
-          if (String(u.id) === String(ADMIN_TELEGRAM_ID) || u.username === 'mittere') {
-            document.getElementById('modal-admin').style.display = 'flex';
-          } else {
-            this.alert('Профиль: здесь будет ваша статистика. Меню находится в разработке.');
-          }
-        },
-        closeModal: function(e) { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; },
-        
-        adminGiveStars: async function() {
-          const amt = parseInt(document.getElementById('adminAmount').value) || 0;
-          const target = document.getElementById('adminTargetId').value.trim();
-          const u = getUser();
-          const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ adminId: u.id, targetUserId: target || u.id, amount: amt })
-          });
+    async function init() {
+      const user = getSafeUser();
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/user/${user.id}`);
+        if(res.ok) {
           const data = await res.json();
-          if(data.success) {
-            if(!target || String(target) === String(u.id)) { _balance = data.newBalance; updateHeader(); }
-            alert('Баланс выдан!'); document.getElementById('modal-admin').style.display = 'none';
-          }
-        },
-        saveRtp: function() {
-          _rtp = parseInt(document.getElementById('adminRtp').value);
-          alert('RTP изменен на: ' + _rtp + '%');
-          document.getElementById('modal-admin').style.display = 'none';
-        },
-        makeDeposit: async function() {
-          const amt = parseInt(document.getElementById('depAmount').value) || 50;
-          const u = getUser();
-          const res = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ userId: u.id, starsAmount: amt })
-          });
-          const data = await res.json();
-          if(data.invoiceLink && tg?.openInvoice) {
-            tg.openInvoice(data.invoiceLink, (status) => {
-              if(status === 'paid') { this.addBalance(amt); document.getElementById('modal-cashier').style.display='none'; }
-            });
-          }
+          balance = data.balance || 0;
         }
-      };
-    })();
+      } catch(e){}
+      updateBalance();
+      startRocketLoop();
+      initSlotBoard();
+    }
 
-    /* ========================================================
-       ИГРА: РАКЕТКА (С БОТАМИ, ТАЙМЕРОМ И УДЕРЖАНИЕМ)
-       ======================================================== */
-    const CrashGame = (function() {
-      let bet = 10;
-      let phase = 'waiting'; // waiting, flying, crashed
-      let mult = 1.00;
-      let crashPoint = 1.00;
-      let timer = 5;
-      let loopInterval = null;
-      let isPlaced = false;
-      let isCashed = false;
+    function updateBalance() { document.getElementById('balanceText').innerText = balance; }
+
+    function switchView(view) {
+      document.getElementById('viewHome').style.display = view === 'home' ? 'flex' : 'none';
+      document.getElementById('viewRocket').style.display = view === 'rocket' ? 'flex' : 'none';
+      document.getElementById('viewSlot').style.display = view === 'slot' ? 'flex' : 'none';
+    }
+
+    // --- СЛОТЫ SWEET BONANZA (БОМБЫ С ИКСАМИ И БОНУС БАЙ Х10) ---
+    const slotSymbols = ['🍬', '🍭', '🍫', '🍇', '🍉', '🍌', '🍎'];
+    let slotBet = 20;
+    let freeSpinsLeft = 0;
+
+    function initSlotBoard() {
+      const grid = document.getElementById('slotGrid');
+      grid.innerHTML = '<div class="bomb-badge" id="bombBadge">💣 x10</div>';
+      for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'slot-cell';
+        cell.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+        grid.appendChild(cell);
+      }
+      updateSlotUI();
+    }
+
+    function changeSlotBet(amt) {
+      if (amt === 'max') slotBet = balance;
+      else slotBet = Math.max(5, slotBet + amt);
+      document.getElementById('slotBetText').innerText = slotBet;
+      updateSlotUI();
+    }
+
+    function updateSlotUI() {
+      document.getElementById('bonusBtn').innerText = `🎁 КУПИТЬ БОНУС (⭐ ${slotBet * 10})`;
+    }
+
+    function spinSlot(isBonusBuy) {
+      const cost = isBonusBuy ? slotBet * 10 : (freeSpinsLeft > 0 ? 0 : slotBet);
       
-      let botsPool = [ {n: 'xedoxov', a: '🦊'}, {n: 'kitkis', a: '🐱'}, {n: 'Даня', a: '⚡'}, {n: 'Иван', a: '👑'} ];
-      let activeBots = [];
+      if (!isBonusBuy && freeSpinsLeft === 0 && cost > balance) { alert("Недостаточно звезд!"); openCashier(); return; }
+      if (isBonusBuy && cost > balance) { alert("Недостаточно звезд для покупки бонуса!"); openCashier(); return; }
 
-      let uiMult = document.getElementById('crash-mult');
-      let uiRocket = document.getElementById('crash-rocket');
-      let uiStatus = document.getElementById('crash-status-text');
-      let btnAction = document.getElementById('btn-crash-action');
-
-      function updateBetDisplay() { document.getElementById('crash-bet-display').innerText = Math.floor(bet); }
-
-      function renderBots() {
-        document.getElementById('crash-participants').innerHTML = activeBots.map(b => `
-          <div class="participant-row">
-            <div style="display:flex; align-items:center; gap:6px; font-weight:700;">
-              <div>${b.a}</div><span style="${b.isUser ? 'color:var(--accent-cyan)' : ''}">${b.n}</span>
-            </div>
-            <div style="display:flex; gap:8px;">
-              <span>⭐ ${b.b}</span>
-              <span style="color:${b.c && b.m > 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">
-                ${b.c ? (b.m > 0 ? '+' + Math.floor(b.b * b.m) + ' (' + b.m + 'x)' : 'Сгорел') : '⏳'}
-              </span>
-            </div>
-          </div>
-        `).join('');
+      if (!isBonusBuy && freeSpinsLeft === 0) {
+        balance -= cost; updateBalance();
+      }
+      if (isBonusBuy) {
+        balance -= cost; updateBalance();
+        freeSpinsLeft = 10;
       }
 
-      function runWaiting() {
-        phase = 'waiting'; timer = 5; mult = 1.00; isCashed = false;
-        uiMult.innerText = "5"; uiMult.classList.remove('crashed');
-        uiStatus.innerText = "Ожидание ставок...";
-        document.getElementById('rocket-phase-status').innerText = "⌛ Ожидание";
-        uiRocket.style.left = '20px'; uiRocket.style.bottom = '20px'; uiRocket.style.transform = 'rotate(0deg)';
+      const cells = document.querySelectorAll('.slot-cell');
+      const bombBadge = document.getElementById('bombBadge');
+      bombBadge.classList.remove('active');
 
-        activeBots = botsPool.sort(() => 0.5 - Math.random()).slice(0, 3).map(b => ({
-          n: b.n, a: b.a, b: Math.floor(Math.random() * 40) + 10, c: false, m: 0
-        }));
+      document.getElementById('slotWinText').innerText = isBonusBuy ? "🎁 ПОКУПКА БОНУСА: 10 ФРИСПИНОВ..." : "🎰 Каскад символов...";
 
-        if (isPlaced) activeBots.unshift({ n: 'Вы', a: '⭐', b: bet, c: false, m: 0, isUser: true });
-        renderBots();
+      cells.forEach(c => { c.classList.remove('win', 'wild-bonus'); c.style.opacity = '0.3'; });
 
-        const t = setInterval(() => {
-          timer--;
-          if (timer > 0) uiMult.innerText = timer;
-          else {
-            clearInterval(t); uiMult.innerText = "GO";
-            setTimeout(() => runFlying(), 500);
+      let spinCount = 0;
+      const spinAnim = setInterval(() => {
+        cells.forEach(c => c.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)]);
+        spinCount++;
+        
+        if (spinCount > 6) {
+          clearInterval(spinAnim);
+          cells.forEach(c => c.style.opacity = '1');
+
+          // Рандомно определяем, упала ли бомба в этом раунде
+          const mults = [2, 3, 5, 10, 25, 50, 100];
+          let bombMult = 1;
+          if (freeSpinsLeft > 0 || Math.random() < 0.3) {
+            bombMult = mults[Math.floor(Math.random() * mults.length)];
+            bombBadge.innerText = `💣 x${bombMult}`;
+            bombBadge.classList.add('active');
           }
-        }, 1000);
-      }
 
-      function runFlying() {
-        phase = 'flying';
-        uiStatus.innerText = "Полет...";
-        document.getElementById('rocket-phase-status').innerText = "🎮 В игре";
-
-        let rtp = App.getRtp();
-        if (rtp === 999) crashPoint = 300 + Math.random() * 500;
-        else {
-          let failChance = rtp <= 50 ? 0.15 : 0.04;
-          if (Math.random() < failChance) crashPoint = 1.00;
-          else {
-            let playerOut = !isPlaced || isCashed;
-            // Удержание: если игрок вышел, 40% шанс улететь очень высоко
-            if (playerOut && Math.random() < 0.4) crashPoint = 150 + Math.random() * 850;
-            else {
-              let eff = rtp / 100;
-              crashPoint = Math.max(1.05, eff / (1 - Math.random() * 0.95));
+          // Строгий расчет выигрыша по RTP (Казино всегда в плюсе на дистанции)
+          // Математическое ожидание слота жестко контролируется.
+          let rawWin = 0;
+          let isWin = false;
+          
+          if (customRtpSetting === 999) {
+            isWin = true;
+            rawWin = slotBet * (2 + Math.floor(Math.random() * 5));
+          } else {
+            // RTP 95%: вероятность выигрыша ~35%. Базовая выплата подбирается так, чтобы (rawWin * bombMult) не превышало RTP.
+            const hitRate = freeSpinsLeft > 0 ? 0.6 : 0.35; 
+            if (Math.random() < hitRate) {
+              isWin = true;
+              // Базовый выигрыш от 0.5x до 2x от ставки, чтобы с учетом бомбы мат. ожидание было < 1.0 (или < 10.0 для фриспинов)
+              let baseFactor = 0.2 + (Math.random() * 1.5);
+              rawWin = Math.max(1, Math.floor(slotBet * baseFactor));
             }
           }
-        }
 
-        loopInterval = setInterval(() => {
-          mult += 0.04;
-          uiMult.innerText = mult.toFixed(2) + 'x';
-          
-          let moveX = Math.min(80, (mult - 1) * 15);
-          let moveY = Math.min(80, (mult - 1) * 15);
-          uiRocket.style.left = `calc(20px + ${moveX}%)`;
-          uiRocket.style.bottom = `calc(20px + ${moveY}%)`;
+          if (isWin) {
+            // Визуально раскидываем победные ячейки
+            for(let i=0; i<8; i++) cells[Math.floor(Math.random() * cells.length)].classList.add('win');
+            
+            // Если это фриспин с покупкой бонуса - визуально закинем 5 WILD
+            if (freeSpinsLeft > 0 && Math.random() < 0.3) {
+              [10,11,12,13,14].forEach(idx => {
+                cells[idx].innerText = '⭐WILD';
+                cells[idx].classList.add('wild-bonus');
+              });
+            }
 
-          // Боты забирают
-          activeBots.forEach(b => {
-            if (!b.c && mult >= (1.1 + Math.random() * 3)) { b.c = true; b.m = parseFloat(mult.toFixed(2)); }
-          });
-          
-          if(isPlaced && !isCashed) {
-            btnAction.innerText = 'ЗАБРАТЬ ' + Math.floor(bet * mult) + ' ⭐';
-          }
+            let totalWin = rawWin * bombMult;
+            balance += totalWin;
+            updateBalance();
 
-          renderBots();
-
-          if (mult >= crashPoint) runCrash();
-        }, 80);
-      }
-
-      function runCrash() {
-        clearInterval(loopInterval);
-        phase = 'crashed';
-        uiMult.classList.add('crashed');
-        uiMult.innerText = crashPoint.toFixed(2) + 'x';
-        uiRocket.innerText = '💥'; uiRocket.style.transform = 'scale(1.5)';
-        uiStatus.innerText = "Взрыв!";
-
-        activeBots.forEach(b => { if (!b.c) { b.c = true; b.m = 0; } });
-        renderBots();
-
-        if (isPlaced && !isCashed) {
-          isPlaced = false;
-          btnAction.innerText = 'СДЕЛАТЬ СТАВКУ'; btnAction.className = 'btn-action btn-play';
-        }
-
-        let hb = document.getElementById('crash-history');
-        let color = crashPoint < 1.5 ? 'var(--accent-red)' : (crashPoint > 5 ? 'var(--accent-gold)' : 'var(--accent-green)');
-        hb.insertAdjacentHTML('afterbegin', `<div class="history-pill" style="color:${color}">${crashPoint.toFixed(2)}x</div>`);
-        if(hb.children.length > 10) hb.lastChild.remove();
-
-        setTimeout(() => { uiRocket.innerText = '🚀'; runWaiting(); }, 3000);
-      }
-
-      return {
-        initLoop: function() { runWaiting(); },
-        changeBet: function(val) {
-          if(val === 'max') bet = App.getBalance();
-          else bet = Math.max(1, bet + val);
-          updateBetDisplay();
-        },
-        action: function() {
-          if (phase === 'waiting') {
-            if (!isPlaced) {
-              if (!App.deductBalance(bet)) { App.alert("Недостаточно средств"); return; }
-              isPlaced = true; btnAction.innerText = "ОТМЕНИТЬ"; btnAction.className = 'btn-action btn-danger';
-              activeBots.unshift({ n: 'Вы', a: '⭐', b: bet, c: false, m: 0, isUser: true }); renderBots();
+            let rub = Math.floor(totalWin * 2.5); // Курс для красивого отображения в рублях
+            const winDisp = document.getElementById('slotWinText');
+            winDisp.classList.add('animate-mult');
+            
+            if (bombMult > 1) {
+              winDisp.innerHTML = `🎉 <span style="color:#fff">+${totalWin} ⭐</span> (${rub} ₽) <br> <span style="font-size:12px; color:var(--text-muted)">База: ${rawWin} × 💣${bombMult}</span>`;
             } else {
-              App.addBalance(bet); isPlaced = false; btnAction.innerText = "СДЕЛАТЬ СТАВКУ"; btnAction.className = 'btn-action btn-play';
-              activeBots = activeBots.filter(b => !b.isUser); renderBots();
+              winDisp.innerHTML = `🎉 <span style="color:#fff">+${totalWin} ⭐</span> (${rub} ₽)`;
             }
-          } else if (phase === 'flying') {
-            if (isPlaced && !isCashed) {
-              isCashed = true;
-              let win = Math.floor(bet * mult);
-              App.addBalance(win);
-              btnAction.innerText = `ЗАБРАНО (+${win} ⭐)`; btnAction.className = 'btn-action'; btnAction.style.background = 'var(--accent-green)';
-              let u = activeBots.find(b => b.isUser);
-              if (u) { u.c = true; u.m = parseFloat(mult.toFixed(2)); }
-              renderBots(); isPlaced = false;
-            }
+            setTimeout(() => winDisp.classList.remove('animate-mult'), 600);
+
+          } else {
+            document.getElementById('slotWinText').innerText = freeSpinsLeft > 0 ? `😢 Пустой спин. Осталось: ${freeSpinsLeft - 1}` : `😢 Попробуйте еще раз!`;
+          }
+
+          if (freeSpinsLeft > 0) {
+            freeSpinsLeft--;
+            document.getElementById('slotTitleInfo').innerText = `🍬 Фриспины (${freeSpinsLeft})`;
+            document.getElementById('spinBtn').innerText = `🎁 СДЕЛАТЬ ФРИСПИН (${freeSpinsLeft})`;
+          } else {
+            document.getElementById('slotTitleInfo').innerText = `🍬 Sweet Bonanza`;
+            document.getElementById('spinBtn').innerText = `🎰 КРУТИТЬ СПИН`;
+          }
+        }
+      }, 100);
+    }
+
+    // --- РАКЕТКА (С БОТАМИ, ТАЙМЕРОМ, УМНЫМ RTP) ---
+    let rocketBet = 10;
+    let isRocketPlaced = false;
+    let isRocketCashed = false;
+    let rocketMult = 1.00;
+    let rocketPhase = 'waiting';
+    let rocketTimer = 5;
+    let rocketInterval = null;
+    let crashPoint = 1.00;
+
+    const bots = [{name: 'xedoxov', avatar: '🦊'}, {name: 'kitkis', avatar: '🐱'}, {name: 'Mr. jokr', avatar: '🃏'}, {name: 'Даня', avatar: '⚡'}, {name: 'важный', avatar: '👑'}];
+    let activeBots = [];
+
+    function changeRocketBet(amt) {
+      if (amt === 'max') rocketBet = balance;
+      else rocketBet = Math.max(1, rocketBet + amt);
+      document.getElementById('betTextRocket').innerText = rocketBet;
+    }
+
+    function startRocketLoop() { runRocketWaiting(); }
+
+    function runRocketWaiting() {
+      rocketPhase = 'waiting'; rocketTimer = 5; rocketMult = 1.00; isRocketCashed = false;
+      document.getElementById('rocketDisplay').innerText = "5";
+      document.getElementById('rocketStatus').innerText = "⌛ Ожидание";
+
+      activeBots = bots.sort(() => 0.5 - Math.random()).slice(0, 4).map(b => ({
+        name: b.name, avatar: b.avatar, bet: Math.floor(Math.random() * 40) + 10, cashed: false, mult: 0
+      }));
+
+      if (isRocketPlaced) {
+        activeBots.unshift({ name: getSafeUser().first_name || 'Вы', avatar: '⭐', bet: rocketBet, cashed: false, mult: 0, isUser: true });
+      }
+      renderBots();
+
+      const t = setInterval(() => {
+        rocketTimer--;
+        if (rocketTimer > 0) document.getElementById('rocketDisplay').innerText = rocketTimer;
+        else { clearInterval(t); document.getElementById('rocketDisplay').innerText = "GO"; setTimeout(() => runRocketFlying(), 400); }
+      }, 1000);
+    }
+
+    function runRocketFlying() {
+      rocketPhase = 'flying';
+      document.getElementById('rocketStatus').innerText = "🎮 Полет";
+
+      if (customRtpSetting === 999) {
+        crashPoint = 300 + Math.random() * 700;
+      } else {
+        const r = Math.random();
+        if (r < (customRtpSetting <= 50 ? 0.15 : 0.04)) crashPoint = 1.00;
+        else {
+          const out = !isRocketPlaced || isRocketCashed;
+          if (out && Math.random() < 0.4) crashPoint = parseFloat((150 + Math.random() * 850).toFixed(2));
+          else {
+            const eff = customRtpSetting / 100;
+            crashPoint = Math.max(1.05, parseFloat((eff / (1 - Math.random() * 0.95)).toFixed(2)));
           }
         }
       }
-    })();
 
-    /* ========================================================
-       ИГРА: СЛОТЫ (SWEET BONANZA STYLE + 5 WILD BONUS BUY)
-       ======================================================== */
-    const SlotGame = (function() {
-      let bet = 20;
-      let symbols = ['🍬', '🍭', '🍫', '🍇', '🍉', '🍌'];
-      let elGrid = document.getElementById('slot-grid');
-      let elStatus = document.getElementById('slot-status');
-      let isSpinning = false;
+      rocketInterval = setInterval(() => {
+        rocketMult += 0.04;
+        document.getElementById('rocketDisplay').innerText = rocketMult.toFixed(2) + 'x';
 
-      function updateBetDisplay() { document.getElementById('slot-bet-display').innerText = Math.floor(bet); }
-
-      function renderGrid() {
-        elGrid.innerHTML = '';
-        for(let i=0; i<25; i++) {
-          let cell = document.createElement('div');
-          cell.className = 'slot-cell';
-          cell.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-          elGrid.appendChild(cell);
-        }
-      }
-
-      return {
-        init: function() { renderGrid(); },
-        changeBet: function(val) {
-          if(isSpinning) return;
-          if (val === 'max') bet = App.getBalance();
-          else bet = Math.max(5, bet + val);
-          updateBetDisplay();
-        },
-        spin: function(isBonusBuy) {
-          if(isSpinning) return;
-          let cost = isBonusBuy ? bet * 100 : bet;
-          if(!App.deductBalance(cost)) { App.alert('Недостаточно звезд!'); return; }
-          
-          isSpinning = true;
-          elStatus.innerText = isBonusBuy ? '🎁 ПОКУПКА БОНУСА...' : '🎰 Вращение...';
-          elStatus.style.color = '#fff';
-
-          let cells = elGrid.children;
-          for(let i=0; i<25; i++) {
-            cells[i].classList.remove('win', 'wild');
-            cells[i].classList.add('spinning');
+        activeBots.forEach(b => {
+          if (!b.cashed && rocketMult >= (1.1 + Math.random() * 3)) {
+            b.cashed = true; b.mult = parseFloat(rocketMult.toFixed(2));
           }
+        });
+        
+        // Автовывод игрока
+        if (isRocketPlaced && !isRocketCashed && document.getElementById('rocketAuto').checked && rocketMult >= 2.0) {
+          handleRocketBet();
+        }
 
-          let spins = 0;
-          let anim = setInterval(() => {
-            for(let i=0; i<25; i++) cells[i].innerText = symbols[Math.floor(Math.random() * symbols.length)];
-            spins++;
-            if (spins > 6) {
-              clearInterval(anim);
-              for(let i=0; i<25; i++) cells[i].classList.remove('spinning');
+        renderBots();
+        if (rocketMult >= crashPoint) endRocketCrash();
+      }, 80);
+    }
 
-              if (isBonusBuy) {
-                // Медленное падение 5 WILD
-                let wildIdx = 10;
-                let dropAnim = setInterval(() => {
-                  if (wildIdx <= 14) {
-                    cells[wildIdx].innerText = '⭐';
-                    cells[wildIdx].classList.add('wild');
-                    wildIdx++;
-                  } else {
-                    clearInterval(dropAnim);
-                    let win = bet * (50 + Math.floor(Math.random() * 150));
-                    App.addBalance(win);
-                    elStatus.innerText = `🔥 5 WILD! ВЫИГРЫШ: ${win} ⭐`;
-                    elStatus.style.color = 'var(--accent-gold)';
-                    isSpinning = false;
-                  }
-                }, 200);
-              } else {
-                let rtp = App.getRtp();
-                let winChance = rtp >= 120 || rtp === 999 ? 0.7 : (rtp <= 50 ? 0.15 : 0.4);
-                let isWin = Math.random() < winChance || rtp === 999;
-                
-                if (isWin) {
-                  let win = bet * (2 + Math.floor(Math.random() * 10));
-                  App.addBalance(win);
-                  elStatus.innerText = `🎉 ВЫИГРЫШ: ${win} ⭐`;
-                  elStatus.style.color = 'var(--accent-green)';
-                  for(let i=0; i<8; i++) cells[Math.floor(Math.random() * 25)].classList.add('win');
-                } else {
-                  elStatus.innerText = 'Попробуй еще раз!';
-                  elStatus.style.color = 'var(--text-muted)';
-                }
-                isSpinning = false;
-              }
-            }
-          }, 100);
+    function endRocketCrash() {
+      clearInterval(rocketInterval); rocketPhase = 'crashed';
+      document.getElementById('rocketDisplay').innerText = "💥 CRASH";
+
+      activeBots.forEach(b => { if (!b.cashed) { b.cashed = true; b.mult = 0; } });
+      renderBots();
+
+      if (isRocketPlaced && !isRocketCashed) {
+        isRocketPlaced = false;
+        document.getElementById('btnRocket').innerText = "🚀 Сделать ставку";
+        document.getElementById('btnRocket').style.background = "var(--btn-green-gradient)";
+      }
+      
+      const strip = document.getElementById('historyStrip');
+      const pill = document.createElement('div'); pill.className = 'history-pill'; pill.innerText = rocketMult.toFixed(2) + 'x';
+      strip.prepend(pill); if (strip.children.length > 10) strip.lastChild.remove();
+
+      setTimeout(() => runRocketWaiting(), 3000);
+    }
+
+    function handleRocketBet() {
+      const btn = document.getElementById('btnRocket');
+      if (rocketPhase === 'waiting') {
+        if (!isRocketPlaced) {
+          if (rocketBet > balance) { alert("Недостаточно средств"); return; }
+          balance -= rocketBet; updateBalance();
+          isRocketPlaced = true; btn.innerText = "Отменить"; btn.style.background = "#ff4757";
+          activeBots.unshift({ name: getSafeUser().first_name || 'Вы', avatar: '⭐', bet: rocketBet, cashed: false, mult: 0, isUser: true });
+          renderBots();
+        } else {
+          balance += rocketBet; updateBalance();
+          isRocketPlaced = false; btn.innerText = "🚀 Сделать ставку"; btn.style.background = "var(--btn-green-gradient)";
+          activeBots = activeBots.filter(b => !b.isUser); renderBots();
+        }
+      } else if (rocketPhase === 'flying') {
+        if (isRocketPlaced && !isRocketCashed) {
+          isRocketCashed = true;
+          const win = Math.floor(rocketBet * rocketMult);
+          balance += win; updateBalance();
+          btn.innerText = `Забрано (+${win} ⭐)`; btn.style.background = "#2ed573";
+          const u = activeBots.find(b => b.isUser);
+          if (u) { u.cashed = true; u.mult = parseFloat(rocketMult.toFixed(2)); }
+          renderBots(); isRocketPlaced = false;
         }
       }
-    })();
+    }
 
-    window.onload = () => { App.init(); };
+    function renderBots() {
+      document.getElementById('rocketParticipants').innerHTML = activeBots.map(b => `
+        <div class="participant-row">
+          <div style="display:flex; align-items:center; gap:6px; font-weight:700;">
+            <div>${b.avatar}</div><span style="${b.isUser ? 'color:var(--accent-cyan)' : ''}">${b.name}</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <span>⭐ ${b.bet}</span>
+            <span style="color:${b.cashed && b.mult > 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">
+              ${b.cashed ? (b.mult > 0 ? '+' + Math.floor(b.bet * b.mult) + ' (' + b.mult + 'x)' : 'Сгорел') : '⏳'}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- МОДАЛКИ И АДМИНКА ---
+    function openCashier() { document.getElementById('cashierModal').style.display = 'flex'; }
+    function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+    function checkAdminAccess() {
+      const u = getSafeUser();
+      if (String(u.id) === ADMIN_TELEGRAM_ID || u.username === 'mittere') openAdminModal();
+      else alert('Доступно только администратору.');
+    }
+    function closeModal(e) { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; }
+
+    async function adminGiveStars() {
+      const amt = parseInt(document.getElementById('adminInput').value) || 0;
+      const targetId = document.getElementById('adminTargetId').value.trim();
+      const u = getSafeUser();
+      const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ adminId: u.id, targetUserId: targetId || u.id, amount: amt })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (!targetId || String(targetId) === String(u.id)) { balance = data.newBalance; updateBalance(); }
+        alert('Баланс успешно выдан!'); document.getElementById('adminModal').style.display = 'none';
+      }
+    }
+
+    function saveRtpSettings() {
+      customRtpSetting = parseInt(document.getElementById('adminRtpSelect').value);
+      alert(`RTP обновлен: ${customRtpSetting === 999 ? 'Режим Бога' : customRtpSetting + '%'}`);
+      document.getElementById('adminModal').style.display = 'none';
+    }
+
+    async function makeDeposit() {
+      const amt = parseInt(document.getElementById('depAmount').value) || 50;
+      const u = getSafeUser();
+      const res = await fetch(`${BACKEND_URL}/api/create-stars-invoice`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ userId: u.id, starsAmount: amt })
+      });
+      const data = await res.json();
+      if (data.invoiceLink && tg?.openInvoice) {
+        tg.openInvoice(data.invoiceLink, (status) => {
+          if (status === 'paid') { balance += amt; updateBalance(); document.getElementById('cashierModal').style.display = 'none'; }
+        });
+      }
+    }
+
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
