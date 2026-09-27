@@ -310,7 +310,7 @@
         <div class="modal-tab" id="tabWithdraw" onclick="switchCashierTab('withdraw')">Вывод Stars</div>
       </div>
 
-      <!-- ВКЛАДКА: ПОПОЛНЕНИЕ -->
+      <!-- ВКЛАДКА: ПОПОЛНЕНИЕ И ПРОМОКОД -->
       <div id="sectionDeposit">
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Выберите сумму Stars для покупки:</div>
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:14px;">
@@ -321,9 +321,20 @@
 
         <input type="number" id="depositInput" class="bet-input-field" style="margin-bottom:14px;" value="50" min="1">
 
-        <button class="btn-action btn-bet-execute" id="btnDepositExecute" onclick="createStarsDeposit()">
+        <button class="btn-action btn-bet-execute" id="btnDepositExecute" style="margin-bottom:20px;" onclick="createStarsDeposit()">
           Оплатить через Telegram Stars
         </button>
+
+        <!-- БЛОК ПРОМОКОДА -->
+        <div style="border-top:1px solid var(--border-color); padding-top:16px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Есть промокод на бесплатные звёзды?</div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="promoInput" class="bet-input-field" placeholder="Напр. BONUS100" style="text-transform:uppercase;">
+            <button class="btn-action" style="width:auto; padding:0 20px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid var(--border-color);" onclick="submitPromoCode()">
+              Ввести
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- ВКЛАДКА: ВЫВОД STARS ЧЕРЕЗ FRAGMENT -->
@@ -541,6 +552,47 @@
       }
     }
 
+    // Активация промокода
+    async function submitPromoCode() {
+      const input = document.getElementById('promoInput');
+      const code = input.value.trim().toUpperCase();
+
+      if (!code) {
+        alert("Введите промокод!");
+        return;
+      }
+
+      const userId = tg?.initDataUnsafe?.user?.id;
+      if (!userId) {
+        alert("Ошибка: профиль Telegram не найден");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/activate-promo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, promoCode: code })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          balance = data.newBalance;
+          totalDeposited = data.totalDeposited;
+          updateBalance();
+          haptic();
+          playBeep("G5");
+          alert(`🎁 Промокод активирован! Вам начислено +${data.bonusAmount} ⭐ Stars!`);
+          input.value = "";
+        } else {
+          alert(data.error || "Не удалось применить промокод");
+        }
+      } catch (err) {
+        alert("Ошибка сети: " + err.message);
+      }
+    }
+
     function calcWithdrawalFee() {
       const val = parseInt(document.getElementById('withdrawInput').value) || 0;
       const fee = Math.floor(val * 0.15);
@@ -569,7 +621,7 @@
       const username = tg?.initDataUnsafe?.user?.username;
 
       if (!username) {
-        alert("Внимание: для получения звёзд у вас должен быть установлен публичный @username в Telegram! Установите его в настройках Telegram профиля.");
+        alert("Внимание: для получения звёзд у вас должен быть установлен публичный @username в Telegram! Установите его в настройках профиля Telegram.");
         return;
       }
 
