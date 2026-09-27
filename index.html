@@ -174,11 +174,11 @@
       padding: 12px 16px;
       background: rgba(7, 9, 14, 0.85);
       backdrop-filter: blur(10px);
-      position: absolute;
+      position: sticky;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .nav-back-btn {
@@ -202,11 +202,12 @@
       border-radius: 14px;
     }
 
-    /* Арена CRUSH */
+    /* АРЕНА CRUSH */
     .flight-arena {
       position: relative;
       width: 100%;
-      height: 350px;
+      height: 290px;
+      min-height: 290px;
       background: radial-gradient(circle at 100% 50%, #172233 0%, #0c121c 60%, #07090e 100%);
       overflow: hidden;
       display: flex;
@@ -220,33 +221,33 @@
     .mult-display {
       position: relative;
       z-index: 5;
-      font-size: 48px;
+      font-size: 46px;
       font-weight: 900;
       letter-spacing: -1px;
       color: #fff;
       text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-      margin-bottom: 60px;
+      margin-bottom: 40px;
       pointer-events: none;
     }
 
     .status-badge-overlay {
       position: absolute;
-      top: 60px;
+      top: 10px;
       z-index: 6;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.65);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 6px 14px;
-      font-size: 13px;
+      padding: 5px 14px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--accent-gold);
     }
 
     .history-row {
       position: absolute;
-      bottom: 12px;
-      left: 14px;
-      right: 14px;
+      bottom: 8px;
+      left: 12px;
+      right: 12px;
       display: flex;
       gap: 6px;
       overflow-x: auto;
@@ -256,8 +257,8 @@
     .history-row::-webkit-scrollbar { display: none; }
 
     .history-tag {
-      padding: 4px 10px;
-      border-radius: 12px;
+      padding: 3px 8px;
+      border-radius: 10px;
       font-size: 11px;
       font-weight: 800;
       white-space: nowrap;
@@ -269,141 +270,184 @@
     .history-tag.purple { background: rgba(138, 43, 226, 0.15); color: #b76eff; border-color: rgba(138, 43, 226, 0.3); }
     .history-tag.gold { background: rgba(245, 166, 35, 0.15); color: #f5a623; border-color: rgba(245, 166, 35, 0.3); }
 
-    .bet-control-container {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--bg-space);
-    }
-
-    .sub-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .bet-input-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 6px 14px;
-      width: 100%;
-      max-width: 280px;
-      margin-bottom: 4px;
-    }
-
-    .bet-editable-input {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 24px;
-      font-weight: 900;
-      width: 100%;
-      text-align: center;
-      outline: none;
-    }
-
-    .bet-usd {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .quick-bet-bar {
+    /* ДВЕ ПАНЕЛИ СТАВОК */
+    .dual-bet-wrapper {
       display: flex;
       gap: 8px;
+      padding: 10px 12px;
       width: 100%;
-      margin-bottom: 12px;
     }
 
-    .btn-quick {
+    .bet-panel {
       flex: 1;
-      padding: 10px 0;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: rgba(255, 255, 255, 0.04);
-      color: #fff;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .btn-quick:active { background: rgba(255, 255, 255, 0.1); }
-
-    .autocash-container {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 10px 14px;
+      padding: 8px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .autocash-input-wrap {
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 6px;
     }
 
-    .autocash-val-input {
-      width: 60px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-color);
-      color: var(--accent-green);
+    .panel-tag {
+      font-size: 10px;
       font-weight: 800;
-      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bet-input-box-mini {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 4px 6px;
+    }
+
+    .bet-editable-input-mini {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      width: 100%;
       text-align: center;
-      padding: 4px;
-      border-radius: 8px;
       outline: none;
     }
 
-    .switch {
+    .quick-bar-mini {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-quick-mini {
+      flex: 1;
+      padding: 4px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .autocash-mini {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 4px 6px;
+    }
+
+    .autocash-val-mini {
+      width: 44px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--accent-green);
+      font-weight: 800;
+      font-size: 11px;
+      text-align: center;
+      padding: 2px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .switch-mini {
       position: relative;
       display: inline-block;
-      width: 44px;
-      height: 24px;
+      width: 32px;
+      height: 18px;
     }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
+    .switch-mini input { opacity: 0; width: 0; height: 0; }
+    .slider-mini {
       position: absolute; cursor: pointer; inset: 0;
       background-color: rgba(255, 255, 255, 0.15);
-      transition: .3s; border-radius: 24px;
+      transition: .25s; border-radius: 18px;
     }
-    .slider:before {
-      position: absolute; content: ""; height: 18px; width: 18px;
-      left: 3px; bottom: 3px; background-color: white;
-      transition: .3s; border-radius: 50%;
+    .slider-mini:before {
+      position: absolute; content: ""; height: 14px; width: 14px;
+      left: 2px; bottom: 2px; background-color: white;
+      transition: .25s; border-radius: 50%;
     }
-    input:checked + .slider { background-color: var(--accent-green); }
-    input:checked + .slider:before { transform: translateX(20px); }
+    input:checked + .slider-mini { background-color: var(--accent-green); }
+    input:checked + .slider-mini:before { transform: translateX(14px); }
 
-    .btn-launch {
+    .btn-panel-action {
       width: 100%;
-      padding: 16px;
-      border-radius: 16px;
+      padding: 10px 4px;
+      border-radius: 10px;
       border: none;
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
       background: var(--accent-green);
       color: #05140b;
-      box-shadow: 0 4px 20px rgba(0, 255, 135, 0.35);
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
-    .btn-launch:active { transform: scale(0.98); }
+    .btn-panel-action:active { transform: scale(0.97); }
 
-    /* ---------------- СТИЛИ FALLING PICKAXE ---------------- */
+    /* МЕНЮ СТАВОК ИГРОКОВ */
+    .players-container {
+      margin: 4px 12px 16px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .players-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    .player-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .player-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+    }
+
+    .player-cashed {
+      color: var(--accent-green);
+      font-weight: 800;
+    }
+
+    /* FALLING PICKAXE */
     .pickaxe-screen {
       position: relative;
       width: 100%;
@@ -442,7 +486,7 @@
       border: 10px solid #2d384e;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 30px rgba(0,0,0,0.5);
       position: relative;
-      margin: 120px auto 30px auto;
+      margin: 110px auto 20px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -463,9 +507,7 @@
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .portal-drop-anim {
-      animation: dropDown 0.5s ease-out;
-    }
+    .portal-drop-anim { animation: dropDown 0.5s ease-out; }
 
     @keyframes dropDown {
       0% { transform: translateY(-140px) scale(0.4); opacity: 0; }
@@ -599,7 +641,6 @@
     <div style="font-size: 42px;">🥷</div>
   </div>
 
-  <!-- РАЗДЕЛ 1: ЛУЧШИЕ ИГРЫ -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
     <div class="game-card rocket" onclick="openGame('rocket')">
@@ -612,7 +653,6 @@
     </div>
   </div>
 
-  <!-- РАЗДЕЛ 2: БЫСТРЫЕ ИГРЫ -->
   <div class="section-header">⚡ Быстрые игры</div>
   <div class="games-row">
     <div class="game-card pickaxe" onclick="openGame('pickaxe')">
@@ -640,7 +680,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН 1: CRUSH -->
+  <!-- ЭКРАН CRUSH С ДВУМЯ СТАВКАМИ И СПИСКОМ ИГРОКОВ -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -663,40 +703,76 @@
       </div>
     </div>
 
-    <div class="bet-control-container">
-      <div class="sub-label">Сумма ставки (шаг 10 ⭐)</div>
-      <div class="bet-input-box">
-        <span style="font-size: 22px;">⭐</span>
-        <input type="number" id="betInputVal" class="bet-editable-input" value="10" step="10" min="10" onchange="onBetInputChange()">
-      </div>
-      <div class="bet-usd" id="betDisplayUsd">≈ $0.15</div>
-
-      <div class="quick-bet-bar">
-        <button class="btn-quick" onclick="adjustBet(-10)">-10</button>
-        <button class="btn-quick" onclick="adjustBet(10)">+10</button>
-        <button class="btn-quick" onclick="adjustBet(50)">+50</button>
-        <button class="btn-quick" onclick="adjustBet('MAX')">MAX</button>
-      </div>
-
-      <div class="autocash-container">
-        <div class="autocash-input-wrap">
-          <span style="font-size: 13px; color: var(--text-muted); font-weight: 700;">Автовывод на</span>
-          <input type="number" step="0.1" min="1.1" id="autoCashoutMult" class="autocash-val-input" value="2.0">
-          <span style="font-size: 13px; color: var(--text-muted); font-weight: 700;">x</span>
+    <!-- ДВЕ СТАВКИ ОДНОВРЕМЕННО -->
+    <div class="dual-bet-wrapper">
+      <!-- ПАНЕЛЬ 1 -->
+      <div class="bet-panel" id="panel1">
+        <div class="panel-tag">Ставка 1</div>
+        <div class="bet-input-box-mini">
+          <span style="font-size: 14px;">⭐</span>
+          <input type="number" id="p1_bet" class="bet-editable-input-mini" value="10" step="10" min="10" onchange="validateBetInput(1)">
         </div>
-        <label class="switch">
-          <input type="checkbox" id="autoCashoutToggle">
-          <span class="slider"></span>
-        </label>
+        <div class="quick-bar-mini">
+          <button class="btn-quick-mini" onclick="quickStep(1, -10)">-10</button>
+          <button class="btn-quick-mini" onclick="quickStep(1, 10)">+10</button>
+          <button class="btn-quick-mini" onclick="quickStep(1, 50)">+50</button>
+        </div>
+        <div class="autocash-mini">
+          <div style="display: flex; align-items:center; gap:3px;">
+            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">Авто</span>
+            <input type="number" step="0.1" min="1.1" id="p1_autoMult" class="autocash-val-mini" value="2.0">
+            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">x</span>
+          </div>
+          <label class="switch-mini">
+            <input type="checkbox" id="p1_autoToggle">
+            <span class="slider-mini"></span>
+          </label>
+        </div>
+        <button class="btn-panel-action" id="p1_btn" onclick="handlePanelAction(1)">
+          ⭐ Поставить
+        </button>
       </div>
 
-      <button class="btn-launch" id="rocketMainBtn" onclick="handleRocketBtnClick()">
-        ⭐ Сделать ставку
-      </button>
+      <!-- ПАНЕЛЬ 2 -->
+      <div class="bet-panel" id="panel2">
+        <div class="panel-tag">Ставка 2</div>
+        <div class="bet-input-box-mini">
+          <span style="font-size: 14px;">⭐</span>
+          <input type="number" id="p2_bet" class="bet-editable-input-mini" value="10" step="10" min="10" onchange="validateBetInput(2)">
+        </div>
+        <div class="quick-bar-mini">
+          <button class="btn-quick-mini" onclick="quickStep(2, -10)">-10</button>
+          <button class="btn-quick-mini" onclick="quickStep(2, 10)">+10</button>
+          <button class="btn-quick-mini" onclick="quickStep(2, 50)">+50</button>
+        </div>
+        <div class="autocash-mini">
+          <div style="display: flex; align-items:center; gap:3px;">
+            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">Авто</span>
+            <input type="number" step="0.1" min="1.1" id="p2_autoMult" class="autocash-val-mini" value="3.0">
+            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">x</span>
+          </div>
+          <label class="switch-mini">
+            <input type="checkbox" id="p2_autoToggle">
+            <span class="slider-mini"></span>
+          </label>
+        </div>
+        <button class="btn-panel-action" id="p2_btn" onclick="handlePanelAction(2)">
+          ⭐ Поставить
+        </button>
+      </div>
+    </div>
+
+    <!-- МЕНЮ ИГРОКОВ (БОТЫ + РЕАЛЬНЫЕ) -->
+    <div class="players-container">
+      <div class="players-header">
+        <span>Игроки в раунде (<span id="totalPlayersCount">10</span>)</span>
+        <span>Ставка / Икс</span>
+      </div>
+      <div class="players-list" id="playersList"></div>
     </div>
   </div>
 
-  <!-- ЭКРАН 2: FALLING PICKAXE -->
+  <!-- FALLING PICKAXE -->
   <div class="game-screen" id="modal-pickaxe">
     <div class="pickaxe-screen">
       <div class="screen-top-nav">
@@ -709,7 +785,6 @@
       <div class="mc-clouds"></div>
       <div class="mc-floating-island">🏝️</div>
 
-      <!-- Центральный круг-портал -->
       <div class="mc-portal-circle">
         <span class="portal-arrow left">▶</span>
         <div class="portal-center-icon" id="pickaxeDropResult" style="color:#ff3366;">✕</div>
@@ -720,7 +795,6 @@
         Нажмите кнопку удара!
       </div>
 
-      <!-- Нижняя пиксельная планка -->
       <div class="mc-blocks-footer">
         <div class="pickaxe-control-bar">
           <div class="mc-panel-box">
@@ -743,7 +817,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН 3: PVP ДУЭЛЬ -->
+  <!-- PVP ДУЭЛЬ -->
   <div class="game-screen" id="modal-pvp">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -769,7 +843,7 @@
         Бросьте кости против оппонента!
       </div>
       <div style="width:100%; max-width:320px;">
-        <button class="btn-launch" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ (100 ⭐)</button>
+        <button class="btn-panel-action" style="padding:14px; font-size:15px;" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ (100 ⭐)</button>
       </div>
     </div>
   </div>
@@ -826,30 +900,7 @@
       if (tg) tg.BackButton.hide();
     }
 
-    /* ---------------- CRUSH: СТАВКИ С ШАГОМ 10 ---------------- */
-    function onBetInputChange() {
-      const input = document.getElementById('betInputVal');
-      let val = parseInt(input.value) || 10;
-      val = Math.max(10, Math.round(val / 10) * 10);
-      input.value = val;
-      document.getElementById('betDisplayUsd').innerText = `≈ $${(val * 0.015).toFixed(2)}`;
-    }
-
-    function adjustBet(delta) {
-      haptic();
-      const input = document.getElementById('betInputVal');
-      let cur = parseInt(input.value) || 10;
-      if (delta === 'MAX') {
-        cur = Math.max(10, Math.floor(balance / 10) * 10);
-      } else {
-        cur = Math.max(10, cur + delta);
-        cur = Math.round(cur / 10) * 10;
-      }
-      input.value = cur;
-      onBetInputChange();
-    }
-
-    /* ---------------- CRUSH: THREE.JS 3D ДВИЖОК ---------------- */
+    /* ---------------- THREE.JS 3D ДВИЖОК ---------------- */
     let scene, camera, renderer, rocketGroup, planetMesh, flameMesh;
     let threeInitialized = false;
 
@@ -954,125 +1005,253 @@
       renderer.render(scene, camera);
     }
 
-    /* ---------------- CRUSH АВТО-ЦИКЛ ---------------- */
+    /* ---------------- CRUSH: ЛОГИКА ДВУХ СТАВОК И БОТОВ ---------------- */
     let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
     let crashTarget = 1.00;
-    let userBetPlaced = false;
-    let userQueuedBet = false;
-    let activeBetAmount = 0;
-    let queuedBetAmount = 0;
+    let flightLoopTimer = null;
+    let hasExtendedFlight = false;
 
-    function getFairCrashPoint() {
+    // Состояние панелей: placed (активна), queued (в очереди), amount, cashedOut
+    const panelState = {
+      1: { placed: false, queued: false, amount: 0, cashedOut: false },
+      2: { placed: false, queued: false, amount: 0, cashedOut: false }
+    };
+
+    const botNames = ['Alex_TON', 'Durov_Fan', 'CryptoWhale', 'Ivan_99', 'Elena_Stars', 'Maks_Trade', 'TonRocket', 'Satoshi_N', 'Winner777', 'FastFly'];
+    let roundPlayers = [];
+
+    function validateBetInput(id) {
+      const input = document.getElementById(`p${id}_bet`);
+      let val = parseInt(input.value) || 10;
+      val = Math.max(10, Math.round(val / 10) * 10);
+      input.value = val;
+    }
+
+    function quickStep(id, delta) {
+      haptic();
+      const input = document.getElementById(`p${id}_bet`);
+      let cur = parseInt(input.value) || 10;
+      cur = Math.max(10, cur + delta);
+      cur = Math.round(cur / 10) * 10;
+      input.value = cur;
+    }
+
+    function calculateCrashPoint() {
       if (Math.random() < 0.02) return 1.00;
       const u = Math.random();
       const mult = 0.98 / (1 - u);
       return Math.max(1.01, Math.min(100.0, parseFloat(mult.toFixed(2))));
     }
 
-    function updateMainBtnUI() {
-      const btn = document.getElementById('rocketMainBtn');
+    function updatePanelButtonUI(id) {
+      const btn = document.getElementById(`p${id}_btn`);
+      const p = panelState[id];
+
       if (flightPhase === 'waiting') {
-        if (userBetPlaced) {
-          btn.innerText = `✅ СТАВКА ПРИНЯТА (${activeBetAmount} ⭐)`;
+        if (p.placed) {
+          btn.innerText = `✅ Принято (${p.amount} ⭐)`;
           btn.style.background = "rgba(0, 255, 135, 0.2)";
           btn.style.color = "var(--accent-green)";
         } else {
-          btn.innerText = `⭐ Сделать ставку (${waitSeconds}с)`;
+          btn.innerText = `⭐ Поставить (${p.amount || document.getElementById(`p${id}_bet`).value})`;
           btn.style.background = "var(--accent-green)";
           btn.style.color = "#05140b";
         }
       } else if (flightPhase === 'flying') {
-        if (userBetPlaced) {
-          btn.innerText = `⭐ ЗАБРАТЬ (${Math.floor(activeBetAmount * currentMultiplier)} ⭐)`;
+        if (p.placed && !p.cashedOut) {
+          const win = Math.floor(p.amount * currentMultiplier);
+          btn.innerText = `ЗАБРАТЬ (${win} ⭐)`;
           btn.style.background = "#00f2fe";
           btn.style.color = "#000";
-        } else if (userQueuedBet) {
-          btn.innerText = `В ОЧЕРЕДИ НА СЛЕД. РАУНД (${queuedBetAmount} ⭐)`;
+        } else if (p.cashedOut) {
+          btn.innerText = `ВЫИГРЫШ ✅`;
+          btn.style.background = "rgba(255,255,255,0.08)";
+          btn.style.color = "var(--text-muted)";
+        } else if (p.queued) {
+          btn.innerText = `В очереди (${p.amount} ⭐)`;
           btn.style.background = "rgba(245, 166, 35, 0.2)";
           btn.style.color = "var(--accent-gold)";
         } else {
-          btn.innerText = `⭐ Поставить на след. раунд`;
+          btn.innerText = `На след. раунд`;
           btn.style.background = "var(--accent-gold)";
           btn.style.color = "#05140b";
         }
       } else if (flightPhase === 'crashed') {
-        if (userQueuedBet) {
-          btn.innerText = `В ОЧЕРЕДИ НА СЛЕД. РАУНД (${queuedBetAmount} ⭐)`;
+        if (p.queued) {
+          btn.innerText = `В очереди (${p.amount} ⭐)`;
           btn.style.background = "rgba(245, 166, 35, 0.2)";
           btn.style.color = "var(--accent-gold)";
         } else {
-          btn.innerText = `⭐ Сделать ставку на след. раунд`;
+          btn.innerText = `На след. раунд`;
           btn.style.background = "var(--accent-green)";
           btn.style.color = "#05140b";
         }
       }
     }
 
-    function handleRocketBtnClick() {
+    function handlePanelAction(id) {
       haptic();
-      const input = document.getElementById('betInputVal');
+      const p = panelState[id];
+      const input = document.getElementById(`p${id}_bet`);
       const betVal = parseInt(input.value) || 10;
 
       if (flightPhase === 'waiting') {
-        if (userBetPlaced) return;
+        if (p.placed) return;
         if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
         balance -= betVal;
         updateBalance();
-        userBetPlaced = true;
-        activeBetAmount = betVal;
+        p.placed = true;
+        p.amount = betVal;
+        p.cashedOut = false;
         playBeep("C5");
-        updateMainBtnUI();
+        updatePanelButtonUI(id);
       } else if (flightPhase === 'flying') {
-        if (userBetPlaced) {
-          const win = Math.floor(activeBetAmount * currentMultiplier);
-          balance += win;
-          updateBalance();
-          userBetPlaced = false;
-          confetti({ particleCount: 75, spread: 60 });
-          playBeep("G5");
-          updateMainBtnUI();
+        if (p.placed && !p.cashedOut) {
+          cashOutPanel(id);
         } else {
-          if (userQueuedBet) return;
+          if (p.queued) return;
           if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
           balance -= betVal;
           updateBalance();
-          userQueuedBet = true;
-          queuedBetAmount = betVal;
+          p.queued = true;
+          p.amount = betVal;
           playBeep("D5");
-          updateMainBtnUI();
+          updatePanelButtonUI(id);
         }
       } else if (flightPhase === 'crashed') {
-        if (userQueuedBet) return;
+        if (p.queued) return;
         if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
         balance -= betVal;
         updateBalance();
-        userQueuedBet = true;
-        queuedBetAmount = betVal;
+        p.queued = true;
+        p.amount = betVal;
         playBeep("D5");
-        updateMainBtnUI();
+        updatePanelButtonUI(id);
       }
+    }
+
+    function cashOutPanel(id) {
+      const p = panelState[id];
+      if (!p.placed || p.cashedOut || flightPhase !== 'flying') return;
+      p.cashedOut = true;
+      const win = Math.floor(p.amount * currentMultiplier);
+      balance += win;
+      updateBalance();
+      confetti({ particleCount: 50, spread: 50 });
+      playBeep("G5");
+      updatePanelButtonUI(id);
+
+      // Проверка: забрал ли игрок все свои активные ставки
+      checkAllRealPlayersCashed();
+    }
+
+    function checkAllRealPlayersCashed() {
+      if (hasExtendedFlight) return;
+
+      const p1Active = panelState[1].placed && !panelState[1].cashedOut;
+      const p2Active = panelState[2].placed && !panelState[2].cashedOut;
+
+      // Если у игрока больше нет неснятых ставок, ракета улетает от 15х до 200х
+      if (!p1Active && !p2Active) {
+        hasExtendedFlight = true;
+        const extendedMult = parseFloat((15.0 + Math.random() * 185.0).toFixed(2));
+        if (extendedMult > crashTarget) {
+          crashTarget = extendedMult;
+        }
+      }
+    }
+
+    function generateBotPlayers() {
+      roundPlayers = [];
+      // Добавляем ставки реального игрока
+      if (panelState[1].placed) {
+        roundPlayers.push({ name: 'Вы (Ставка 1)', amount: panelState[1].amount, isBot: false, id: 1, cashed: false, cashMult: 0 });
+      }
+      if (panelState[2].placed) {
+        roundPlayers.push({ name: 'Вы (Ставка 2)', amount: panelState[2].amount, isBot: false, id: 2, cashed: false, cashMult: 0 });
+      }
+
+      // Дополняем ботами до 10-12 участников
+      const totalRequired = 10 + Math.floor(Math.random() * 3);
+      let botIdx = 0;
+      while (roundPlayers.length < totalRequired) {
+        const name = botNames[botIdx % botNames.length];
+        const bet = (Math.floor(Math.random() * 15) + 1) * 10;
+        // Случайный икс выхода бота
+        const targetMult = parseFloat((1.15 + Math.random() * 4.5).toFixed(2));
+        roundPlayers.push({
+          name: name,
+          amount: bet,
+          isBot: true,
+          targetMult: targetMult,
+          cashed: false,
+          cashMult: 0
+        });
+        botIdx++;
+      }
+      renderPlayersList();
+    }
+
+    function renderPlayersList() {
+      const container = document.getElementById('playersList');
+      container.innerHTML = '';
+      document.getElementById('totalPlayersCount').innerText = roundPlayers.length;
+
+      roundPlayers.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'player-row';
+        div.innerHTML = `
+          <div class="player-name">
+            <span>${p.isBot ? '🤖' : '😎'}</span>
+            <span>${p.name}</span>
+          </div>
+          <div>
+            ${p.cashed ? `<span class="player-cashed">${p.cashMult.toFixed(2)}x (+${Math.floor(p.amount * p.cashMult)} ⭐)</span>` : `<span>${p.amount} ⭐</span>`}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateBotCashouts() {
+      let changed = false;
+      roundPlayers.forEach(p => {
+        if (p.isBot && !p.cashed && currentMultiplier >= p.targetMult && currentMultiplier < crashTarget) {
+          p.cashed = true;
+          p.cashMult = p.targetMult;
+          changed = true;
+        }
+      });
+      if (changed) renderPlayersList();
     }
 
     function startWaitingPhase() {
       flightPhase = 'waiting';
       waitSeconds = 5;
       currentMultiplier = 1.00;
+      hasExtendedFlight = false;
       document.getElementById('rocket-mult').innerText = "1.00x";
       document.getElementById('rocket-mult').style.color = "#fff";
 
-      if (userQueuedBet) {
-        userBetPlaced = true;
-        activeBetAmount = queuedBetAmount;
-        userQueuedBet = false;
-        queuedBetAmount = 0;
-      }
-      updateMainBtnUI();
+      // Перенос ставок из очереди
+      [1, 2].forEach(id => {
+        if (panelState[id].queued) {
+          panelState[id].placed = true;
+          panelState[id].queued = false;
+          panelState[id].cashedOut = false;
+        } else {
+          panelState[id].placed = false;
+          panelState[id].cashedOut = false;
+        }
+        updatePanelButtonUI(id);
+      });
+
+      generateBotPlayers();
 
       const waitTimer = setInterval(() => {
         document.getElementById('rocketStateBadge').innerText = `Взлёт через ${waitSeconds}с...`;
-        updateMainBtnUI();
         waitSeconds--;
         if (waitSeconds < 0) {
           clearInterval(waitTimer);
@@ -1083,38 +1262,53 @@
 
     function startFlightPhase() {
       flightPhase = 'flying';
-      crashTarget = getFairCrashPoint();
+      crashTarget = calculateCrashPoint();
       currentMultiplier = 1.00;
       document.getElementById('rocketStateBadge').innerText = "Ракета в полёте";
-      updateMainBtnUI();
+      updatePanelButtonUI(1);
+      updatePanelButtonUI(2);
 
-      const flightInterval = setInterval(() => {
-        currentMultiplier = parseFloat((currentMultiplier + 0.02 * (1 + currentMultiplier * 0.3)).toFixed(2));
+      // Если реальный игрок не ставил, ракета сразу летит далеко
+      checkAllRealPlayersCashed();
+
+      flightLoopTimer = setInterval(() => {
+        // Увеличение скорости роста после 5х
+        let step = currentMultiplier < 5.0 ? 0.02 * (1 + currentMultiplier * 0.25) : 0.05 * (1 + currentMultiplier * 0.45);
+        currentMultiplier = parseFloat((currentMultiplier + step).toFixed(2));
         document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
 
-        const autoEnabled = document.getElementById('autoCashoutToggle').checked;
-        const autoTarget = parseFloat(document.getElementById('autoCashoutMult').value) || 2.0;
-        if (autoEnabled && userBetPlaced && currentMultiplier >= autoTarget) {
-          const win = Math.floor(activeBetAmount * currentMultiplier);
-          balance += win;
-          updateBalance();
-          userBetPlaced = false;
-          confetti({ particleCount: 70, spread: 60 });
-          playBeep("G5");
-        }
+        // Проверка автовывода панели 1 и 2
+        [1, 2].forEach(id => {
+          const autoOn = document.getElementById(`p${id}_autoToggle`).checked;
+          const target = parseFloat(document.getElementById(`p${id}_autoMult`).value) || 2.0;
+          if (autoOn && panelState[id].placed && !panelState[id].cashedOut && currentMultiplier >= target) {
+            cashOutPanel(id);
+          }
+        });
 
-        updateMainBtnUI();
+        // Проверка ботов
+        updateBotCashouts();
+        updatePanelButtonUI(1);
+        updatePanelButtonUI(2);
 
         if (currentMultiplier >= crashTarget) {
-          clearInterval(flightInterval);
+          clearInterval(flightLoopTimer);
           flightPhase = 'crashed';
-          userBetPlaced = false;
+
+          [1, 2].forEach(id => {
+            if (panelState[id].placed && !panelState[id].cashedOut) {
+              panelState[id].placed = false;
+            }
+          });
+
           document.getElementById('rocket-mult').style.color = "var(--accent-red)";
           document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
           document.getElementById('rocketStateBadge').innerText = `КРАШ НА ${crashTarget.toFixed(2)}x`;
           addHistoryTag(crashTarget.toFixed(2));
           playBeep("A3");
-          updateMainBtnUI();
+
+          updatePanelButtonUI(1);
+          updatePanelButtonUI(2);
 
           setTimeout(startWaitingPhase, 2500);
         }
@@ -1125,7 +1319,8 @@
       const row = document.getElementById('historyRow');
       const tag = document.createElement('span');
       tag.className = 'history-tag';
-      if (val >= 10) tag.className += ' purple';
+      if (val >= 15) tag.className += ' gold';
+      else if (val >= 10) tag.className += ' purple';
       else if (val >= 5) tag.className += ' blue';
       tag.innerText = val + "x";
       row.insertBefore(tag, row.firstChild);
@@ -1147,7 +1342,7 @@
       if (isPickaxeDropping) return;
       const cost = isBonus ? pickaxeBet * 5 : pickaxeBet;
       if (cost > balance) {
-        alert("Недостаточно звёзд для удара!");
+        alert("Недостаточно звёзд!");
         return;
       }
 
@@ -1172,11 +1367,9 @@
       let outcome = {};
 
       if (isBonus) {
-        // Бонус-бай: гарантированная железная или алмазная кирка
         outcome = roll < 0.75 ? { icon: "⛏️", name: "Железная кирка", mult: 6.0, color: "#e0e0e0" }
                               : { icon: "💎", name: "Алмазная кирка", mult: 16.0, color: "#00f2fe" };
       } else {
-        // Стандартный раунд
         if (roll < 0.52) {
           outcome = { icon: "✕", name: "Промах", mult: 0, color: "#ff3366" };
         } else if (roll < 0.78) {
@@ -1197,7 +1390,7 @@
         const win = Math.floor(pickaxeBet * outcome.mult);
         balance += win;
         updateBalance();
-        statusElem.innerHTML = `<span style="color:#00ff87;">${outcome.name}! Выигрыш +${win} ⭐ (x${outcome.mult})</span>`;
+        statusElem.innerHTML = `<span style="color:#00ff87;">${outcome.name}! +${win} ⭐ (x${outcome.mult})</span>`;
         confetti({ particleCount: 70, spread: 60 });
         playBeep("G5");
       } else {
@@ -1209,7 +1402,7 @@
     }
 
     function buyBonusPickaxe() {
-      if (confirm(`Активировать Бонус-бай за ${pickaxeBet * 5} ⭐? Гарантирует редкую кирку!`)) {
+      if (confirm(`Активировать Бонус-бай за ${pickaxeBet * 5} ⭐?`)) {
         dropPickaxe(true);
       }
     }
