@@ -12,11 +12,11 @@
 
   <style>
     :root {
-      --bg-space: #05070d;
+      --bg-space: #04060a;
       --card-bg: #0c111c;
       --accent-green: #00ff87;
-      --accent-cyan: #00f2fe;
-      --accent-purple: #8a2be2;
+      --accent-cyan: #00b4d8;
+      --accent-purple: #b76eff;
       --accent-gold: #ffd166;
       --accent-red: #ff3366;
       --text-muted: #748296;
@@ -150,23 +150,72 @@
 
     .game-card {
       aspect-ratio: 1;
-      border-radius: 18px;
-      padding: 16px 10px;
+      border-radius: 20px;
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-      transition: transform 0.15s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+      overflow: hidden;
     }
 
     .game-card:active { transform: scale(0.96); }
+
+    /* КРАСИВАЯ КАРТОЧКА CRUSH В МЕНЮ */
     .game-card.rocket {
-      background: radial-gradient(circle at 70% 30%, #1e3c72 0%, #111a2e 70%, #090e18 100%);
-      border: 1px solid rgba(0, 242, 254, 0.35);
-      box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+      background: radial-gradient(circle at 80% 20%, #203a6b 0%, #0d172e 60%, #060912 100%);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 242, 254, 0.2);
     }
+
+    .hot-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(255, 65, 108, 0.5);
+    }
+
+    .rocket-card-art {
+      width: 100%;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .rocket-art-halo {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.4) 0%, transparent 70%);
+      animation: pulseArt 2.5s infinite alternate;
+    }
+
+    @keyframes pulseArt {
+      0% { transform: scale(0.85); opacity: 0.5; }
+      100% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .rocket-art-shuttle {
+      font-size: 42px;
+      transform: rotate(-35deg);
+      filter: drop-shadow(0 6px 14px rgba(0, 242, 254, 0.6));
+      z-index: 2;
+    }
+
     .game-card.pvp {
       background: linear-gradient(145deg, #11998e, #38ef7d);
     }
@@ -175,11 +224,6 @@
       border: 1px solid rgba(100, 220, 50, 0.3);
     }
 
-    .card-icon {
-      font-size: 38px;
-      margin-top: 8px;
-      filter: drop-shadow(0 4px 10px rgba(0, 242, 254, 0.4));
-    }
     .card-title { font-size: 15px; font-weight: 800; text-align: center; }
 
     .game-screen {
@@ -199,7 +243,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      background: rgba(5, 7, 13, 0.92);
+      background: rgba(4, 6, 10, 0.94);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
@@ -231,13 +275,13 @@
       border: 1px solid var(--border-color);
     }
 
-    /* АРЕНА CRUSH */
+    /* АРЕНА CRUSH С ГЛУБОКИМ КОСМОСОМ */
     .flight-arena {
       position: relative;
       width: 100%;
-      height: 300px;
-      min-height: 300px;
-      background: radial-gradient(circle at 75% 35%, #18253d 0%, #0c1422 60%, #05070d 100%);
+      height: 310px;
+      min-height: 310px;
+      background: radial-gradient(ellipse at 85% 30%, #1e2942 0%, #0d1424 50%, #030408 100%);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -248,19 +292,21 @@
 
     #threeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+    /* НЕОНОВЫЙ МНОЖИТЕЛЬ */
     .mult-display {
       position: relative;
       z-index: 5;
       font-size: 54px;
       font-weight: 900;
       letter-spacing: -1.5px;
-      color: #fff;
-      text-shadow: 0 4px 25px rgba(0,0,0,0.9), 0 0 35px rgba(0, 242, 254, 0.35);
+      color: var(--accent-green);
+      text-shadow: 0 0 20px rgba(0, 255, 135, 0.6), 0 4px 25px rgba(0,0,0,0.9);
       margin-bottom: 25px;
       pointer-events: none;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
     }
 
-    /* КРУГОВОЙ АНИМИРОВАННЫЙ ТАЙМЕР */
+    /* ТАЙМЕР ОЖИДАНИЯ */
     .timer-overlay {
       position: absolute;
       z-index: 8;
@@ -287,14 +333,14 @@
 
     .timer-circle-bar {
       fill: none;
-      stroke: var(--accent-cyan);
+      stroke: #00f2fe;
       stroke-width: 7;
       stroke-linecap: round;
       stroke-dasharray: 283;
       stroke-dashoffset: 0;
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
-      filter: drop-shadow(0 0 8px var(--accent-cyan));
+      filter: drop-shadow(0 0 8px #00f2fe);
       transition: stroke-dashoffset 1s linear;
     }
 
@@ -338,14 +384,14 @@
       font-weight: 800;
       white-space: nowrap;
       background: rgba(0, 255, 135, 0.15);
-      color: #00ff87;
+      color: var(--accent-green);
       border: 1px solid rgba(0, 255, 135, 0.25);
     }
-    .history-tag.blue { background: rgba(0, 180, 216, 0.15); color: #00b4d8; border-color: rgba(0, 180, 216, 0.3); }
-    .history-tag.purple { background: rgba(138, 43, 226, 0.15); color: #b76eff; border-color: rgba(138, 43, 226, 0.3); }
-    .history-tag.gold { background: rgba(255, 209, 102, 0.2); color: #ffd166; border-color: rgba(255, 209, 102, 0.4); box-shadow: 0 0 8px rgba(255, 209, 102, 0.3); }
+    .history-tag.blue { background: rgba(0, 180, 216, 0.15); color: var(--accent-cyan); border-color: rgba(0, 180, 216, 0.3); }
+    .history-tag.purple { background: rgba(183, 110, 255, 0.15); color: var(--accent-purple); border-color: rgba(183, 110, 255, 0.3); }
+    .history-tag.gold { background: rgba(255, 209, 102, 0.2); color: var(--accent-gold); border-color: rgba(255, 209, 102, 0.4); box-shadow: 0 0 8px rgba(255, 209, 102, 0.3); }
 
-    /* ВЕРТИКАЛЬНЫЙ СТЕК ПАНЕЛЕЙ СТАВОК (ОДНА ПОД ОДНОЙ) */
+    /* ВЕРТИКАЛЬНЫЙ СТЕК ПАНЕЛЕЙ СТАВОК */
     .vertical-bet-container {
       display: flex;
       flex-direction: column;
@@ -493,7 +539,7 @@
     }
     .btn-bet-execute:active { transform: scale(0.97); }
 
-    /* МЕНЮ СТАВОК И БОТОВ */
+    /* МЕНЮ СТАВОК И СГОРЕВШИХ БОТОВ */
     .players-container {
       margin: 2px 12px 20px 12px;
       background: var(--card-bg);
@@ -535,8 +581,8 @@
     }
 
     .player-row.crashed-loss {
-      background: rgba(255, 51, 102, 0.15);
-      border: 1px solid rgba(255, 51, 102, 0.35);
+      background: rgba(255, 51, 102, 0.18);
+      border: 1px solid rgba(255, 51, 102, 0.45);
     }
 
     .player-name {
@@ -865,22 +911,29 @@
     <div style="font-size: 42px;">🥷</div>
   </div>
 
+  <!-- РАЗДЕЛ: ЛУЧШИЕ ИГРЫ -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
+    <!-- КАРТОЧКА CRUSH С КРАСИВЫМ АРТОМ -->
     <div class="game-card rocket" onclick="openGame('rocket')">
-      <div class="card-icon">🚀</div>
-      <div class="card-title">Crush</div>
+      <div class="hot-badge">🔥 HOT</div>
+      <div class="rocket-card-art">
+        <div class="rocket-art-halo"></div>
+        <div class="rocket-art-shuttle">🚀</div>
+      </div>
+      <div class="card-title">Crush Arena</div>
     </div>
     <div class="game-card pvp" onclick="openGame('pvp')">
-      <div class="card-icon">⚔️</div>
+      <div class="card-icon" style="font-size: 38px; margin-top: 12px;">⚔️</div>
       <div class="card-title">PVP Дуэль</div>
     </div>
   </div>
 
+  <!-- РАЗДЕЛ: БЫСТРЫЕ ИГРЫ -->
   <div class="section-header">⚡ Быстрые игры</div>
   <div class="games-row">
     <div class="game-card pickaxe" onclick="openGame('pickaxe')">
-      <div class="card-icon">⛏️</div>
+      <div class="card-icon" style="font-size: 38px; margin-top: 12px;">⛏️</div>
       <div class="card-title">Falling Pickaxe</div>
     </div>
   </div>
@@ -921,7 +974,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН CRUSH: 3D-РАКЕТА, АНИМИРОВАННЫЙ ТАЙМЕР, СТАВКИ ОДНА ПОД ОДНОЙ, СГОРЕВШИЕ БОТЫ -->
+  <!-- ЭКРАН CRUSH: 3D С ЗВЕЗДНЫМ НЕБОМ -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -932,7 +985,7 @@
     <div class="flight-arena">
       <div id="threeCanvas"></div>
 
-      <!-- НЕОНОВЫЙ КРУГОВОЙ ТАЙМЕР ОЖИДАНИЯ -->
+      <!-- КРУГОВОЙ ТАЙМЕР -->
       <div class="timer-overlay" id="timerOverlay">
         <div class="timer-svg-box">
           <svg width="100" height="100" viewBox="0 0 100 100">
@@ -944,6 +997,7 @@
         <div class="timer-sub-tag">СТАРТ РАУНДА</div>
       </div>
 
+      <!-- НЕОНОВЫЙ МНОЖИТЕЛЬ -->
       <div class="mult-display" id="rocket-mult">1.00x</div>
 
       <div class="history-row" id="historyRow">
@@ -956,7 +1010,7 @@
       </div>
     </div>
 
-    <!-- ВЕРТИКАЛЬНЫЙ ИНТЕРФЕЙС СТАВОК (ОДНА ПОД ОДНОЙ) -->
+    <!-- ВЕРТИКАЛЬНЫЕ ПАНЕЛИ СТАВОК (ОДНА ПОД ОДНОЙ) -->
     <div class="vertical-bet-container">
       <!-- СТАВКА 1 -->
       <div class="bet-card-row" id="panel1">
@@ -1329,9 +1383,13 @@
       }, 6200);
     }
 
-    /* ---------------- THREE.JS: КРУТОЙ ДИЗАЙН КИБЕРПАНК-ШАТТЛА ---------------- */
-    let scene, camera, renderer, rocketGroup, planetMesh, flameMesh1, flameMesh2;
+    /* ---------------- THREE.JS: ДИАГОНАЛЬНЫЙ ПОЛЕТ + ЗВЕЗДНОЕ НЕБО ---------------- */
+    let scene, camera, renderer, rocketGroup, planetMesh, starPoints, flameMesh1, flameMesh2;
     let threeInitialized = false;
+
+    const START_POS = { x: -6.5, y: -4.2, z: 0 };
+    const END_POS = { x: 5.5, y: 3.8, z: 0 };
+    let flightProgressNormalized = 0;
 
     function initThreeScene() {
       const container = document.getElementById('threeCanvas');
@@ -1353,7 +1411,7 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
       scene.add(ambLight);
 
       const dirLight = new THREE.DirectionalLight(0x00f2fe, 2.5);
@@ -1364,17 +1422,37 @@
       backLight.position.set(-10, -10, -5);
       scene.add(backLight);
 
-      // Планета на заднем плане с кольцом
+      // 1. КОСМИЧЕСКОЕ ЗВЕЗДНОЕ НЕБО (800 МЕРЦАЮЩИХ ЗВЕЗД)
+      const starsCount = 800;
+      const starsGeo = new THREE.BufferGeometry();
+      const starPositions = new Float32Array(starsCount * 3);
+
+      for (let i = 0; i < starsCount * 3; i += 3) {
+        starPositions[i] = (Math.random() - 0.5) * 60;
+        starPositions[i + 1] = (Math.random() - 0.5) * 40;
+        starPositions[i + 2] = -10 - Math.random() * 25;
+      }
+      starsGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+
+      const starsMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.28,
+        transparent: true,
+        opacity: 0.85
+      });
+      starPoints = new THREE.Points(starsGeo, starsMat);
+      scene.add(starPoints);
+
+      // 2. ДАЛЕКАЯ ТУМАННАЯ ПЛАНЕТА
       const pGeo = new THREE.SphereGeometry(5.5, 32, 32);
       const pMat = new THREE.MeshStandardMaterial({ color: 0x141d2e, roughness: 0.7, metalness: 0.2 });
       planetMesh = new THREE.Mesh(pGeo, pMat);
       planetMesh.position.set(9.5, -0.5, -8);
       scene.add(planetMesh);
 
-      // ГРУППА РАКЕТЫ
+      // 3. ГРУППА РАКЕТЫ
       rocketGroup = new THREE.Group();
 
-      // Главный фюзеляж (граненый киберпанк обтекатель)
       const noseGeo = new THREE.ConeGeometry(0.85, 2.0, 6);
       const noseMat = new THREE.MeshStandardMaterial({
         color: 0x00f2fe,
@@ -1386,7 +1464,6 @@
       nose.position.y = 2.0;
       rocketGroup.add(nose);
 
-      // Центральный корпус шаттла
       const bodyGeo = new THREE.CylinderGeometry(0.85, 0.75, 2.4, 6);
       const bodyMat = new THREE.MeshStandardMaterial({
         color: 0x0f172a,
@@ -1398,7 +1475,6 @@
       body.position.y = -0.1;
       rocketGroup.add(body);
 
-      // Неоновые линии по бокам
       const lineGeo = new THREE.BoxGeometry(0.08, 2.2, 0.08);
       const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
       const l1 = new THREE.Mesh(lineGeo, lineMat);
@@ -1408,7 +1484,6 @@
       l2.position.set(-0.8, -0.1, 0);
       rocketGroup.add(l2);
 
-      // Золотой купольный фонарь кабины
       const glassGeo = new THREE.SphereGeometry(0.48, 16, 16);
       const glassMat = new THREE.MeshStandardMaterial({
         color: 0xffd166,
@@ -1421,7 +1496,6 @@
       glass.position.set(0, 0.5, 0.72);
       rocketGroup.add(glass);
 
-      // Аэродинамические гипер-крылья
       const wingShape = new THREE.BoxGeometry(0.1, 1.4, 1.4);
       const wingMat = new THREE.MeshStandardMaterial({
         color: 0x7928ca,
@@ -1440,7 +1514,6 @@
       wLeft.rotation.z = 0.2;
       rocketGroup.add(wLeft);
 
-      // Сдвоенные реактивные сопла
       const nozzleGeo = new THREE.CylinderGeometry(0.32, 0.38, 0.5, 12);
       const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
 
@@ -1452,7 +1525,6 @@
       noz2.position.set(-0.35, -1.4, 0);
       rocketGroup.add(noz2);
 
-      // Сдвоенное пламя сопел
       const flameGeo = new THREE.ConeGeometry(0.38, 1.8, 16);
       const flameMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
 
@@ -1466,8 +1538,11 @@
       flameMesh2.rotation.x = Math.PI;
       rocketGroup.add(flameMesh2);
 
-      // Поворот всей ракеты на вектор полета
-      rocketGroup.rotation.z = -Math.PI / 3.8;
+      rocketGroup.rotation.z = -Math.PI / 3.4;
+      rocketGroup.rotation.x = 0.15;
+      rocketGroup.rotation.y = 0.1;
+
+      rocketGroup.position.set(START_POS.x, START_POS.y, START_POS.z);
       scene.add(rocketGroup);
 
       window.addEventListener('resize', onWindowResize);
@@ -1484,28 +1559,65 @@
 
     function animateThree() {
       requestAnimationFrame(animateThree);
-      if (planetMesh) planetMesh.rotation.y += 0.0015;
-      if (rocketGroup) {
-        // Плавное постоянное осевое вращение 3D-модели
-        rocketGroup.rotation.y += 0.04;
 
+      // Медленное вращение планеты и дрейф звездного неба
+      if (planetMesh) planetMesh.rotation.y += 0.0015;
+      if (starPoints) {
+        starPoints.rotation.z += 0.0004;
+        if (flightPhase === 'flying') {
+          starPoints.position.x -= 0.02;
+          starPoints.position.y -= 0.015;
+        }
+      }
+
+      if (rocketGroup) {
         if (flightPhase === 'flying') {
           flameMesh1.visible = true;
           flameMesh2.visible = true;
           const s = 1 + Math.random() * 0.45;
-          flameMesh1.scale.set(s, 1 + Math.random() * 0.7, s);
-          flameMesh2.scale.set(s, 1 + Math.random() * 0.7, s);
-          rocketGroup.position.y = Math.sin(Date.now() * 0.006) * 0.28;
+          flameMesh1.scale.set(s, 1 + Math.random() * 0.8, s);
+          flameMesh2.scale.set(s, 1 + Math.random() * 0.8, s);
+
+          const p = Math.min(flightProgressNormalized, 1.0);
+          const curX = START_POS.x + (END_POS.x - START_POS.x) * p;
+          const curY = START_POS.y + (END_POS.y - START_POS.y) * Math.pow(p, 0.9);
+
+          const shake = Math.sin(Date.now() * 0.015) * 0.08;
+          rocketGroup.position.set(curX, curY + shake, 0);
         } else {
           flameMesh1.visible = false;
           flameMesh2.visible = false;
-          rocketGroup.position.y = 0;
+          rocketGroup.position.set(START_POS.x, START_POS.y, 0);
         }
       }
       renderer.render(scene, camera);
     }
 
-    /* ---------------- CRUSH: СТАВКИ, СГОРЕВШИЕ БОТЫ И АНИМАЦИЯ ТАЙМЕРА ---------------- */
+    /* ---------------- ДИНАМИЧЕСКИЙ НЕОНОВЫЙ ЦВЕТ ИКСОВ ---------------- */
+    function updateMultiplierNeonColor(mult, isCrashed = false) {
+      const display = document.getElementById('rocket-mult');
+      if (isCrashed) {
+        display.style.color = "var(--accent-red)";
+        display.style.textShadow = "0 0 25px rgba(255, 51, 102, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
+        return;
+      }
+
+      if (mult >= 10.0) {
+        display.style.color = "var(--accent-gold)";
+        display.style.textShadow = "0 0 25px rgba(255, 209, 102, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
+      } else if (mult >= 5.0) {
+        display.style.color = "var(--accent-purple)";
+        display.style.textShadow = "0 0 25px rgba(183, 110, 255, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
+      } else if (mult >= 2.0) {
+        display.style.color = "var(--accent-cyan)";
+        display.style.textShadow = "0 0 25px rgba(0, 180, 216, 0.8), 0 4px 30px rgba(0,0,0,0.9)";
+      } else {
+        display.style.color = "var(--accent-green)";
+        display.style.textShadow = "0 0 25px rgba(0, 255, 135, 0.7), 0 4px 30px rgba(0,0,0,0.9)";
+      }
+    }
+
+    /* ---------------- CRUSH: СТАВКИ, СГОРЕВШИЕ БОТЫ И ЦИКЛ ---------------- */
     let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
@@ -1653,7 +1765,6 @@
       playBeep("G5");
       updatePanelButtonUI(id);
 
-      // Обновляем статус в таблице игроков
       const row = roundPlayers.find(pl => !pl.isBot && pl.id === id);
       if (row) {
         row.cashed = true;
@@ -1692,8 +1803,7 @@
       while (roundPlayers.length < totalRequired) {
         const botData = botPool[bIdx % botPool.length];
         const bet = Math.round((Math.floor(Math.random() * (botData.maxBet - botData.minBet)) + botData.minBet) / 10) * 10;
-        // Часть ботов забирает рано, часть ставит на очень высокие иксы (чтобы сгореть)
-        const targetMult = parseFloat((1.18 + Math.random() * (Math.random() < 0.4 ? 12.0 : 4.0)).toFixed(2));
+        const targetMult = parseFloat((1.18 + Math.random() * (Math.random() < 0.45 ? 18.0 : 4.5)).toFixed(2));
         roundPlayers.push({
           name: botData.name,
           amount: bet,
@@ -1756,12 +1866,13 @@
       renderPlayersList();
     }
 
-    /* ---------------- ИГРОВОЙ ЦИКЛ CRUSH С КРУГОВЫМ ТАЙМЕРОМ ---------------- */
+    /* ---------------- ИГРОВОЙ ЦИКЛ CRUSH ---------------- */
     function startWaitingPhase() {
       flightPhase = 'waiting';
       waitSeconds = 5;
       currentMultiplier = 1.00;
       hasExtendedFlight = false;
+      flightProgressNormalized = 0;
 
       document.getElementById('rocket-mult').style.display = "none";
       document.getElementById('timerOverlay').style.display = "flex";
@@ -1810,9 +1921,10 @@
       flightPhase = 'flying';
       crashTarget = calculateCrashPoint();
       currentMultiplier = 1.00;
+      flightProgressNormalized = 0;
 
       document.getElementById('rocket-mult').innerText = "1.00x";
-      document.getElementById('rocket-mult').style.color = "#fff";
+      updateMultiplierNeonColor(1.00, false);
 
       updatePanelButtonUI(1);
       updatePanelButtonUI(2);
@@ -1823,6 +1935,9 @@
         let step = currentMultiplier < 5.0 ? 0.02 * (1 + currentMultiplier * 0.25) : 0.055 * (1 + currentMultiplier * 0.45);
         currentMultiplier = parseFloat((currentMultiplier + step).toFixed(2));
         document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
+
+        updateMultiplierNeonColor(currentMultiplier, false);
+        flightProgressNormalized += 0.008;
 
         [1, 2].forEach(id => {
           const autoOn = document.getElementById(`p${id}_autoToggle`).checked;
@@ -1846,10 +1961,9 @@
             }
           });
 
-          document.getElementById('rocket-mult').style.color = "var(--accent-red)";
+          updateMultiplierNeonColor(crashTarget, true);
           document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
 
-          // ОТМЕЧАЕМ СГОРЕВШИХ БОТОВ И ИГРОКОВ КРАСНЫМ
           markBurnedPlayers();
           addHistoryTag(crashTarget.toFixed(2));
           playBeep("A3");
@@ -1866,9 +1980,9 @@
       const row = document.getElementById('historyRow');
       const tag = document.createElement('span');
       tag.className = 'history-tag';
-      if (val >= 15) tag.className += ' gold';
-      else if (val >= 10) tag.className += ' purple';
-      else if (val >= 5) tag.className += ' blue';
+      if (val >= 10) tag.className += ' gold';
+      else if (val >= 5) tag.className += ' purple';
+      else if (val >= 2) tag.className += ' blue';
       tag.innerText = val + "x";
       row.insertBefore(tag, row.firstChild);
     }
