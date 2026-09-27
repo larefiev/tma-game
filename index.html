@@ -39,7 +39,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 70px;
+      padding-bottom: 74px;
       overflow-x: hidden;
     }
 
@@ -107,8 +107,11 @@
     .section-header {
       padding: 0 16px;
       margin-bottom: 12px;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .games-row {
@@ -116,6 +119,7 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       padding: 0 16px;
+      margin-bottom: 20px;
     }
 
     .game-card {
@@ -139,9 +143,13 @@
     .game-card.pvp {
       background: linear-gradient(145deg, #11998e, #38ef7d);
     }
+    .game-card.pickaxe {
+      background: linear-gradient(145deg, #2b580c, #4a7c29);
+      border: 1px solid rgba(100, 220, 50, 0.3);
+    }
 
     .card-icon {
-      font-size: 40px;
+      font-size: 38px;
       margin-top: 8px;
       filter: drop-shadow(0 4px 10px rgba(0, 242, 254, 0.4));
     }
@@ -159,7 +167,7 @@
 
     .game-screen.active { display: flex; }
 
-    .rocket-top-nav {
+    .screen-top-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -194,6 +202,7 @@
       border-radius: 14px;
     }
 
+    /* Арена CRUSH */
     .flight-arena {
       position: relative;
       width: 100%;
@@ -206,12 +215,7 @@
       align-items: center;
     }
 
-    #threeCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
+    #threeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
     .mult-display {
       position: relative;
@@ -399,43 +403,157 @@
     }
     .btn-launch:active { transform: scale(0.98); }
 
-    .pvp-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .pvp-box {
-      display: flex;
+    /* ---------------- СТИЛИ FALLING PICKAXE ---------------- */
+    .pickaxe-screen {
+      position: relative;
       width: 100%;
-      justify-content: space-around;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .pvp-card {
-      width: 110px;
-      height: 130px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 18px;
-      border: 1px solid var(--border-color);
+      height: 100%;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(to bottom, #99c9f0 0%, #bce0fd 45%, #7ea86d 75%, #466838 100%);
+      overflow: hidden;
+    }
+
+    .mc-clouds {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      right: 0;
+      height: 140px;
+      background: radial-gradient(circle at 75% 40%, rgba(255,255,255,0.7) 0%, transparent 50%),
+                  radial-gradient(circle at 25% 65%, rgba(255,255,255,0.85) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    .mc-floating-island {
+      position: absolute;
+      top: 68px;
+      left: 32%;
+      font-size: 40px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    }
+
+    .mc-portal-circle {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: #1e2638;
+      border: 10px solid #2d384e;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 8px 30px rgba(0,0,0,0.5);
+      position: relative;
+      margin: 120px auto 30px auto;
+      display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s;
+      overflow: hidden;
     }
 
-    .dice-rolling {
-      animation: diceShake 0.35s ease infinite alternate;
+    .portal-arrow {
+      position: absolute;
+      font-size: 16px;
+      color: #00ff87;
+      text-shadow: 0 0 8px #00ff87;
+    }
+    .portal-arrow.left { left: 10px; }
+    .portal-arrow.right { right: 10px; }
+
+    .portal-center-icon {
+      font-size: 60px;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes diceShake {
-      0% { transform: rotate(-10deg) scale(1.05); }
-      100% { transform: rotate(10deg) scale(0.95); }
+    .portal-drop-anim {
+      animation: dropDown 0.5s ease-out;
+    }
+
+    @keyframes dropDown {
+      0% { transform: translateY(-140px) scale(0.4); opacity: 0; }
+      70% { transform: translateY(10px) scale(1.15); opacity: 1; }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .mc-blocks-footer {
+      margin-top: auto;
+      width: 100%;
+      height: 90px;
+      background: repeating-linear-gradient(
+        90deg,
+        #c67d38 0px,
+        #c67d38 34px,
+        #785028 35px
+      );
+      border-top: 14px solid #55aa22;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .pickaxe-control-bar {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .mc-panel-box {
+      background: rgba(16, 20, 28, 0.9);
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 6px 12px;
+      text-align: center;
+      min-width: 90px;
+    }
+
+    .mc-spin-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2b3952, #182232);
+      border: 3px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    }
+    .mc-spin-btn:active { transform: scale(0.93); }
+
+    .mc-btn-square {
+      width: 38px;
+      height: 38px;
+      background: rgba(16, 20, 28, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-bonus-buy {
+      position: absolute;
+      top: 64px;
+      right: 14px;
+      background: linear-gradient(135deg, #ffd700, #ff8c00);
+      color: #000;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+      cursor: pointer;
+      z-index: 15;
     }
 
     .bottom-nav {
@@ -481,15 +599,25 @@
     <div style="font-size: 42px;">🥷</div>
   </div>
 
+  <!-- РАЗДЕЛ 1: ЛУЧШИЕ ИГРЫ -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
     <div class="game-card rocket" onclick="openGame('rocket')">
-      <div class="card-icon">🛸</div>
-      <div class="card-title">3D Ракетка</div>
+      <div class="card-icon">🚀</div>
+      <div class="card-title">Crush</div>
     </div>
     <div class="game-card pvp" onclick="openGame('pvp')">
       <div class="card-icon">⚔️</div>
-      <div class="card-title">PVP</div>
+      <div class="card-title">PVP Дуэль</div>
+    </div>
+  </div>
+
+  <!-- РАЗДЕЛ 2: БЫСТРЫЕ ИГРЫ -->
+  <div class="section-header">⚡ Быстрые игры</div>
+  <div class="games-row">
+    <div class="game-card pickaxe" onclick="openGame('pickaxe')">
+      <div class="card-icon">⛏️</div>
+      <div class="card-title">Falling Pickaxe</div>
     </div>
   </div>
 
@@ -512,11 +640,11 @@
     </div>
   </div>
 
-  <!-- ЭКРАН: 3D РАКЕТКА -->
+  <!-- ЭКРАН 1: CRUSH -->
   <div class="game-screen" id="modal-rocket">
-    <div class="rocket-top-nav">
+    <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
-      <div class="app-brand">⚡ Random Games</div>
+      <div class="app-brand">🚀 Crush</div>
       <div style="width: 24px;"></div>
     </div>
 
@@ -536,15 +664,16 @@
     </div>
 
     <div class="bet-control-container">
-      <div class="sub-label">Сумма ставки (введите или выберите)</div>
+      <div class="sub-label">Сумма ставки (шаг 10 ⭐)</div>
       <div class="bet-input-box">
         <span style="font-size: 22px;">⭐</span>
-        <input type="number" id="betInputVal" class="bet-editable-input" value="10" min="1" oninput="onBetInputChange()">
+        <input type="number" id="betInputVal" class="bet-editable-input" value="10" step="10" min="10" onchange="onBetInputChange()">
       </div>
       <div class="bet-usd" id="betDisplayUsd">≈ $0.15</div>
 
       <div class="quick-bet-bar">
         <button class="btn-quick" onclick="adjustBet(-10)">-10</button>
+        <button class="btn-quick" onclick="adjustBet(10)">+10</button>
         <button class="btn-quick" onclick="adjustBet(50)">+50</button>
         <button class="btn-quick" onclick="adjustBet('MAX')">MAX</button>
       </div>
@@ -567,39 +696,80 @@
     </div>
   </div>
 
-  <!-- ЭКРАН: PVP ДУЭЛЬ -->
+  <!-- ЭКРАН 2: FALLING PICKAXE -->
+  <div class="game-screen" id="modal-pickaxe">
+    <div class="pickaxe-screen">
+      <div class="screen-top-nav">
+        <button class="nav-back-btn" onclick="closeGame()">←</button>
+        <div class="app-brand">⛏️ Falling Pickaxe</div>
+        <div style="width: 24px;"></div>
+      </div>
+
+      <button class="btn-bonus-buy" onclick="buyBonusPickaxe()">👑 Бонус-бай (x5)</button>
+      <div class="mc-clouds"></div>
+      <div class="mc-floating-island">🏝️</div>
+
+      <!-- Центральный круг-портал -->
+      <div class="mc-portal-circle">
+        <span class="portal-arrow left">▶</span>
+        <div class="portal-center-icon" id="pickaxeDropResult" style="color:#ff3366;">✕</div>
+        <span class="portal-arrow right">◀</span>
+      </div>
+
+      <div id="pickaxeStatusText" style="text-align:center; font-weight:800; font-size:16px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.8);">
+        Нажмите кнопку удара!
+      </div>
+
+      <!-- Нижняя пиксельная планка -->
+      <div class="mc-blocks-footer">
+        <div class="pickaxe-control-bar">
+          <div class="mc-panel-box">
+            <div style="font-size:9px; color:#8e9ba8; font-weight:800;">БАЛАНС (STARS)</div>
+            <div style="font-weight:900; font-size:14px; color:#00ff87;" id="mcBalanceVal">1000</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button class="mc-btn-square" onclick="adjustPickaxeBet(-10)">-</button>
+            <div class="mc-panel-box" style="min-width:70px;">
+              <div style="font-size:9px; color:#8e9ba8; font-weight:800;">СТАВКА</div>
+              <div style="font-weight:900; font-size:14px; color:#ffd700;" id="mcBetVal">10</div>
+            </div>
+            <button class="mc-btn-square" onclick="adjustPickaxeBet(10)">+</button>
+          </div>
+
+          <div class="mc-spin-btn" id="spinPickaxeBtn" onclick="dropPickaxe(false)">⟳</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭКРАН 3: PVP ДУЭЛЬ -->
   <div class="game-screen" id="modal-pvp">
-    <div class="rocket-top-nav">
+    <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
       <div class="app-brand">⚔️ PVP Duel</div>
       <div style="width: 24px;"></div>
     </div>
 
-    <div class="pvp-area">
-      <div class="pvp-box">
-        <div class="pvp-card" id="userCard">
-          <div style="font-size: 34px;">😎</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Вы</div>
-          <div id="pvp-user-val" style="font-size: 26px; font-weight: 900; color: #0088cc;">-</div>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+      <div style="display:flex; width:100%; justify-content:space-around; align-items:center; margin-bottom:24px;">
+        <div style="width:110px; height:130px; background:rgba(255,255,255,0.04); border-radius:18px; border:1px solid var(--border-color); display:flex; flex-direction:column; align-items:center; justify-content:center;" id="userCard">
+          <div style="font-size:34px;">😎</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Вы</div>
+          <div id="pvp-user-val" style="font-size:26px; font-weight:900; color:#0088cc;">-</div>
         </div>
-
-        <div style="font-size: 24px; font-weight: 900; color: var(--accent-red);">VS</div>
-
-        <div class="pvp-card" id="botCard">
-          <div style="font-size: 34px;">🤖</div>
-          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Оппонент</div>
-          <div id="pvp-bot-val" style="font-size: 26px; font-weight: 900; color: var(--accent-red);">-</div>
+        <div style="font-size:24px; font-weight:900; color:var(--accent-red);">VS</div>
+        <div style="width:110px; height:130px; background:rgba(255,255,255,0.04); border-radius:18px; border:1px solid var(--border-color); display:flex; flex-direction:column; align-items:center; justify-content:center;" id="botCard">
+          <div style="font-size:34px;">🤖</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Оппонент</div>
+          <div id="pvp-bot-val" style="font-size:26px; font-weight:900; color:var(--accent-red);">-</div>
         </div>
       </div>
-
-      <div id="pvp-status" style="font-weight: 800; font-size: 15px; margin-bottom: 20px; color: var(--accent-gold); text-align: center;">
+      <div id="pvp-status" style="font-weight:800; font-size:15px; margin-bottom:20px; color:var(--accent-gold); text-align:center;">
         Бросьте кости против оппонента!
       </div>
-
-      <div style="width: 100%; max-width: 320px;">
-        <button class="btn-launch" id="pvp-btn" onclick="playPvp()">
-          БРОСИТЬ КОСТИ (100 ⭐)
-        </button>
+      <div style="width:100%; max-width:320px;">
+        <button class="btn-launch" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ (100 ⭐)</button>
       </div>
     </div>
   </div>
@@ -627,6 +797,7 @@
     let balance = parseInt(localStorage.getItem('rg_stars_balance')) || 1000;
     function updateBalance() {
       document.getElementById('balance-stars').innerText = balance;
+      document.getElementById('mcBalanceVal').innerText = balance;
       localStorage.setItem('rg_stars_balance', balance);
     }
     updateBalance();
@@ -645,9 +816,7 @@
       if (screen) {
         screen.classList.add('active');
         if (tg) tg.BackButton.show();
-        if (gameId === 'rocket') {
-          setTimeout(initThreeScene, 50);
-        }
+        if (gameId === 'rocket') setTimeout(initThreeScene, 50);
       }
     }
 
@@ -657,10 +826,12 @@
       if (tg) tg.BackButton.hide();
     }
 
-    /* ---------------- УПРАВЛЕНИЕ СТАВКОЙ ---------------- */
+    /* ---------------- CRUSH: СТАВКИ С ШАГОМ 10 ---------------- */
     function onBetInputChange() {
       const input = document.getElementById('betInputVal');
-      let val = parseInt(input.value) || 0;
+      let val = parseInt(input.value) || 10;
+      val = Math.max(10, Math.round(val / 10) * 10);
+      input.value = val;
       document.getElementById('betDisplayUsd').innerText = `≈ $${(val * 0.015).toFixed(2)}`;
     }
 
@@ -668,13 +839,17 @@
       haptic();
       const input = document.getElementById('betInputVal');
       let cur = parseInt(input.value) || 10;
-      if (delta === 'MAX') cur = Math.max(1, balance);
-      else cur = Math.max(1, cur + delta);
+      if (delta === 'MAX') {
+        cur = Math.max(10, Math.floor(balance / 10) * 10);
+      } else {
+        cur = Math.max(10, cur + delta);
+        cur = Math.round(cur / 10) * 10;
+      }
       input.value = cur;
       onBetInputChange();
     }
 
-    /* ---------------- THREE.JS 3D СЦЕНА ---------------- */
+    /* ---------------- CRUSH: THREE.JS 3D ДВИЖОК ---------------- */
     let scene, camera, renderer, rocketGroup, planetMesh, flameMesh;
     let threeInitialized = false;
 
@@ -705,68 +880,41 @@
       dirLight.position.set(10, 15, 10);
       scene.add(dirLight);
 
-      const pointLight = new THREE.PointLight(0xff0055, 2, 50);
-      pointLight.position.set(-10, -10, 5);
-      scene.add(pointLight);
-
-      // Планета на заднем плане
       const pGeo = new THREE.SphereGeometry(6, 32, 32);
-      const pMat = new THREE.MeshStandardMaterial({
-        color: 0x182436,
-        roughness: 0.8,
-        metalness: 0.1
-      });
+      const pMat = new THREE.MeshStandardMaterial({ color: 0x182436, roughness: 0.8 });
       planetMesh = new THREE.Mesh(pGeo, pMat);
       planetMesh.position.set(10, -1, -8);
       scene.add(planetMesh);
 
-      // 3D Модель Ракеты
       rocketGroup = new THREE.Group();
 
-      // Носовой обтекатель (конус)
       const noseGeo = new THREE.ConeGeometry(0.9, 1.8, 24);
-      const noseMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, metalness: 0.7, roughness: 0.2 });
+      const noseMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, metalness: 0.7 });
       const nose = new THREE.Mesh(noseGeo, noseMat);
       nose.position.y = 1.9;
       rocketGroup.add(nose);
 
-      // Основной корпус (цилиндр)
       const bodyGeo = new THREE.CylinderGeometry(0.9, 0.8, 2.2, 24);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe0f7fa, metalness: 0.5, roughness: 0.3 });
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe0f7fa, metalness: 0.5 });
       const body = new THREE.Mesh(bodyGeo, bodyMat);
       body.position.y = -0.1;
       rocketGroup.add(body);
 
-      // Кабина / Фонарь (полусфера)
       const glassGeo = new THREE.SphereGeometry(0.45, 16, 16);
-      const glassMat = new THREE.MeshStandardMaterial({ color: 0xffd166, metalness: 0.9, roughness: 0.1, emissive: 0xffa500, emissiveIntensity: 0.4 });
+      const glassMat = new THREE.MeshStandardMaterial({ color: 0xffd166, emissive: 0xffa500, emissiveIntensity: 0.4 });
       const glass = new THREE.Mesh(glassGeo, glassMat);
       glass.position.set(0, 0.4, 0.75);
       rocketGroup.add(glass);
 
-      // Крылья (4 плавника)
       const wingGeo = new THREE.BoxGeometry(0.12, 1.2, 0.9);
-      const wingMat = new THREE.MeshStandardMaterial({ color: 0x9b51e0, metalness: 0.6, roughness: 0.3 });
-
+      const wingMat = new THREE.MeshStandardMaterial({ color: 0x9b51e0 });
       const w1 = new THREE.Mesh(wingGeo, wingMat);
       w1.position.set(1.1, -0.7, 0);
       rocketGroup.add(w1);
-
       const w2 = new THREE.Mesh(wingGeo, wingMat);
       w2.position.set(-1.1, -0.7, 0);
       rocketGroup.add(w2);
 
-      const w3 = new THREE.Mesh(wingGeo, wingMat);
-      w3.rotation.y = Math.PI / 2;
-      w3.position.set(0, -0.7, 1.1);
-      rocketGroup.add(w3);
-
-      const w4 = new THREE.Mesh(wingGeo, wingMat);
-      w4.rotation.y = Math.PI / 2;
-      w4.position.set(0, -0.7, -1.1);
-      rocketGroup.add(w4);
-
-      // Пламя реактивного двигателя (конус)
       const flameGeo = new THREE.ConeGeometry(0.55, 1.8, 16);
       const flameMat = new THREE.MeshBasicMaterial({ color: 0xff7b00 });
       flameMesh = new THREE.Mesh(flameGeo, flameMat);
@@ -774,7 +922,6 @@
       flameMesh.rotation.x = Math.PI;
       rocketGroup.add(flameMesh);
 
-      // Начальный наклон ракеты в сторону полета
       rocketGroup.rotation.z = -Math.PI / 3.8;
       scene.add(rocketGroup);
 
@@ -792,39 +939,28 @@
 
     function animateThree() {
       requestAnimationFrame(animateThree);
-
       if (planetMesh) planetMesh.rotation.y += 0.002;
-
       if (rocketGroup) {
-        // Постоянное 3D вращение вокруг собственной продольной оси
         rocketGroup.rotation.y += 0.045;
-
-        // Покачивание и динамика пламени
         if (flightPhase === 'flying') {
           flameMesh.visible = true;
-          flameMesh.scale.set(
-            1 + Math.random() * 0.35,
-            1 + Math.random() * 0.6,
-            1 + Math.random() * 0.35
-          );
+          flameMesh.scale.set(1 + Math.random() * 0.4, 1 + Math.random() * 0.6, 1 + Math.random() * 0.4);
           rocketGroup.position.y = Math.sin(Date.now() * 0.005) * 0.25;
         } else {
           flameMesh.visible = false;
           rocketGroup.position.y = 0;
         }
       }
-
       renderer.render(scene, camera);
     }
 
-    /* ---------------- ИГРОВОЙ АВТО-ЦИКЛ РАКЕТКИ ---------------- */
-    let flightPhase = 'waiting'; // 'waiting', 'flying', 'crashed'
+    /* ---------------- CRUSH АВТО-ЦИКЛ ---------------- */
+    let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
     let crashTarget = 1.00;
-
-    let userBetPlaced = false;      // Ставка в текущем полете
-    let userQueuedBet = false;      // Ставка поставлена в очередь на следующий полет
+    let userBetPlaced = false;
+    let userQueuedBet = false;
     let activeBetAmount = 0;
     let queuedBetAmount = 0;
 
@@ -881,10 +1017,7 @@
 
       if (flightPhase === 'waiting') {
         if (userBetPlaced) return;
-        if (betVal > balance) {
-          alert("Недостаточно звёзд!");
-          return;
-        }
+        if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
         balance -= betVal;
         updateBalance();
         userBetPlaced = true;
@@ -893,7 +1026,6 @@
         updateMainBtnUI();
       } else if (flightPhase === 'flying') {
         if (userBetPlaced) {
-          // Забрать выигрыш
           const win = Math.floor(activeBetAmount * currentMultiplier);
           balance += win;
           updateBalance();
@@ -902,12 +1034,8 @@
           playBeep("G5");
           updateMainBtnUI();
         } else {
-          // Встать в очередь на след. раунд
           if (userQueuedBet) return;
-          if (betVal > balance) {
-            alert("Недостаточно звёзд!");
-            return;
-          }
+          if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
           balance -= betVal;
           updateBalance();
           userQueuedBet = true;
@@ -917,10 +1045,7 @@
         }
       } else if (flightPhase === 'crashed') {
         if (userQueuedBet) return;
-        if (betVal > balance) {
-          alert("Недостаточно звёзд!");
-          return;
-        }
+        if (betVal > balance) { alert("Недостаточно звёзд!"); return; }
         balance -= betVal;
         updateBalance();
         userQueuedBet = true;
@@ -930,7 +1055,6 @@
       }
     }
 
-    // Запуск бесконечного цикла раундов
     function startWaitingPhase() {
       flightPhase = 'waiting';
       waitSeconds = 5;
@@ -938,14 +1062,12 @@
       document.getElementById('rocket-mult').innerText = "1.00x";
       document.getElementById('rocket-mult').style.color = "#fff";
 
-      // Если была ставка в очереди — переносим в активную
       if (userQueuedBet) {
         userBetPlaced = true;
         activeBetAmount = queuedBetAmount;
         userQueuedBet = false;
         queuedBetAmount = 0;
       }
-
       updateMainBtnUI();
 
       const waitTimer = setInterval(() => {
@@ -970,7 +1092,6 @@
         currentMultiplier = parseFloat((currentMultiplier + 0.02 * (1 + currentMultiplier * 0.3)).toFixed(2));
         document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
 
-        // Проверка автовывода
         const autoEnabled = document.getElementById('autoCashoutToggle').checked;
         const autoTarget = parseFloat(document.getElementById('autoCashoutMult').value) || 2.0;
         if (autoEnabled && userBetPlaced && currentMultiplier >= autoTarget) {
@@ -987,7 +1108,7 @@
         if (currentMultiplier >= crashTarget) {
           clearInterval(flightInterval);
           flightPhase = 'crashed';
-          userBetPlaced = false; // не успел забрать
+          userBetPlaced = false;
           document.getElementById('rocket-mult').style.color = "var(--accent-red)";
           document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
           document.getElementById('rocketStateBadge').innerText = `КРАШ НА ${crashTarget.toFixed(2)}x`;
@@ -1009,9 +1130,89 @@
       tag.innerText = val + "x";
       row.insertBefore(tag, row.firstChild);
     }
-
-    // Старт непрерывного цикла при открытии
     startWaitingPhase();
+
+    /* ---------------- ИГРА: FALLING PICKAXE ---------------- */
+    let pickaxeBet = 10;
+    let isPickaxeDropping = false;
+
+    function adjustPickaxeBet(delta) {
+      if (isPickaxeDropping) return;
+      haptic();
+      pickaxeBet = Math.max(10, pickaxeBet + delta);
+      document.getElementById('mcBetVal').innerText = pickaxeBet;
+    }
+
+    async function dropPickaxe(isBonus = false) {
+      if (isPickaxeDropping) return;
+      const cost = isBonus ? pickaxeBet * 5 : pickaxeBet;
+      if (cost > balance) {
+        alert("Недостаточно звёзд для удара!");
+        return;
+      }
+
+      balance -= cost;
+      updateBalance();
+      haptic();
+      playBeep("E4");
+
+      isPickaxeDropping = true;
+      const resultElem = document.getElementById('pickaxeDropResult');
+      const statusElem = document.getElementById('pickaxeStatusText');
+
+      resultElem.classList.remove('portal-drop-anim');
+      resultElem.innerText = "⏳";
+      resultElem.style.color = "#fff";
+      statusElem.innerText = "Кирка падает...";
+
+      await new Promise(r => setTimeout(r, 650));
+      resultElem.classList.add('portal-drop-anim');
+
+      const roll = Math.random();
+      let outcome = {};
+
+      if (isBonus) {
+        // Бонус-бай: гарантированная железная или алмазная кирка
+        outcome = roll < 0.75 ? { icon: "⛏️", name: "Железная кирка", mult: 6.0, color: "#e0e0e0" }
+                              : { icon: "💎", name: "Алмазная кирка", mult: 16.0, color: "#00f2fe" };
+      } else {
+        // Стандартный раунд
+        if (roll < 0.52) {
+          outcome = { icon: "✕", name: "Промах", mult: 0, color: "#ff3366" };
+        } else if (roll < 0.78) {
+          outcome = { icon: "🪵", name: "Деревянная кирка", mult: 1.5, color: "#c67d38" };
+        } else if (roll < 0.91) {
+          outcome = { icon: "🪨", name: "Каменная кирка", mult: 2.5, color: "#a0a0a0" };
+        } else if (roll < 0.98) {
+          outcome = { icon: "⛏️", name: "Железная кирка", mult: 5.0, color: "#ffffff" };
+        } else {
+          outcome = { icon: "💎", name: "Алмазная кирка", mult: 15.0, color: "#00f2fe" };
+        }
+      }
+
+      resultElem.innerText = outcome.icon;
+      resultElem.style.color = outcome.color;
+
+      if (outcome.mult > 0) {
+        const win = Math.floor(pickaxeBet * outcome.mult);
+        balance += win;
+        updateBalance();
+        statusElem.innerHTML = `<span style="color:#00ff87;">${outcome.name}! Выигрыш +${win} ⭐ (x${outcome.mult})</span>`;
+        confetti({ particleCount: 70, spread: 60 });
+        playBeep("G5");
+      } else {
+        statusElem.innerHTML = `<span style="color:#ff3366;">Промах! Попробуйте снова.</span>`;
+        playBeep("A3");
+      }
+
+      isPickaxeDropping = false;
+    }
+
+    function buyBonusPickaxe() {
+      if (confirm(`Активировать Бонус-бай за ${pickaxeBet * 5} ⭐? Гарантирует редкую кирку!`)) {
+        dropPickaxe(true);
+      }
+    }
 
     /* ---------------- PVP ДУЭЛЬ ---------------- */
     async function playPvp() {
