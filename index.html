@@ -6,6 +6,7 @@
   <title>Random Games Arcade</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -42,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* Верхняя панель главной */
     .top-bar {
       display: flex;
       justify-content: flex-end;
@@ -74,7 +74,6 @@
       gap: 5px;
     }
 
-    /* Промо-баннер */
     .promo-banner {
       margin: 0 16px 18px 16px;
       background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
@@ -105,7 +104,6 @@
       display: inline-block;
     }
 
-    /* Сетка игр */
     .section-header {
       padding: 0 16px;
       margin-bottom: 12px;
@@ -115,15 +113,15 @@
 
     .games-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       padding: 0 16px;
     }
 
     .game-card {
-      aspect-ratio: 0.85;
+      aspect-ratio: 1;
       border-radius: 18px;
-      padding: 12px 6px;
+      padding: 16px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -133,15 +131,22 @@
       transition: transform 0.15s ease;
     }
 
-    .game-card:active { transform: scale(0.95); }
-    .game-card.upgrader { background: linear-gradient(145deg, #6a11cb, #2575fc); }
-    .game-card.rocket { background: linear-gradient(145deg, #ff416c, #ff4b2b); }
-    .game-card.pvp { background: linear-gradient(145deg, #11998e, #38ef7d); }
+    .game-card:active { transform: scale(0.96); }
+    .game-card.rocket {
+      background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+    }
+    .game-card.pvp {
+      background: linear-gradient(145deg, #11998e, #38ef7d);
+    }
 
-    .card-icon { font-size: 34px; margin-top: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-    .card-title { font-size: 13px; font-weight: 800; text-align: center; }
+    .card-icon {
+      font-size: 40px;
+      margin-top: 8px;
+      filter: drop-shadow(0 4px 10px rgba(0, 242, 254, 0.4));
+    }
+    .card-title { font-size: 15px; font-weight: 800; text-align: center; }
 
-    /* Полноэкранные экраны игр */
     .game-screen {
       position: fixed;
       inset: 0;
@@ -154,13 +159,13 @@
 
     .game-screen.active { display: flex; }
 
-    /* Верхняя панель ракетки */
     .rocket-top-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      background: rgba(7, 9, 14, 0.8);
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(10px);
       position: absolute;
       top: 0;
       left: 0;
@@ -189,12 +194,11 @@
       border-radius: 14px;
     }
 
-    /* Арена полета Ракетки */
     .flight-arena {
       position: relative;
       width: 100%;
-      height: 340px;
-      background: radial-gradient(circle at 100% 50%, #202b3d 0%, #0d121c 60%, #07090e 100%);
+      height: 350px;
+      background: radial-gradient(circle at 100% 50%, #172233 0%, #0c121c 60%, #07090e 100%);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -202,21 +206,7 @@
       align-items: center;
     }
 
-    /* Планета на фоне */
-    .planet-bg {
-      position: absolute;
-      right: -130px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 250px;
-      height: 250px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #2a374f, #141b29 70%, #06080d);
-      box-shadow: inset -10px -10px 40px rgba(0,0,0,0.85), 0 0 50px rgba(32, 43, 61, 0.4);
-      pointer-events: none;
-    }
-
-    #rocketCanvas {
+    #threeCanvas {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -226,15 +216,28 @@
     .mult-display {
       position: relative;
       z-index: 5;
-      font-size: 46px;
+      font-size: 48px;
       font-weight: 900;
       letter-spacing: -1px;
       color: #fff;
       text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-      margin-bottom: 70px;
+      margin-bottom: 60px;
+      pointer-events: none;
     }
 
-    /* История коэффициентов */
+    .status-badge-overlay {
+      position: absolute;
+      top: 60px;
+      z-index: 6;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+
     .history-row {
       position: absolute;
       bottom: 12px;
@@ -262,7 +265,6 @@
     .history-tag.purple { background: rgba(138, 43, 226, 0.15); color: #b76eff; border-color: rgba(138, 43, 226, 0.3); }
     .history-tag.gold { background: rgba(245, 166, 35, 0.15); color: #f5a623; border-color: rgba(245, 166, 35, 0.3); }
 
-    /* Панель управления ставкой Ракетки */
     .bet-control-container {
       padding: 16px;
       display: flex;
@@ -277,26 +279,41 @@
       margin-bottom: 6px;
     }
 
-    .bet-value-row {
+    .bet-input-box {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 26px;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 6px 14px;
+      width: 100%;
+      max-width: 280px;
+      margin-bottom: 4px;
+    }
+
+    .bet-editable-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
       font-weight: 900;
-      margin-bottom: 2px;
+      width: 100%;
+      text-align: center;
+      outline: none;
     }
 
     .bet-usd {
       font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .quick-bet-bar {
       display: flex;
       gap: 8px;
       width: 100%;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .btn-quick {
@@ -310,21 +327,39 @@
       font-size: 13px;
       cursor: pointer;
     }
-
     .btn-quick:active { background: rgba(255, 255, 255, 0.1); }
 
-    .autocash-row {
+    .autocash-container {
       width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0 16px 0;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 600;
+      margin-bottom: 14px;
     }
 
-    /* Switch */
+    .autocash-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .autocash-val-input {
+      width: 60px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--accent-green);
+      font-weight: 800;
+      font-size: 13px;
+      text-align: center;
+      padding: 4px;
+      border-radius: 8px;
+      outline: none;
+    }
+
     .switch {
       position: relative;
       display: inline-block;
@@ -364,7 +399,45 @@
     }
     .btn-launch:active { transform: scale(0.98); }
 
-    /* Нижнее меню */
+    .pvp-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .pvp-box {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .pvp-card {
+      width: 110px;
+      height: 130px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 18px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .dice-rolling {
+      animation: diceShake 0.35s ease infinite alternate;
+    }
+
+    @keyframes diceShake {
+      0% { transform: rotate(-10deg) scale(1.05); }
+      100% { transform: rotate(10deg) scale(0.95); }
+    }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -391,25 +464,15 @@
       cursor: pointer;
     }
     .nav-item.active { color: var(--accent-green); }
-
-    /* Модалки других игр (NFT & PVP) */
-    .other-game-content {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Верхняя панель -->
   <div class="top-bar">
     <button class="btn-connect" onclick="alert('TON Wallet подключен!')">💎 Connect</button>
     <div class="badge-stars">⭐ <span id="balance-stars">1000</span></div>
   </div>
 
-  <!-- Промо-баннер -->
   <div class="promo-banner">
     <div class="promo-content">
       <h3>Вступайте в наш<br>чат общения</h3>
@@ -418,16 +481,11 @@
     <div style="font-size: 42px;">🥷</div>
   </div>
 
-  <!-- Раздел: Лучшие игры -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
-    <div class="game-card upgrader" onclick="openGame('upgrader')">
-      <div class="card-icon">🎁</div>
-      <div class="card-title">Апгрейдер</div>
-    </div>
     <div class="game-card rocket" onclick="openGame('rocket')">
-      <div class="card-icon">🚀</div>
-      <div class="card-title">Ракетка</div>
+      <div class="card-icon">🛸</div>
+      <div class="card-title">3D Ракетка</div>
     </div>
     <div class="game-card pvp" onclick="openGame('pvp')">
       <div class="card-icon">⚔️</div>
@@ -435,7 +493,6 @@
     </div>
   </div>
 
-  <!-- Нижняя панель навигации -->
   <div class="bottom-nav">
     <div class="nav-item active">
       <div style="font-size: 18px;">🏠</div>
@@ -455,7 +512,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН 1: РАКЕТКА (СТИЛЬ ИЗ РЕФЕРЕНСА С RTP 98%) -->
+  <!-- ЭКРАН: 3D РАКЕТКА -->
   <div class="game-screen" id="modal-rocket">
     <div class="rocket-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -463,13 +520,11 @@
       <div style="width: 24px;"></div>
     </div>
 
-    <!-- Арена с планетой и канвасом ракеты -->
     <div class="flight-arena">
-      <div class="planet-bg"></div>
-      <canvas id="rocketCanvas"></canvas>
-      <div class="mult-display" id="rocket-mult">2.02x</div>
+      <div id="threeCanvas"></div>
+      <div class="status-badge-overlay" id="rocketStateBadge">Ожидание ставок...</div>
+      <div class="mult-display" id="rocket-mult">1.00x</div>
 
-      <!-- Лента прошлых раундов -->
       <div class="history-row" id="historyRow">
         <span class="history-tag">🟢 2.02x</span>
         <span class="history-tag blue">5.34x</span>
@@ -480,59 +535,72 @@
       </div>
     </div>
 
-    <!-- Управление ставкой -->
     <div class="bet-control-container">
-      <div class="sub-label">Введите сумму следующей ставки</div>
-      <div class="bet-value-row">
-        <span>⭐</span>
-        <span id="betDisplayVal">10</span>
+      <div class="sub-label">Сумма ставки (введите или выберите)</div>
+      <div class="bet-input-box">
+        <span style="font-size: 22px;">⭐</span>
+        <input type="number" id="betInputVal" class="bet-editable-input" value="10" min="1" oninput="onBetInputChange()">
       </div>
       <div class="bet-usd" id="betDisplayUsd">≈ $0.15</div>
 
-      <!-- Быстрые кнопки -->
       <div class="quick-bet-bar">
         <button class="btn-quick" onclick="adjustBet(-10)">-10</button>
         <button class="btn-quick" onclick="adjustBet(50)">+50</button>
         <button class="btn-quick" onclick="adjustBet('MAX')">MAX</button>
       </div>
 
-      <!-- Автовывод -->
-      <div class="autocash-row">
-        <span>Автовывод (2.0x)</span>
+      <div class="autocash-container">
+        <div class="autocash-input-wrap">
+          <span style="font-size: 13px; color: var(--text-muted); font-weight: 700;">Автовывод на</span>
+          <input type="number" step="0.1" min="1.1" id="autoCashoutMult" class="autocash-val-input" value="2.0">
+          <span style="font-size: 13px; color: var(--text-muted); font-weight: 700;">x</span>
+        </div>
         <label class="switch">
           <input type="checkbox" id="autoCashoutToggle">
           <span class="slider"></span>
         </label>
       </div>
 
-      <!-- Главная кнопка старта / забора -->
-      <button class="btn-launch" id="rocketMainBtn" onclick="handleRocketAction()">
+      <button class="btn-launch" id="rocketMainBtn" onclick="handleRocketBtnClick()">
         ⭐ Сделать ставку
       </button>
     </div>
   </div>
 
-  <!-- ЭКРАН 2: АПГРЕЙДЕР (NFT) -->
-  <div class="game-screen" id="modal-upgrader">
-    <div class="other-game-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h2>🎁 NFT Апгрейдер</h2>
-        <button class="nav-back-btn" onclick="closeGame()">✕</button>
-      </div>
-      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Улучшайте NFT подарки с множителями до x10!</p>
-      <button class="btn-launch" onclick="alert('Режим апгрейда активен')">Прокачать подарок</button>
-    </div>
-  </div>
-
-  <!-- ЭКРАН 3: PVP ДУЭЛЬ -->
+  <!-- ЭКРАН: PVP ДУЭЛЬ -->
   <div class="game-screen" id="modal-pvp">
-    <div class="other-game-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h2>⚔️ PVP Дуэль</h2>
-        <button class="nav-back-btn" onclick="closeGame()">✕</button>
+    <div class="rocket-top-nav">
+      <button class="nav-back-btn" onclick="closeGame()">←</button>
+      <div class="app-brand">⚔️ PVP Duel</div>
+      <div style="width: 24px;"></div>
+    </div>
+
+    <div class="pvp-area">
+      <div class="pvp-box">
+        <div class="pvp-card" id="userCard">
+          <div style="font-size: 34px;">😎</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Вы</div>
+          <div id="pvp-user-val" style="font-size: 26px; font-weight: 900; color: #0088cc;">-</div>
+        </div>
+
+        <div style="font-size: 24px; font-weight: 900; color: var(--accent-red);">VS</div>
+
+        <div class="pvp-card" id="botCard">
+          <div style="font-size: 34px;">🤖</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Оппонент</div>
+          <div id="pvp-bot-val" style="font-size: 26px; font-weight: 900; color: var(--accent-red);">-</div>
+        </div>
       </div>
-      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Бросайте кости против реальных оппонентов в реальном времени.</p>
-      <button class="btn-launch" onclick="alert('Поиск соперника...')">Найти противника</button>
+
+      <div id="pvp-status" style="font-weight: 800; font-size: 15px; margin-bottom: 20px; color: var(--accent-gold); text-align: center;">
+        Бросьте кости против оппонента!
+      </div>
+
+      <div style="width: 100%; max-width: 320px;">
+        <button class="btn-launch" id="pvp-btn" onclick="playPvp()">
+          БРОСИТЬ КОСТИ (100 ⭐)
+        </button>
+      </div>
     </div>
   </div>
 
@@ -578,273 +646,358 @@
         screen.classList.add('active');
         if (tg) tg.BackButton.show();
         if (gameId === 'rocket') {
-          setTimeout(initRocketCanvas, 50);
+          setTimeout(initThreeScene, 50);
         }
       }
     }
 
     function closeGame() {
-      if (currentGame === 'rocket' && isFlying) return;
       document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
       currentGame = null;
       if (tg) tg.BackButton.hide();
     }
 
-    /* ---------------- ЛОГИКА СТАВОК И ИНТЕРФЕЙСА РАКЕТКИ ---------------- */
-    let currentBet = 10;
-    function updateBetUI() {
-      document.getElementById('betDisplayVal').innerText = currentBet;
-      document.getElementById('betDisplayUsd').innerText = `≈ $${(currentBet * 0.015).toFixed(2)}`;
+    /* ---------------- УПРАВЛЕНИЕ СТАВКОЙ ---------------- */
+    function onBetInputChange() {
+      const input = document.getElementById('betInputVal');
+      let val = parseInt(input.value) || 0;
+      document.getElementById('betDisplayUsd').innerText = `≈ $${(val * 0.015).toFixed(2)}`;
     }
 
-    function adjustBet(val) {
+    function adjustBet(delta) {
       haptic();
-      if (isFlying) return;
-      if (val === 'MAX') {
-        currentBet = Math.max(10, balance);
-      } else {
-        currentBet = Math.max(10, Math.min(balance, currentBet + val));
+      const input = document.getElementById('betInputVal');
+      let cur = parseInt(input.value) || 10;
+      if (delta === 'MAX') cur = Math.max(1, balance);
+      else cur = Math.max(1, cur + delta);
+      input.value = cur;
+      onBetInputChange();
+    }
+
+    /* ---------------- THREE.JS 3D СЦЕНА ---------------- */
+    let scene, camera, renderer, rocketGroup, planetMesh, flameMesh;
+    let threeInitialized = false;
+
+    function initThreeScene() {
+      const container = document.getElementById('threeCanvas');
+      if (threeInitialized) {
+        onWindowResize();
+        return;
       }
-      updateBetUI();
+      threeInitialized = true;
+
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+      camera.position.set(0, 0, 18);
+
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambLight);
+
+      const dirLight = new THREE.DirectionalLight(0x00f2fe, 1.8);
+      dirLight.position.set(10, 15, 10);
+      scene.add(dirLight);
+
+      const pointLight = new THREE.PointLight(0xff0055, 2, 50);
+      pointLight.position.set(-10, -10, 5);
+      scene.add(pointLight);
+
+      // Планета на заднем плане
+      const pGeo = new THREE.SphereGeometry(6, 32, 32);
+      const pMat = new THREE.MeshStandardMaterial({
+        color: 0x182436,
+        roughness: 0.8,
+        metalness: 0.1
+      });
+      planetMesh = new THREE.Mesh(pGeo, pMat);
+      planetMesh.position.set(10, -1, -8);
+      scene.add(planetMesh);
+
+      // 3D Модель Ракеты
+      rocketGroup = new THREE.Group();
+
+      // Носовой обтекатель (конус)
+      const noseGeo = new THREE.ConeGeometry(0.9, 1.8, 24);
+      const noseMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, metalness: 0.7, roughness: 0.2 });
+      const nose = new THREE.Mesh(noseGeo, noseMat);
+      nose.position.y = 1.9;
+      rocketGroup.add(nose);
+
+      // Основной корпус (цилиндр)
+      const bodyGeo = new THREE.CylinderGeometry(0.9, 0.8, 2.2, 24);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe0f7fa, metalness: 0.5, roughness: 0.3 });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = -0.1;
+      rocketGroup.add(body);
+
+      // Кабина / Фонарь (полусфера)
+      const glassGeo = new THREE.SphereGeometry(0.45, 16, 16);
+      const glassMat = new THREE.MeshStandardMaterial({ color: 0xffd166, metalness: 0.9, roughness: 0.1, emissive: 0xffa500, emissiveIntensity: 0.4 });
+      const glass = new THREE.Mesh(glassGeo, glassMat);
+      glass.position.set(0, 0.4, 0.75);
+      rocketGroup.add(glass);
+
+      // Крылья (4 плавника)
+      const wingGeo = new THREE.BoxGeometry(0.12, 1.2, 0.9);
+      const wingMat = new THREE.MeshStandardMaterial({ color: 0x9b51e0, metalness: 0.6, roughness: 0.3 });
+
+      const w1 = new THREE.Mesh(wingGeo, wingMat);
+      w1.position.set(1.1, -0.7, 0);
+      rocketGroup.add(w1);
+
+      const w2 = new THREE.Mesh(wingGeo, wingMat);
+      w2.position.set(-1.1, -0.7, 0);
+      rocketGroup.add(w2);
+
+      const w3 = new THREE.Mesh(wingGeo, wingMat);
+      w3.rotation.y = Math.PI / 2;
+      w3.position.set(0, -0.7, 1.1);
+      rocketGroup.add(w3);
+
+      const w4 = new THREE.Mesh(wingGeo, wingMat);
+      w4.rotation.y = Math.PI / 2;
+      w4.position.set(0, -0.7, -1.1);
+      rocketGroup.add(w4);
+
+      // Пламя реактивного двигателя (конус)
+      const flameGeo = new THREE.ConeGeometry(0.55, 1.8, 16);
+      const flameMat = new THREE.MeshBasicMaterial({ color: 0xff7b00 });
+      flameMesh = new THREE.Mesh(flameGeo, flameMat);
+      flameMesh.position.y = -2.1;
+      flameMesh.rotation.x = Math.PI;
+      rocketGroup.add(flameMesh);
+
+      // Начальный наклон ракеты в сторону полета
+      rocketGroup.rotation.z = -Math.PI / 3.8;
+      scene.add(rocketGroup);
+
+      window.addEventListener('resize', onWindowResize);
+      animateThree();
     }
 
-    /* ---------------- ОТРИСОВКА ИГРЫ «РАКЕТКА» (CANVAS 2D) ---------------- */
-    const canvas = document.getElementById('rocketCanvas');
-    const ctx = canvas.getContext('2d');
-    let isFlying = false;
-    let flightProgress = 0;
-    let currentMult = 1.00;
+    function onWindowResize() {
+      if (!renderer || !camera) return;
+      const container = document.getElementById('threeCanvas');
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+
+      if (planetMesh) planetMesh.rotation.y += 0.002;
+
+      if (rocketGroup) {
+        // Постоянное 3D вращение вокруг собственной продольной оси
+        rocketGroup.rotation.y += 0.045;
+
+        // Покачивание и динамика пламени
+        if (flightPhase === 'flying') {
+          flameMesh.visible = true;
+          flameMesh.scale.set(
+            1 + Math.random() * 0.35,
+            1 + Math.random() * 0.6,
+            1 + Math.random() * 0.35
+          );
+          rocketGroup.position.y = Math.sin(Date.now() * 0.005) * 0.25;
+        } else {
+          flameMesh.visible = false;
+          rocketGroup.position.y = 0;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    /* ---------------- ИГРОВОЙ АВТО-ЦИКЛ РАКЕТКИ ---------------- */
+    let flightPhase = 'waiting'; // 'waiting', 'flying', 'crashed'
+    let waitSeconds = 5;
+    let currentMultiplier = 1.00;
     let crashTarget = 1.00;
-    let animFrame = null;
-    let exhaustParticles = [];
 
-    function initRocketCanvas() {
-      const arena = document.querySelector('.flight-arena');
-      canvas.width = arena.clientWidth;
-      canvas.height = arena.clientHeight;
-      drawRocketScene(0.45, 2.02, false);
-    }
-    window.addEventListener('resize', initRocketCanvas);
+    let userBetPlaced = false;      // Ставка в текущем полете
+    let userQueuedBet = false;      // Ставка поставлена в очередь на следующий полет
+    let activeBetAmount = 0;
+    let queuedBetAmount = 0;
 
-    // Математический генератор точки краша с RTP 98%
-    function getFair98CrashPoint() {
-      if (Math.random() < 0.02) return 1.00; // 2% мгновенный краш
+    function getFairCrashPoint() {
+      if (Math.random() < 0.02) return 1.00;
       const u = Math.random();
       const mult = 0.98 / (1 - u);
       return Math.max(1.01, Math.min(100.0, parseFloat(mult.toFixed(2))));
     }
 
-    // Отрисовка перекрашенной футуристичной ракеты (Cyan/Purple/Gold)
-    function drawFuturisticRocket(x, y, angle) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-
-      // Пламя из сопла (градиентный конус)
-      if (isFlying) {
-        ctx.beginPath();
-        ctx.moveTo(-28, -5);
-        ctx.lineTo(-55 - Math.random() * 18, 0);
-        ctx.lineTo(-28, 5);
-        ctx.fillStyle = Math.random() > 0.4 ? '#ff9e00' : '#ff0055';
-        ctx.shadowColor = '#ff5400';
-        ctx.shadowBlur = 15;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-
-      // Корпус ракеты (Неоновый бирюзовый + металлик)
-      ctx.beginPath();
-      ctx.moveTo(32, 0); // Носовой обтекатель
-      ctx.quadraticCurveTo(10, -14, -24, -10);
-      ctx.lineTo(-26, 10);
-      ctx.quadraticCurveTo(10, 14, 32, 0);
-      ctx.fillStyle = '#00f2fe';
-      ctx.fill();
-
-      // Верхняя полированная грань (бело-голубой блик)
-      ctx.beginPath();
-      ctx.moveTo(32, 0);
-      ctx.quadraticCurveTo(8, -12, -22, -8);
-      ctx.lineTo(-22, -2);
-      ctx.quadraticCurveTo(8, -5, 32, 0);
-      ctx.fillStyle = '#e0f7fa';
-      ctx.fill();
-
-      // Киберпанк крылья (Фиолетовые)
-      ctx.beginPath();
-      ctx.moveTo(-8, -10);
-      ctx.lineTo(-22, -22);
-      ctx.lineTo(-26, -9);
-      ctx.fillStyle = '#9b51e0';
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(-8, 10);
-      ctx.lineTo(-22, 22);
-      ctx.lineTo(-26, 9);
-      ctx.fillStyle = '#7928ca';
-      ctx.fill();
-
-      // Золотой купольный фонарь (кокпит)
-      ctx.beginPath();
-      ctx.arc(6, -2, 6, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffd166';
-      ctx.shadowColor = '#ffd166';
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      ctx.restore();
-    }
-
-    function drawRocketScene(progress, mult, crashed) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Неоновая сетка координат (как на скриншоте)
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 45) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 45) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-      }
-
-      // Траектория полёта
-      const startX = 40;
-      const startY = canvas.height - 40;
-      const targetX = startX + (canvas.width - 120) * Math.min(progress, 1);
-      const targetY = startY - (canvas.height - 110) * Math.pow(Math.min(progress, 1), 0.85);
-
-      if (progress > 0) {
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.quadraticCurveTo(startX + (targetX - startX) * 0.4, startY, targetX, targetY);
-        ctx.strokeStyle = crashed ? "rgba(255, 51, 102, 0.5)" : "rgba(0, 242, 254, 0.4)";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      }
-
-      // Частицы плазменного шлейфа
-      exhaustParticles.forEach((p, idx) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= 0.025;
-        if (p.alpha <= 0) exhaustParticles.splice(idx, 1);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(0, p.alpha);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      ctx.globalAlpha = 1.0;
-
-      if (!crashed) {
-        const angle = -Math.PI / 6.5; // Наклон носа вверх
-        drawFuturisticRocket(targetX, targetY, angle);
-
-        // Генерация шлейфа во время полета
-        if (isFlying && Math.random() > 0.3) {
-          exhaustParticles.push({
-            x: targetX - 25,
-            y: targetY + 10,
-            vx: -Math.random() * 3 - 2,
-            vy: Math.random() * 2 - 1,
-            size: Math.random() * 3 + 2,
-            alpha: 1,
-            color: Math.random() > 0.5 ? '#00f2fe' : '#9b51e0'
-          });
+    function updateMainBtnUI() {
+      const btn = document.getElementById('rocketMainBtn');
+      if (flightPhase === 'waiting') {
+        if (userBetPlaced) {
+          btn.innerText = `✅ СТАВКА ПРИНЯТА (${activeBetAmount} ⭐)`;
+          btn.style.background = "rgba(0, 255, 135, 0.2)";
+          btn.style.color = "var(--accent-green)";
+        } else {
+          btn.innerText = `⭐ Сделать ставку (${waitSeconds}с)`;
+          btn.style.background = "var(--accent-green)";
+          btn.style.color = "#05140b";
+        }
+      } else if (flightPhase === 'flying') {
+        if (userBetPlaced) {
+          btn.innerText = `⭐ ЗАБРАТЬ (${Math.floor(activeBetAmount * currentMultiplier)} ⭐)`;
+          btn.style.background = "#00f2fe";
+          btn.style.color = "#000";
+        } else if (userQueuedBet) {
+          btn.innerText = `В ОЧЕРЕДИ НА СЛЕД. РАУНД (${queuedBetAmount} ⭐)`;
+          btn.style.background = "rgba(245, 166, 35, 0.2)";
+          btn.style.color = "var(--accent-gold)";
+        } else {
+          btn.innerText = `⭐ Поставить на след. раунд`;
+          btn.style.background = "var(--accent-gold)";
+          btn.style.color = "#05140b";
+        }
+      } else if (flightPhase === 'crashed') {
+        if (userQueuedBet) {
+          btn.innerText = `В ОЧЕРЕДИ НА СЛЕД. РАУНД (${queuedBetAmount} ⭐)`;
+          btn.style.background = "rgba(245, 166, 35, 0.2)";
+          btn.style.color = "var(--accent-gold)";
+        } else {
+          btn.innerText = `⭐ Сделать ставку на след. раунд`;
+          btn.style.background = "var(--accent-green)";
+          btn.style.color = "#05140b";
         }
       }
     }
 
-    /* ---------------- ИГРОВОЙ ЦИКЛ РАКЕТКИ ---------------- */
-    function handleRocketAction() {
-      const btn = document.getElementById('rocketMainBtn');
+    function handleRocketBtnClick() {
+      haptic();
+      const input = document.getElementById('betInputVal');
+      const betVal = parseInt(input.value) || 10;
 
-      if (!isFlying) {
-        // СТАВКА
-        if (currentBet > balance) {
+      if (flightPhase === 'waiting') {
+        if (userBetPlaced) return;
+        if (betVal > balance) {
           alert("Недостаточно звёзд!");
           return;
         }
-
-        balance -= currentBet;
+        balance -= betVal;
         updateBalance();
-        haptic();
-
-        isFlying = true;
-        flightProgress = 0;
-        currentMult = 1.00;
-        crashTarget = getFair98CrashPoint();
-
-        btn.innerText = "⭐ ЗАБРАТЬ";
-        btn.style.background = "#00f2fe";
-        btn.style.color = "#000";
-        document.getElementById('rocket-mult').style.color = "#fff";
-
-        function step() {
-          flightProgress += 0.0035;
-          currentMult = parseFloat((currentMult + 0.012 * (1 + flightProgress * 2)).toFixed(2));
-          document.getElementById('rocket-mult').innerText = currentMult.toFixed(2) + "x";
-
-          // Автовывод (2.0x)
-          const autoCash = document.getElementById('autoCashoutToggle').checked;
-          if (autoCash && currentMult >= 2.00) {
-            cashOut();
+        userBetPlaced = true;
+        activeBetAmount = betVal;
+        playBeep("C5");
+        updateMainBtnUI();
+      } else if (flightPhase === 'flying') {
+        if (userBetPlaced) {
+          // Забрать выигрыш
+          const win = Math.floor(activeBetAmount * currentMultiplier);
+          balance += win;
+          updateBalance();
+          userBetPlaced = false;
+          confetti({ particleCount: 75, spread: 60 });
+          playBeep("G5");
+          updateMainBtnUI();
+        } else {
+          // Встать в очередь на след. раунд
+          if (userQueuedBet) return;
+          if (betVal > balance) {
+            alert("Недостаточно звёзд!");
             return;
           }
-
-          if (currentMult >= crashTarget) {
-            // КРАШ
-            isFlying = false;
-            drawRocketScene(flightProgress, currentMult, true);
-            document.getElementById('rocket-mult').style.color = "var(--accent-red)";
-            document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
-
-            // Добавление в историю
-            addHistoryTag(crashTarget.toFixed(2));
-
-            btn.innerText = "⭐ Сделать ставку";
-            btn.style.background = "var(--accent-green)";
-            btn.style.color = "#05140b";
-            playBeep("A3");
-            return;
-          }
-
-          drawRocketScene(flightProgress, currentMult, false);
-          animFrame = requestAnimationFrame(step);
+          balance -= betVal;
+          updateBalance();
+          userQueuedBet = true;
+          queuedBetAmount = betVal;
+          playBeep("D5");
+          updateMainBtnUI();
         }
-
-        animFrame = requestAnimationFrame(step);
-
-      } else {
-        // ЗАБРАТЬ ВЫИГРЫШ
-        cashOut();
+      } else if (flightPhase === 'crashed') {
+        if (userQueuedBet) return;
+        if (betVal > balance) {
+          alert("Недостаточно звёзд!");
+          return;
+        }
+        balance -= betVal;
+        updateBalance();
+        userQueuedBet = true;
+        queuedBetAmount = betVal;
+        playBeep("D5");
+        updateMainBtnUI();
       }
     }
 
-    function cashOut() {
-      if (!isFlying) return;
-      cancelAnimationFrame(animFrame);
-      isFlying = false;
+    // Запуск бесконечного цикла раундов
+    function startWaitingPhase() {
+      flightPhase = 'waiting';
+      waitSeconds = 5;
+      currentMultiplier = 1.00;
+      document.getElementById('rocket-mult').innerText = "1.00x";
+      document.getElementById('rocket-mult').style.color = "#fff";
 
-      const winAmount = Math.floor(currentBet * currentMult);
-      balance += winAmount;
-      updateBalance();
-      haptic();
+      // Если была ставка в очереди — переносим в активную
+      if (userQueuedBet) {
+        userBetPlaced = true;
+        activeBetAmount = queuedBetAmount;
+        userQueuedBet = false;
+        queuedBetAmount = 0;
+      }
 
-      addHistoryTag(currentMult.toFixed(2));
+      updateMainBtnUI();
 
-      document.getElementById('rocket-mult').style.color = "var(--accent-green)";
-      confetti({ particleCount: 75, spread: 60 });
-      playBeep("G5");
+      const waitTimer = setInterval(() => {
+        document.getElementById('rocketStateBadge').innerText = `Взлёт через ${waitSeconds}с...`;
+        updateMainBtnUI();
+        waitSeconds--;
+        if (waitSeconds < 0) {
+          clearInterval(waitTimer);
+          startFlightPhase();
+        }
+      }, 1000);
+    }
 
-      const btn = document.getElementById('rocketMainBtn');
-      btn.innerText = "⭐ Сделать ставку";
-      btn.style.background = "var(--accent-green)";
-      btn.style.color = "#05140b";
+    function startFlightPhase() {
+      flightPhase = 'flying';
+      crashTarget = getFairCrashPoint();
+      currentMultiplier = 1.00;
+      document.getElementById('rocketStateBadge').innerText = "Ракета в полёте";
+      updateMainBtnUI();
+
+      const flightInterval = setInterval(() => {
+        currentMultiplier = parseFloat((currentMultiplier + 0.02 * (1 + currentMultiplier * 0.3)).toFixed(2));
+        document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
+
+        // Проверка автовывода
+        const autoEnabled = document.getElementById('autoCashoutToggle').checked;
+        const autoTarget = parseFloat(document.getElementById('autoCashoutMult').value) || 2.0;
+        if (autoEnabled && userBetPlaced && currentMultiplier >= autoTarget) {
+          const win = Math.floor(activeBetAmount * currentMultiplier);
+          balance += win;
+          updateBalance();
+          userBetPlaced = false;
+          confetti({ particleCount: 70, spread: 60 });
+          playBeep("G5");
+        }
+
+        updateMainBtnUI();
+
+        if (currentMultiplier >= crashTarget) {
+          clearInterval(flightInterval);
+          flightPhase = 'crashed';
+          userBetPlaced = false; // не успел забрать
+          document.getElementById('rocket-mult').style.color = "var(--accent-red)";
+          document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
+          document.getElementById('rocketStateBadge').innerText = `КРАШ НА ${crashTarget.toFixed(2)}x`;
+          addHistoryTag(crashTarget.toFixed(2));
+          playBeep("A3");
+          updateMainBtnUI();
+
+          setTimeout(startWaitingPhase, 2500);
+        }
+      }, 75);
     }
 
     function addHistoryTag(val) {
@@ -855,6 +1008,77 @@
       else if (val >= 5) tag.className += ' blue';
       tag.innerText = val + "x";
       row.insertBefore(tag, row.firstChild);
+    }
+
+    // Старт непрерывного цикла при открытии
+    startWaitingPhase();
+
+    /* ---------------- PVP ДУЭЛЬ ---------------- */
+    async function playPvp() {
+      const bet = 100;
+      if (bet > balance) {
+        alert("Недостаточно звёзд для дуэли!");
+        return;
+      }
+
+      balance -= bet;
+      updateBalance();
+      haptic();
+
+      const btn = document.getElementById('pvp-btn');
+      const uCard = document.getElementById('userCard');
+      const bCard = document.getElementById('botCard');
+      const uVal = document.getElementById('pvp-user-val');
+      const bVal = document.getElementById('pvp-bot-val');
+      const status = document.getElementById('pvp-status');
+
+      btn.disabled = true;
+      uCard.classList.add('dice-rolling');
+      bCard.classList.add('dice-rolling');
+      status.innerText = "Бросок костей...";
+
+      let rollTicks = 0;
+      const rollInterval = setInterval(() => {
+        uVal.innerText = Math.floor(Math.random() * 99) + 1;
+        bVal.innerText = Math.floor(Math.random() * 99) + 1;
+        playBeep("C5");
+        if (++rollTicks > 12) clearInterval(rollInterval);
+      }, 70);
+
+      await new Promise(r => setTimeout(r, 1100));
+
+      uCard.classList.remove('dice-rolling');
+      bCard.classList.remove('dice-rolling');
+
+      const isWin = Math.random() < 0.49;
+      let finalUser, finalBot;
+
+      if (isWin) {
+        finalUser = Math.floor(Math.random() * 40) + 60;
+        finalBot = Math.floor(Math.random() * 50) + 10;
+        if (finalBot >= finalUser) finalBot = finalUser - 5;
+      } else {
+        finalBot = Math.floor(Math.random() * 40) + 60;
+        finalUser = Math.floor(Math.random() * 50) + 10;
+        if (finalUser >= finalBot) finalUser = finalBot - 5;
+      }
+
+      uVal.innerText = finalUser;
+      bVal.innerText = finalBot;
+
+      if (finalUser > finalBot) {
+        const win = Math.floor(bet * 2);
+        balance += win;
+        updateBalance();
+        status.innerHTML = `<span style="color:#00ff87; font-weight:800;">ПОБЕДА! Забрали банк +${win} ⭐</span>`;
+        confetti({ particleCount: 70, spread: 60 });
+        playBeep("G5");
+      } else {
+        status.innerHTML = `<span style="color:var(--accent-red); font-weight:800;">ПОРАЖЕНИЕ! Оппонент победил.</span>`;
+        playBeep("A3");
+      }
+
+      btn.disabled = false;
     }
   </script>
 </body>
