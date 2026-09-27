@@ -551,7 +551,7 @@
     .player-growing { color: var(--accent-cyan); font-weight: 800; }
     .player-burned { color: var(--accent-red); font-weight: 900; }
 
-    /* МОДАЛЬНОЕ ОКНО КАССЫ (ДЕПОЗИТ И ВЫВОД В STARS) */
+    /* МОДАЛЬНОЕ ОКНО КАССЫ */
     .cashier-modal {
       position: fixed;
       inset: 0;
@@ -866,7 +866,7 @@
         </div>
 
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Сумма для вывода:</div>
-        <input type="number" id="withdrawInput" class="bet-input-field" style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; margin-bottom:6px;" value="100" min="50" step="10" oninput="calcWithdrawalFee()">
+        <input type="number" id="withdrawInput" class="bet-input-field" style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; margin-bottom:6px;" value="100" min="10" step="10" oninput="calcWithdrawalFee()">
         
         <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;" id="withdrawFeeText">
           Комиссия платформы (15%): -15 ⭐ | К получению: <b>85 ⭐</b>
@@ -930,7 +930,6 @@
       </div>
     </div>
 
-    <!-- ВЕРТИКАЛЬНЫЕ ПАНЕЛИ СТАВОК (ОДНА ПОД ОДНОЙ) -->
     <div class="vertical-bet-container">
       <!-- СТАВКА 1 -->
       <div class="bet-card-row" id="panel1">
@@ -1101,7 +1100,6 @@
   </div>
 
   <script>
-    // АКТИВНЫЙ БЭКЕНД РАЗВЕРНУТЫЙ НА RAILWAY
     const BACKEND_URL = 'https://tma-backend-production-d65d.up.railway.app';
 
     const tg = window.Telegram?.WebApp;
@@ -1123,7 +1121,7 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
-    /* ---------------- БАЛАНС И ВЕЙДЖЕР (100% ОТЫГРЫШ ДЕПА) ---------------- */
+    /* ---------------- БАЛАНС И ВЕЙДЖЕР ---------------- */
     let balance = parseInt(localStorage.getItem('rg_stars_balance'));
     if (isNaN(balance) || balance < 0) balance = 1000;
 
@@ -1171,7 +1169,6 @@
     }
     updateBalance();
 
-    // Синхронизация данных с сервера Railway
     async function syncUserDataWithServer() {
       const userId = tg?.initDataUnsafe?.user?.id;
       if (!userId) return;
@@ -1233,17 +1230,16 @@
       document.getElementById('customDepInput').value = amount;
     }
 
-    // Инициализация РЕАЛЬНОГО платежа в Telegram Stars через бэкенд
     async function initiateStarsPayment() {
       const amount = parseInt(document.getElementById('customDepInput').value) || 0;
-      if (amount < 10) {
-        alert("Минимальная сумма пополнения — 10 ⭐");
+      if (amount < 1) {
+        alert("Минимальная сумма пополнения — 1 ⭐");
         return;
       }
 
       const userId = tg?.initDataUnsafe?.user?.id;
       if (!userId) {
-        alert("Откройте игру через Telegram бота для проведения реального платежа!");
+        alert("Откройте игру через Telegram бота для проведения платежа!");
         return;
       }
 
@@ -1262,7 +1258,7 @@
 
         const data = await res.json();
 
-        if (data.invoiceLink && tg.openInvoice) {
+        if (data.invoiceLink && tg?.openInvoice) {
           tg.openInvoice(data.invoiceLink, async (status) => {
             if (status === 'paid') {
               balance += amount;
@@ -1284,11 +1280,11 @@
             }
           });
         } else {
-          alert("Ошибка создания ссылки на оплату Stars.");
+          alert("Ошибка Telegram API: " + (data.details || data.error || JSON.stringify(data)));
         }
       } catch (err) {
         console.error(err);
-        alert("Ошибка соединения с платёжным сервером Railway.");
+        alert("Ошибка сети при обращении к серверу: " + err.message);
       } finally {
         depBtn.innerText = originalText;
         depBtn.disabled = false;
@@ -1297,7 +1293,7 @@
 
     function calcWithdrawalFee() {
       const val = parseInt(document.getElementById('withdrawInput').value) || 0;
-      const fee = Math.floor(val * 0.15); // 15% комиссия TG / платформы
+      const fee = Math.floor(val * 0.15);
       const toReceive = Math.max(0, val - fee);
       document.getElementById('withdrawFeeText').innerHTML = 
         `Комиссия платформы (15%): -${fee} ⭐ | К получению: <b>${toReceive} ⭐</b>`;
@@ -1305,7 +1301,11 @@
 
     async function submitWithdrawalRequest() {
       const val = parseInt(document.getElementById('withdrawInput').value) || 0;
-      if (val <= 0 || val > balance) {
+      if (val < 10) {
+        alert("Минимальная сумма вывода — 10 ⭐");
+        return;
+      }
+      if (val > balance) {
         alert("Недостаточно звёзд на балансе!");
         return;
       }
@@ -1315,17 +1315,38 @@
       }
 
       const userId = tg?.initDataUnsafe?.user?.id;
-      const fee = Math.floor(val * 0.15);
-      const toReceive = val - fee;
+      const username = tg?.initDataUnsafe?.user?.username || '';
+      const btnW = document.getElementById('btnRequestWithdraw');
+      const originalText = btnW.innerText;
 
-      haptic();
-      playBeep("C5");
+      btnW.innerText = "⏳ Обработка...";
+      btnW.disabled = true;
 
-      balance -= val;
-      updateBalance();
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/withdraw`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, amount: val, username })
+        });
 
-      alert(`Заявка на вывод ${toReceive} ⭐ (с учетом комиссии 15%) успешно создана и передана на выплату!`);
-      closeCashierModal();
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          balance = data.newBalance;
+          updateBalance();
+          haptic();
+          playBeep("G5");
+          alert(`✅ Заявка на вывод ${data.toPayout} ⭐ успешно оформлена! Ожидайте выплаты от администратора.`);
+          closeCashierModal();
+        } else {
+          alert("Ошибка вывода: " + (data.error || "Неизвестная ошибка"));
+        }
+      } catch (err) {
+        alert("Ошибка сети при отправке заявки: " + err.message);
+      } finally {
+        btnW.innerText = originalText;
+        btnW.disabled = false;
+      }
     }
 
     /* ---------------- ИГРЫ И НАВИГАЦИЯ ---------------- */
