@@ -12,15 +12,14 @@
 
   <style>
     :root {
-      --bg-space: #06080e;
-      --card-bg: #0f1420;
-      --panel-glow: rgba(0, 242, 254, 0.15);
+      --bg-space: #05070d;
+      --card-bg: #0c111c;
       --accent-green: #00ff87;
       --accent-cyan: #00f2fe;
       --accent-purple: #8a2be2;
       --accent-gold: #ffd166;
       --accent-red: #ff3366;
-      --text-muted: #7e8b9f;
+      --text-muted: #748296;
       --border-color: rgba(255, 255, 255, 0.08);
     }
 
@@ -44,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* Верхняя панель */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -102,7 +100,6 @@
       gap: 5px;
     }
 
-    /* Баннер */
     .promo-banner {
       margin: 0 16px 18px 16px;
       background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
@@ -202,7 +199,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      background: rgba(6, 8, 14, 0.9);
+      background: rgba(5, 7, 13, 0.92);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
@@ -238,15 +235,15 @@
     .flight-arena {
       position: relative;
       width: 100%;
-      height: 310px;
-      min-height: 310px;
-      background: radial-gradient(circle at 80% 40%, #1a2842 0%, #0d1524 60%, #06080e 100%);
+      height: 300px;
+      min-height: 300px;
+      background: radial-gradient(circle at 75% 35%, #18253d 0%, #0c1422 60%, #05070d 100%);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 242, 254, 0.12);
+      border-bottom: 1px solid rgba(0, 242, 254, 0.15);
     }
 
     #threeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -254,28 +251,71 @@
     .mult-display {
       position: relative;
       z-index: 5;
-      font-size: 52px;
+      font-size: 54px;
       font-weight: 900;
       letter-spacing: -1.5px;
       color: #fff;
-      text-shadow: 0 4px 25px rgba(0,0,0,0.9), 0 0 30px rgba(0, 242, 254, 0.3);
-      margin-bottom: 30px;
+      text-shadow: 0 4px 25px rgba(0,0,0,0.9), 0 0 35px rgba(0, 242, 254, 0.35);
+      margin-bottom: 25px;
       pointer-events: none;
     }
 
-    .status-badge-overlay {
+    /* КРУГОВОЙ АНИМИРОВАННЫЙ ТАЙМЕР */
+    .timer-overlay {
       position: absolute;
-      top: 12px;
-      z-index: 6;
-      background: rgba(15, 20, 32, 0.85);
-      border: 1px solid rgba(0, 242, 254, 0.3);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      padding: 5px 16px;
-      font-size: 12px;
+      z-index: 8;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-svg-box {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 7;
+    }
+
+    .timer-circle-bar {
+      fill: none;
+      stroke: var(--accent-cyan);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 0;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      filter: drop-shadow(0 0 8px var(--accent-cyan));
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .timer-val-text {
+      position: absolute;
+      font-size: 34px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(0, 242, 254, 0.7);
+    }
+
+    .timer-sub-tag {
+      font-size: 11px;
       font-weight: 800;
       color: var(--accent-gold);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+      background: rgba(0,0,0,0.6);
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 209, 102, 0.3);
     }
 
     .history-row {
@@ -305,33 +345,40 @@
     .history-tag.purple { background: rgba(138, 43, 226, 0.15); color: #b76eff; border-color: rgba(138, 43, 226, 0.3); }
     .history-tag.gold { background: rgba(255, 209, 102, 0.2); color: #ffd166; border-color: rgba(255, 209, 102, 0.4); box-shadow: 0 0 8px rgba(255, 209, 102, 0.3); }
 
-    /* ДВЕ ПАНЕЛИ СТАВОК */
-    .dual-bet-wrapper {
+    /* ВЕРТИКАЛЬНЫЙ СТЕК ПАНЕЛЕЙ СТАВОК (ОДНА ПОД ОДНОЙ) */
+    .vertical-bet-container {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
       padding: 12px;
       width: 100%;
     }
 
-    .bet-panel {
-      flex: 1;
+    .bet-card-row {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 10px;
+      padding: 10px 12px;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    .panel-header-row {
+    .bet-left-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1.2;
+    }
+
+    .bet-tag-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .panel-tag {
+    .bet-panel-title {
       font-size: 11px;
       font-weight: 800;
       color: var(--accent-cyan);
@@ -339,16 +386,16 @@
       letter-spacing: 0.5px;
     }
 
-    .bet-input-box-mini {
+    .bet-input-container {
       display: flex;
       align-items: center;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 6px 8px;
+      border-radius: 10px;
+      padding: 4px 8px;
     }
 
-    .bet-editable-input-mini {
+    .bet-input-field {
       background: transparent;
       border: none;
       color: #fff;
@@ -359,70 +406,78 @@
       outline: none;
     }
 
-    .quick-bar-mini {
+    .bet-steppers-bar {
       display: flex;
-      gap: 5px;
+      gap: 4px;
     }
 
-    .btn-quick-mini {
+    .btn-step-mini {
       flex: 1;
-      padding: 5px 0;
-      border-radius: 8px;
+      padding: 4px 0;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
       background: rgba(255, 255, 255, 0.04);
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       cursor: pointer;
     }
+    .btn-step-mini:active { background: rgba(255, 255, 255, 0.1); }
 
-    .autocash-mini {
+    .bet-right-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .autocash-toggle-wrap {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 5px 8px;
+      border-radius: 8px;
+      padding: 4px 6px;
     }
 
-    .autocash-val-mini {
-      width: 48px;
+    .autocash-field {
+      width: 44px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-color);
       color: var(--accent-green);
       font-weight: 900;
       font-size: 12px;
       text-align: center;
-      padding: 3px;
+      padding: 2px;
       border-radius: 6px;
       outline: none;
     }
 
-    .switch-mini {
+    .switch-v {
       position: relative;
       display: inline-block;
-      width: 34px;
-      height: 20px;
+      width: 32px;
+      height: 18px;
     }
-    .switch-mini input { opacity: 0; width: 0; height: 0; }
-    .slider-mini {
+    .switch-v input { opacity: 0; width: 0; height: 0; }
+    .slider-v {
       position: absolute; cursor: pointer; inset: 0;
       background-color: rgba(255, 255, 255, 0.15);
-      transition: .25s; border-radius: 20px;
+      transition: .25s; border-radius: 18px;
     }
-    .slider-mini:before {
+    .slider-v:before {
       position: absolute; content: ""; height: 14px; width: 14px;
-      left: 3px; bottom: 3px; background-color: white;
+      left: 2px; bottom: 2px; background-color: white;
       transition: .25s; border-radius: 50%;
     }
-    input:checked + .slider-mini { background-color: var(--accent-green); }
-    input:checked + .slider-mini:before { transform: translateX(14px); }
+    input:checked + .slider-v { background-color: var(--accent-green); }
+    input:checked + .slider-v:before { transform: translateX(14px); }
 
-    .btn-panel-action {
+    .btn-bet-execute {
       width: 100%;
-      padding: 12px 6px;
-      border-radius: 12px;
+      padding: 10px 4px;
+      border-radius: 10px;
       border: none;
       font-size: 13px;
       font-weight: 900;
@@ -430,17 +485,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       background: var(--accent-green);
       color: #05140b;
-      box-shadow: 0 4px 15px rgba(0, 255, 135, 0.25);
+      box-shadow: 0 4px 14px rgba(0, 255, 135, 0.25);
       transition: all 0.15s;
     }
-    .btn-panel-action:active { transform: scale(0.97); }
+    .btn-bet-execute:active { transform: scale(0.97); }
 
-    /* МЕНЮ СТАВОК ИГРОКОВ (БОТЫ И ХАЙРОЛЛЕРЫ) */
+    /* МЕНЮ СТАВОК И БОТОВ */
     .players-container {
-      margin: 4px 12px 20px 12px;
+      margin: 2px 12px 20px 12px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
@@ -463,7 +518,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 180px;
+      max-height: 190px;
       overflow-y: auto;
     }
 
@@ -473,9 +528,15 @@
       align-items: center;
       font-size: 11px;
       font-weight: 700;
-      padding: 5px 8px;
+      padding: 6px 8px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.02);
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .player-row.crashed-loss {
+      background: rgba(255, 51, 102, 0.15);
+      border: 1px solid rgba(255, 51, 102, 0.35);
     }
 
     .player-name {
@@ -490,7 +551,15 @@
       font-weight: 900;
     }
 
-    /* МОДАЛЬНОЕ ОКНО: КОЛЕСО ФОРТУНЫ */
+    .player-burned {
+      color: var(--accent-red);
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* МОДАЛЬНОЕ ОКНО КОЛЕСА ФОРТУНЫ */
     .wheel-modal {
       position: fixed;
       inset: 0;
@@ -835,7 +904,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО КОЛЕСА ФОРТУНЫ -->
+  <!-- МОДАЛЬНОЕ ОКНО: КОЛЕСО ФОРТУНЫ -->
   <div class="wheel-modal" id="wheelModal">
     <div class="wheel-card">
       <button class="wheel-close-btn" onclick="closeWheelModal()">✕</button>
@@ -852,7 +921,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН CRUSH: 3D, ДВЕ СТАВКИ, ВЫСОКИЕ БОТЫ (БЕЗ БОНУСА НА ЭКРАНЕ) -->
+  <!-- ЭКРАН CRUSH: 3D-РАКЕТА, АНИМИРОВАННЫЙ ТАЙМЕР, СТАВКИ ОДНА ПОД ОДНОЙ, СГОРЕВШИЕ БОТЫ -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -862,7 +931,19 @@
 
     <div class="flight-arena">
       <div id="threeCanvas"></div>
-      <div class="status-badge-overlay" id="rocketStateBadge">Ожидание ставок...</div>
+
+      <!-- НЕОНОВЫЙ КРУГОВОЙ ТАЙМЕР ОЖИДАНИЯ -->
+      <div class="timer-overlay" id="timerOverlay">
+        <div class="timer-svg-box">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle class="timer-circle-bg" cx="50" cy="50" r="45"></circle>
+            <circle class="timer-circle-bar" id="timerSvgBar" cx="50" cy="50" r="45"></circle>
+          </svg>
+          <div class="timer-val-text" id="timerText">5</div>
+        </div>
+        <div class="timer-sub-tag">СТАРТ РАУНДА</div>
+      </div>
+
       <div class="mult-display" id="rocket-mult">1.00x</div>
 
       <div class="history-row" id="historyRow">
@@ -875,74 +956,84 @@
       </div>
     </div>
 
-    <!-- ДВЕ СТАВКИ ОДНОВРЕМЕННО -->
-    <div class="dual-bet-wrapper">
-      <!-- ПАНЕЛЬ 1 -->
-      <div class="bet-panel" id="panel1">
-        <div class="panel-header-row">
-          <span class="panel-tag">Ставка 1</span>
-        </div>
-        <div class="bet-input-box-mini">
-          <span style="font-size: 14px;">⭐</span>
-          <input type="number" id="p1_bet" class="bet-editable-input-mini" value="10" step="10" min="10" onchange="validateBetInput(1)">
-        </div>
-        <div class="quick-bar-mini">
-          <button class="btn-quick-mini" onclick="quickStep(1, -10)">-10</button>
-          <button class="btn-quick-mini" onclick="quickStep(1, 10)">+10</button>
-          <button class="btn-quick-mini" onclick="quickStep(1, 50)">+50</button>
-        </div>
-        <div class="autocash-mini">
-          <div style="display: flex; align-items:center; gap:3px;">
-            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">Авто</span>
-            <input type="number" step="0.1" min="1.1" id="p1_autoMult" class="autocash-val-mini" value="2.0">
-            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">x</span>
+    <!-- ВЕРТИКАЛЬНЫЙ ИНТЕРФЕЙС СТАВОК (ОДНА ПОД ОДНОЙ) -->
+    <div class="vertical-bet-container">
+      <!-- СТАВКА 1 -->
+      <div class="bet-card-row" id="panel1">
+        <div class="bet-left-sub">
+          <div class="bet-tag-line">
+            <span class="bet-panel-title">Ставка 1</span>
           </div>
-          <label class="switch-mini">
-            <input type="checkbox" id="p1_autoToggle">
-            <span class="slider-mini"></span>
-          </label>
+          <div class="bet-input-container">
+            <span style="font-size: 13px;">⭐</span>
+            <input type="number" id="p1_bet" class="bet-input-field" value="10" step="10" min="10" onchange="validateBetInput(1)">
+          </div>
+          <div class="bet-steppers-bar">
+            <button class="btn-step-mini" onclick="quickStep(1, -10)">-10</button>
+            <button class="btn-step-mini" onclick="quickStep(1, 10)">+10</button>
+            <button class="btn-step-mini" onclick="quickStep(1, 50)">+50</button>
+          </div>
         </div>
-        <button class="btn-panel-action" id="p1_btn" onclick="handlePanelAction(1)">
-          ⭐ Поставить
-        </button>
+
+        <div class="bet-right-sub">
+          <div class="autocash-toggle-wrap">
+            <div style="display:flex; align-items:center; gap:2px;">
+              <span style="font-size:10px; color:var(--text-muted); font-weight:800;">АВТО</span>
+              <input type="number" step="0.1" min="1.1" id="p1_autoMult" class="autocash-field" value="2.0">
+              <span style="font-size:10px; color:var(--text-muted); font-weight:800;">x</span>
+            </div>
+            <label class="switch-v">
+              <input type="checkbox" id="p1_autoToggle">
+              <span class="slider-v"></span>
+            </label>
+          </div>
+          <button class="btn-bet-execute" id="p1_btn" onclick="handlePanelAction(1)">
+            ⭐ Поставить
+          </button>
+        </div>
       </div>
 
-      <!-- ПАНЕЛЬ 2 -->
-      <div class="bet-panel" id="panel2">
-        <div class="panel-header-row">
-          <span class="panel-tag">Ставка 2</span>
-        </div>
-        <div class="bet-input-box-mini">
-          <span style="font-size: 14px;">⭐</span>
-          <input type="number" id="p2_bet" class="bet-editable-input-mini" value="10" step="10" min="10" onchange="validateBetInput(2)">
-        </div>
-        <div class="quick-bar-mini">
-          <button class="btn-quick-mini" onclick="quickStep(2, -10)">-10</button>
-          <button class="btn-quick-mini" onclick="quickStep(2, 10)">+10</button>
-          <button class="btn-quick-mini" onclick="quickStep(2, 50)">+50</button>
-        </div>
-        <div class="autocash-mini">
-          <div style="display: flex; align-items:center; gap:3px;">
-            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">Авто</span>
-            <input type="number" step="0.1" min="1.1" id="p2_autoMult" class="autocash-val-mini" value="3.0">
-            <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">x</span>
+      <!-- СТАВКА 2 -->
+      <div class="bet-card-row" id="panel2">
+        <div class="bet-left-sub">
+          <div class="bet-tag-line">
+            <span class="bet-panel-title">Ставка 2</span>
           </div>
-          <label class="switch-mini">
-            <input type="checkbox" id="p2_autoToggle">
-            <span class="slider-mini"></span>
-          </label>
+          <div class="bet-input-container">
+            <span style="font-size: 13px;">⭐</span>
+            <input type="number" id="p2_bet" class="bet-input-field" value="10" step="10" min="10" onchange="validateBetInput(2)">
+          </div>
+          <div class="bet-steppers-bar">
+            <button class="btn-step-mini" onclick="quickStep(2, -10)">-10</button>
+            <button class="btn-step-mini" onclick="quickStep(2, 10)">+10</button>
+            <button class="btn-step-mini" onclick="quickStep(2, 50)">+50</button>
+          </div>
         </div>
-        <button class="btn-panel-action" id="p2_btn" onclick="handlePanelAction(2)">
-          ⭐ Поставить
-        </button>
+
+        <div class="bet-right-sub">
+          <div class="autocash-toggle-wrap">
+            <div style="display:flex; align-items:center; gap:2px;">
+              <span style="font-size:10px; color:var(--text-muted); font-weight:800;">АВТО</span>
+              <input type="number" step="0.1" min="1.1" id="p2_autoMult" class="autocash-field" value="3.0">
+              <span style="font-size:10px; color:var(--text-muted); font-weight:800;">x</span>
+            </div>
+            <label class="switch-v">
+              <input type="checkbox" id="p2_autoToggle">
+              <span class="slider-v"></span>
+            </label>
+          </div>
+          <button class="btn-bet-execute" id="p2_btn" onclick="handlePanelAction(2)">
+            ⭐ Поставить
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- МЕНЮ ИГРОКОВ (БОТЫ-ХАЙРОЛЛЕРЫ) -->
+    <!-- МЕНЮ ИГРОКОВ И СГОРЕВШИХ БОТОВ -->
     <div class="players-container">
       <div class="players-header">
         <span>Игроки в раунде (<span id="totalPlayersCount">10</span>)</span>
-        <span>Ставка / Икс</span>
+        <span>Статус / Икс</span>
       </div>
       <div class="players-list" id="playersList"></div>
     </div>
@@ -1019,7 +1110,7 @@
         Бросьте кости против оппонента!
       </div>
       <div style="width:100%; max-width:320px;">
-        <button class="btn-panel-action" style="padding:14px; font-size:15px;" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ (100 ⭐)</button>
+        <button class="btn-bet-execute" style="padding:14px; font-size:15px;" id="pvp-btn" onclick="playPvp()">БРОСИТЬ КОСТИ (100 ⭐)</button>
       </div>
     </div>
   </div>
@@ -1076,16 +1167,7 @@
       if (tg) tg.BackButton.hide();
     }
 
-    /* ---------------- КОЛЕСО ФОРТУНЫ (NEAR-MISS И МИЗЕРНЫЙ ШАНС ДЖЕКПОТА) ---------------- */
-    // Сектора колеса:
-    // 0: 500 ⭐ (Джекпот)
-    // 1: 3 ⭐
-    // 2: 100 ⭐
-    // 3: 5 ⭐
-    // 4: 250 ⭐
-    // 5: 1 ⭐
-    // 6: 50 ⭐
-    // 7: 10 ⭐
+    /* ---------------- КОЛЕСО ФОРТУНЫ ---------------- */
     const wheelSectors = [
       { text: "500 ⭐", value: 500, color: "#ffd166", textColor: "#000" },
       { text: "3 ⭐",   value: 3,   color: "#162238", textColor: "#fff" },
@@ -1188,48 +1270,39 @@
       haptic();
       playBeep("C5");
 
-      // ПСИХОЛОГИЯ NEAR-MISS:
-      // Мизерный шанс (>10 ⭐) = 0.5%
-      // 99.5% выпадает 1, 3, 5 или 10 ⭐.
-      // Но мы останавливаем стрелку ПРЯМО НА ГРАНИЦЕ с 500 ⭐ или 250 ⭐!
       const roll = Math.random();
-      let winningIndex = 1; // По умолчанию сектор 1 (3 ⭐)
-      let borderOffset = 0; // Смещение к границе для создания Near-Miss
+      let winningIndex = 1;
+      let borderOffset = 0;
 
       if (roll < 0.003) {
-        winningIndex = 0; // 500 ⭐ (супер-редкий джекпот)
+        winningIndex = 0;
         borderOffset = 0;
       } else if (roll < 0.007) {
-        winningIndex = 4; // 250 ⭐
+        winningIndex = 4;
         borderOffset = 0;
       } else if (roll < 0.45) {
-        // Выпадет 3 ⭐, но стрелка остановится в 1 градусе от 500 ⭐!
-        winningIndex = 1; // Сектор 3 ⭐
-        borderOffset = -19; // Буквально 1-2 градуса от сектора 500 ⭐
+        winningIndex = 1;
+        borderOffset = -19;
       } else if (roll < 0.75) {
-        // Выпадет 5 ⭐, но стрелка остановится в 1 градусе от 250 ⭐!
-        winningIndex = 3; // Сектор 5 ⭐
-        borderOffset = -19; // Буквально на границе с 250 ⭐
+        winningIndex = 3;
+        borderOffset = -19;
       } else if (roll < 0.90) {
-        winningIndex = 7; // 10 ⭐
-        borderOffset = -18; // На границе с 500 ⭐
+        winningIndex = 7;
+        borderOffset = -18;
       } else {
-        winningIndex = 5; // 1 ⭐
-        borderOffset = -18; // На границе с 250 ⭐
+        winningIndex = 5;
+        borderOffset = -18;
       }
 
       const numSectors = 8;
-      const arcDeg = 360 / numSectors; // 45 градусов на сектор
-
-      // Стрелка находится сверху (270 градусов относительно 0)
+      const arcDeg = 360 / numSectors;
       const targetSectorAngle = 270 - (winningIndex * arcDeg + arcDeg / 2) + borderOffset;
-      const fullRotations = 360 * 7; // 7 полных кругов
+      const fullRotations = 360 * 7;
       currentWheelRotation += fullRotations + (targetSectorAngle - (currentWheelRotation % 360));
 
       const canvas = document.getElementById('wheelCanvas');
       canvas.style.transform = `rotate(${currentWheelRotation}deg)`;
 
-      // Звуки вращения
       let tick = 0;
       const tickInterval = setInterval(() => {
         playBeep("G4");
@@ -1256,8 +1329,8 @@
       }, 6200);
     }
 
-    /* ---------------- THREE.JS 3D ДВИЖОК ---------------- */
-    let scene, camera, renderer, rocketGroup, planetMesh, flameMesh;
+    /* ---------------- THREE.JS: КРУТОЙ ДИЗАЙН КИБЕРПАНК-ШАТТЛА ---------------- */
+    let scene, camera, renderer, rocketGroup, planetMesh, flameMesh1, flameMesh2;
     let threeInitialized = false;
 
     function initThreeScene() {
@@ -1273,62 +1346,127 @@
 
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
-      camera.position.set(0, 0, 18);
+      camera.position.set(0, 0, 17);
 
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
       renderer.setSize(w, h);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.75);
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
       scene.add(ambLight);
 
-      const dirLight = new THREE.DirectionalLight(0x00f2fe, 2.0);
-      dirLight.position.set(10, 15, 10);
+      const dirLight = new THREE.DirectionalLight(0x00f2fe, 2.5);
+      dirLight.position.set(12, 18, 12);
       scene.add(dirLight);
 
-      const pGeo = new THREE.SphereGeometry(6, 32, 32);
-      const pMat = new THREE.MeshStandardMaterial({ color: 0x162235, roughness: 0.8 });
+      const backLight = new THREE.DirectionalLight(0x9b51e0, 2.0);
+      backLight.position.set(-10, -10, -5);
+      scene.add(backLight);
+
+      // Планета на заднем плане с кольцом
+      const pGeo = new THREE.SphereGeometry(5.5, 32, 32);
+      const pMat = new THREE.MeshStandardMaterial({ color: 0x141d2e, roughness: 0.7, metalness: 0.2 });
       planetMesh = new THREE.Mesh(pGeo, pMat);
-      planetMesh.position.set(10, -1, -8);
+      planetMesh.position.set(9.5, -0.5, -8);
       scene.add(planetMesh);
 
+      // ГРУППА РАКЕТЫ
       rocketGroup = new THREE.Group();
 
-      const noseGeo = new THREE.ConeGeometry(0.9, 1.8, 24);
-      const noseMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, metalness: 0.8, roughness: 0.2 });
+      // Главный фюзеляж (граненый киберпанк обтекатель)
+      const noseGeo = new THREE.ConeGeometry(0.85, 2.0, 6);
+      const noseMat = new THREE.MeshStandardMaterial({
+        color: 0x00f2fe,
+        metalness: 0.85,
+        roughness: 0.15,
+        flatShading: true
+      });
       const nose = new THREE.Mesh(noseGeo, noseMat);
-      nose.position.y = 1.9;
+      nose.position.y = 2.0;
       rocketGroup.add(nose);
 
-      const bodyGeo = new THREE.CylinderGeometry(0.9, 0.8, 2.2, 24);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe0f7fa, metalness: 0.5, roughness: 0.3 });
+      // Центральный корпус шаттла
+      const bodyGeo = new THREE.CylinderGeometry(0.85, 0.75, 2.4, 6);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        metalness: 0.6,
+        roughness: 0.2,
+        flatShading: true
+      });
       const body = new THREE.Mesh(bodyGeo, bodyMat);
       body.position.y = -0.1;
       rocketGroup.add(body);
 
-      const glassGeo = new THREE.SphereGeometry(0.45, 16, 16);
-      const glassMat = new THREE.MeshStandardMaterial({ color: 0xffd166, emissive: 0xffa500, emissiveIntensity: 0.5 });
+      // Неоновые линии по бокам
+      const lineGeo = new THREE.BoxGeometry(0.08, 2.2, 0.08);
+      const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
+      const l1 = new THREE.Mesh(lineGeo, lineMat);
+      l1.position.set(0.8, -0.1, 0);
+      rocketGroup.add(l1);
+      const l2 = new THREE.Mesh(lineGeo, lineMat);
+      l2.position.set(-0.8, -0.1, 0);
+      rocketGroup.add(l2);
+
+      // Золотой купольный фонарь кабины
+      const glassGeo = new THREE.SphereGeometry(0.48, 16, 16);
+      const glassMat = new THREE.MeshStandardMaterial({
+        color: 0xffd166,
+        emissive: 0xff9e00,
+        emissiveIntensity: 0.6,
+        metalness: 0.9,
+        roughness: 0.1
+      });
       const glass = new THREE.Mesh(glassGeo, glassMat);
-      glass.position.set(0, 0.4, 0.75);
+      glass.position.set(0, 0.5, 0.72);
       rocketGroup.add(glass);
 
-      const wingGeo = new THREE.BoxGeometry(0.12, 1.2, 0.9);
-      const wingMat = new THREE.MeshStandardMaterial({ color: 0x9b51e0, metalness: 0.6 });
-      const w1 = new THREE.Mesh(wingGeo, wingMat);
-      w1.position.set(1.1, -0.7, 0);
-      rocketGroup.add(w1);
-      const w2 = new THREE.Mesh(wingGeo, wingMat);
-      w2.position.set(-1.1, -0.7, 0);
-      rocketGroup.add(w2);
+      // Аэродинамические гипер-крылья
+      const wingShape = new THREE.BoxGeometry(0.1, 1.4, 1.4);
+      const wingMat = new THREE.MeshStandardMaterial({
+        color: 0x7928ca,
+        metalness: 0.7,
+        roughness: 0.2,
+        flatShading: true
+      });
 
-      const flameGeo = new THREE.ConeGeometry(0.55, 1.8, 16);
-      const flameMat = new THREE.MeshBasicMaterial({ color: 0xff7b00 });
-      flameMesh = new THREE.Mesh(flameGeo, flameMat);
-      flameMesh.position.y = -2.1;
-      flameMesh.rotation.x = Math.PI;
-      rocketGroup.add(flameMesh);
+      const wRight = new THREE.Mesh(wingShape, wingMat);
+      wRight.position.set(1.2, -0.6, 0);
+      wRight.rotation.z = -0.2;
+      rocketGroup.add(wRight);
 
+      const wLeft = new THREE.Mesh(wingShape, wingMat);
+      wLeft.position.set(-1.2, -0.6, 0);
+      wLeft.rotation.z = 0.2;
+      rocketGroup.add(wLeft);
+
+      // Сдвоенные реактивные сопла
+      const nozzleGeo = new THREE.CylinderGeometry(0.32, 0.38, 0.5, 12);
+      const nozzleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+
+      const noz1 = new THREE.Mesh(nozzleGeo, nozzleMat);
+      noz1.position.set(0.35, -1.4, 0);
+      rocketGroup.add(noz1);
+
+      const noz2 = new THREE.Mesh(nozzleGeo, nozzleMat);
+      noz2.position.set(-0.35, -1.4, 0);
+      rocketGroup.add(noz2);
+
+      // Сдвоенное пламя сопел
+      const flameGeo = new THREE.ConeGeometry(0.38, 1.8, 16);
+      const flameMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe });
+
+      flameMesh1 = new THREE.Mesh(flameGeo, flameMat);
+      flameMesh1.position.set(0.35, -2.4, 0);
+      flameMesh1.rotation.x = Math.PI;
+      rocketGroup.add(flameMesh1);
+
+      flameMesh2 = new THREE.Mesh(flameGeo, flameMat);
+      flameMesh2.position.set(-0.35, -2.4, 0);
+      flameMesh2.rotation.x = Math.PI;
+      rocketGroup.add(flameMesh2);
+
+      // Поворот всей ракеты на вектор полета
       rocketGroup.rotation.z = -Math.PI / 3.8;
       scene.add(rocketGroup);
 
@@ -1346,22 +1484,28 @@
 
     function animateThree() {
       requestAnimationFrame(animateThree);
-      if (planetMesh) planetMesh.rotation.y += 0.002;
+      if (planetMesh) planetMesh.rotation.y += 0.0015;
       if (rocketGroup) {
-        rocketGroup.rotation.y += 0.045;
+        // Плавное постоянное осевое вращение 3D-модели
+        rocketGroup.rotation.y += 0.04;
+
         if (flightPhase === 'flying') {
-          flameMesh.visible = true;
-          flameMesh.scale.set(1 + Math.random() * 0.4, 1 + Math.random() * 0.6, 1 + Math.random() * 0.4);
-          rocketGroup.position.y = Math.sin(Date.now() * 0.005) * 0.25;
+          flameMesh1.visible = true;
+          flameMesh2.visible = true;
+          const s = 1 + Math.random() * 0.45;
+          flameMesh1.scale.set(s, 1 + Math.random() * 0.7, s);
+          flameMesh2.scale.set(s, 1 + Math.random() * 0.7, s);
+          rocketGroup.position.y = Math.sin(Date.now() * 0.006) * 0.28;
         } else {
-          flameMesh.visible = false;
+          flameMesh1.visible = false;
+          flameMesh2.visible = false;
           rocketGroup.position.y = 0;
         }
       }
       renderer.render(scene, camera);
     }
 
-    /* ---------------- CRUSH: ЛОГИКА ДВУХ СТАВОК И БОТОВ-ХАЙРОЛЛЕРОВ ---------------- */
+    /* ---------------- CRUSH: СТАВКИ, СГОРЕВШИЕ БОТЫ И АНИМАЦИЯ ТАЙМЕРА ---------------- */
     let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
@@ -1375,15 +1519,15 @@
     };
 
     const botPool = [
-      { name: 'Whale_TON_77', minBet: 500, maxBet: 2500 },
+      { name: 'Whale_TON_77', minBet: 600, maxBet: 2500 },
       { name: 'Durov_Investor', minBet: 800, maxBet: 2000 },
       { name: 'Maks_Crypto', minBet: 200, maxBet: 1200 },
       { name: 'Elena_Pro', minBet: 300, maxBet: 1500 },
       { name: 'Ton_Alpha', minBet: 400, maxBet: 1800 },
-      { name: 'Satoshi_Dubai', minBet: 600, maxBet: 2400 },
-      { name: 'RocketKing', minBet: 150, maxBet: 900 },
-      { name: 'Fast_Scaler', minBet: 250, maxBet: 1400 },
-      { name: 'Lucky_Strike', minBet: 350, maxBet: 1600 },
+      { name: 'Satoshi_Dubai', minBet: 700, maxBet: 2400 },
+      { name: 'RocketKing', minBet: 200, maxBet: 1000 },
+      { name: 'Fast_Scaler', minBet: 300, maxBet: 1400 },
+      { name: 'Lucky_Strike', minBet: 400, maxBet: 1600 },
       { name: 'Apex_Trader', minBet: 500, maxBet: 2200 }
     ];
     let roundPlayers = [];
@@ -1509,6 +1653,14 @@
       playBeep("G5");
       updatePanelButtonUI(id);
 
+      // Обновляем статус в таблице игроков
+      const row = roundPlayers.find(pl => !pl.isBot && pl.id === id);
+      if (row) {
+        row.cashed = true;
+        row.cashMult = currentMultiplier;
+        renderPlayersList();
+      }
+
       checkAllRealPlayersCashed();
     }
 
@@ -1529,10 +1681,10 @@
     function generateBotPlayers() {
       roundPlayers = [];
       if (panelState[1].placed) {
-        roundPlayers.push({ name: 'Вы (Ставка 1)', amount: panelState[1].amount, isBot: false, cashed: false, cashMult: 0 });
+        roundPlayers.push({ name: 'Вы (Ставка 1)', amount: panelState[1].amount, isBot: false, id: 1, cashed: false, cashMult: 0, burned: false });
       }
       if (panelState[2].placed) {
-        roundPlayers.push({ name: 'Вы (Ставка 2)', amount: panelState[2].amount, isBot: false, cashed: false, cashMult: 0 });
+        roundPlayers.push({ name: 'Вы (Ставка 2)', amount: panelState[2].amount, isBot: false, id: 2, cashed: false, cashMult: 0, burned: false });
       }
 
       const totalRequired = 10 + Math.floor(Math.random() * 3);
@@ -1540,14 +1692,16 @@
       while (roundPlayers.length < totalRequired) {
         const botData = botPool[bIdx % botPool.length];
         const bet = Math.round((Math.floor(Math.random() * (botData.maxBet - botData.minBet)) + botData.minBet) / 10) * 10;
-        const targetMult = parseFloat((1.18 + Math.random() * 5.2).toFixed(2));
+        // Часть ботов забирает рано, часть ставит на очень высокие иксы (чтобы сгореть)
+        const targetMult = parseFloat((1.18 + Math.random() * (Math.random() < 0.4 ? 12.0 : 4.0)).toFixed(2));
         roundPlayers.push({
           name: botData.name,
           amount: bet,
           isBot: true,
           targetMult: targetMult,
           cashed: false,
-          cashMult: 0
+          cashMult: 0,
+          burned: false
         });
         bIdx++;
       }
@@ -1561,15 +1715,21 @@
 
       roundPlayers.forEach(p => {
         const div = document.createElement('div');
-        div.className = 'player-row';
+        div.className = `player-row ${p.burned ? 'crashed-loss' : ''}`;
+
+        let statusHtml = `<span>${p.amount} ⭐</span>`;
+        if (p.cashed) {
+          statusHtml = `<span class="player-cashed">${p.cashMult.toFixed(2)}x (+${Math.floor(p.amount * p.cashMult)} ⭐)</span>`;
+        } else if (p.burned) {
+          statusHtml = `<span class="player-burned">💥 СГОРЕЛ (-${p.amount} ⭐)</span>`;
+        }
+
         div.innerHTML = `
           <div class="player-name">
             <span>${p.isBot ? '🤖' : '😎'}</span>
-            <span>${p.name}</span>
+            <span style="${p.burned ? 'color: var(--accent-red);' : ''}">${p.name}</span>
           </div>
-          <div>
-            ${p.cashed ? `<span class="player-cashed">${p.cashMult.toFixed(2)}x (+${Math.floor(p.amount * p.cashMult)} ⭐)</span>` : `<span>${p.amount} ⭐</span>`}
-          </div>
+          <div>${statusHtml}</div>
         `;
         container.appendChild(div);
       });
@@ -1587,14 +1747,29 @@
       if (changed) renderPlayersList();
     }
 
-    /* ---------------- ИГРОВОЙ ЦИКЛ ---------------- */
+    function markBurnedPlayers() {
+      roundPlayers.forEach(p => {
+        if (!p.cashed) {
+          p.burned = true;
+        }
+      });
+      renderPlayersList();
+    }
+
+    /* ---------------- ИГРОВОЙ ЦИКЛ CRUSH С КРУГОВЫМ ТАЙМЕРОМ ---------------- */
     function startWaitingPhase() {
       flightPhase = 'waiting';
       waitSeconds = 5;
       currentMultiplier = 1.00;
       hasExtendedFlight = false;
-      document.getElementById('rocket-mult').innerText = "1.00x";
-      document.getElementById('rocket-mult').style.color = "#fff";
+
+      document.getElementById('rocket-mult').style.display = "none";
+      document.getElementById('timerOverlay').style.display = "flex";
+      document.getElementById('timerText').innerText = waitSeconds;
+
+      const circleBar = document.getElementById('timerSvgBar');
+      const totalDash = 283;
+      circleBar.style.strokeDashoffset = "0";
 
       [1, 2].forEach(id => {
         if (panelState[id].queued) {
@@ -1610,11 +1785,22 @@
 
       generateBotPlayers();
 
+      let elapsed = 0;
       const waitTimer = setInterval(() => {
-        document.getElementById('rocketStateBadge').innerText = `Взлёт через ${waitSeconds}с...`;
-        waitSeconds--;
-        if (waitSeconds < 0) {
+        playBeep("F4");
+        elapsed++;
+        const currentSec = waitSeconds - elapsed;
+
+        if (currentSec >= 0) {
+          document.getElementById('timerText').innerText = currentSec;
+          const offset = totalDash * (elapsed / 5);
+          circleBar.style.strokeDashoffset = offset;
+        }
+
+        if (elapsed >= 5) {
           clearInterval(waitTimer);
+          document.getElementById('timerOverlay').style.display = "none";
+          document.getElementById('rocket-mult').style.display = "block";
           startFlightPhase();
         }
       }, 1000);
@@ -1624,7 +1810,10 @@
       flightPhase = 'flying';
       crashTarget = calculateCrashPoint();
       currentMultiplier = 1.00;
-      document.getElementById('rocketStateBadge').innerText = "Ракета в полёте";
+
+      document.getElementById('rocket-mult').innerText = "1.00x";
+      document.getElementById('rocket-mult').style.color = "#fff";
+
       updatePanelButtonUI(1);
       updatePanelButtonUI(2);
 
@@ -1659,14 +1848,16 @@
 
           document.getElementById('rocket-mult').style.color = "var(--accent-red)";
           document.getElementById('rocket-mult').innerText = crashTarget.toFixed(2) + "x";
-          document.getElementById('rocketStateBadge').innerText = `КРАШ НА ${crashTarget.toFixed(2)}x`;
+
+          // ОТМЕЧАЕМ СГОРЕВШИХ БОТОВ И ИГРОКОВ КРАСНЫМ
+          markBurnedPlayers();
           addHistoryTag(crashTarget.toFixed(2));
           playBeep("A3");
 
           updatePanelButtonUI(1);
           updatePanelButtonUI(2);
 
-          setTimeout(startWaitingPhase, 2500);
+          setTimeout(startWaitingPhase, 2600);
         }
       }, 75);
     }
