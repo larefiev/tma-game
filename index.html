@@ -253,7 +253,6 @@
       transition: width 0.3s ease;
     }
 
-    /* Кнопка модератора */
     .admin-access-btn {
       margin-top: 18px;
       font-size: 12px;
@@ -314,7 +313,7 @@
     🛡️ Окно модератора
   </button>
 
-  <!-- МОДАЛЬНОЕ ОКНО КАССЫ -->
+  <!-- МОДАЛЬНОЕ ОКНО: КАССА -->
   <div class="cashier-modal-overlay" id="cashierModal" onclick="handleOverlayClick(event)">
     <div class="cashier-modal">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -393,7 +392,7 @@
 
       <input type="number" id="adminStarsInput" class="bet-input-field" style="margin-bottom:14px;" value="100" min="1">
 
-      <button class="btn-action" style="background:var(--accent-cyan); color:#000; font-weight:800;" onclick="submitAdminGiveStars()">
+      <button class="btn-action" id="btnAdminGiveStars" style="background:var(--accent-cyan); color:#000; font-weight:800;" onclick="submitAdminGiveStars()">
         Выдать звёзды на баланс
       </button>
     </div>
@@ -444,7 +443,6 @@
       document.getElementById('userTag').innerText = user.username ? `@${user.username}` : `ID: ${user.id}`;
       document.getElementById('avatarLetter').innerText = (user.first_name || 'U').charAt(0).toUpperCase();
 
-      // Отображаем кнопку модератора только для вашего аккаунта
       if (String(user.id) === ADMIN_TELEGRAM_ID || user.username === 'mittere') {
         document.getElementById('btnAdminAccess').style.display = 'block';
       }
@@ -526,7 +524,6 @@
       }, 400);
     }
 
-    // Управление кассой
     function openCashierModal(tab = 'deposit') {
       document.getElementById('cashierModal').style.display = 'flex';
       switchCashierTab(tab);
@@ -553,7 +550,6 @@
       document.getElementById('depositInput').value = num;
     }
 
-    // Функции панели модератора
     function openAdminModal() {
       document.getElementById('adminModal').style.display = 'flex';
     }
@@ -575,6 +571,9 @@
       if (amount <= 0) return;
 
       const user = getSafeUser();
+      const btn = document.getElementById('btnAdminGiveStars');
+      btn.innerText = "⏳ Начисление...";
+      btn.disabled = true;
 
       try {
         const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, {
@@ -594,13 +593,16 @@
           updateBalance();
           haptic();
           playBeep("G5");
-          alert(`👑 Выдано ${data.addedStars} ⭐! Новый баланс: ${balance} ⭐`);
+          alert(`👑 Успешно! Вам начислено +${data.addedStars} ⭐! Баланс: ${balance} ⭐`);
           closeAdminModal();
         } else {
-          alert("Ошибка: " + (data.error || "Не удалось выдать звёзды"));
+          alert("Ошибка начисления: " + (data.error || "Неизвестная ошибка"));
         }
       } catch (err) {
         alert("Ошибка сети: " + err.message);
+      } finally {
+        btn.innerText = "Выдать звёзды на баланс";
+        btn.disabled = false;
       }
     }
 
