@@ -165,7 +165,6 @@
 
     .game-card:active { transform: scale(0.96); }
 
-    /* КРАСИВАЯ КАРТОЧКА CRUSH В МЕНЮ */
     .game-card.rocket {
       background: radial-gradient(circle at 80% 20%, #203a6b 0%, #0d172e 60%, #060912 100%);
       border: 1px solid rgba(0, 242, 254, 0.4);
@@ -275,24 +274,24 @@
       border: 1px solid var(--border-color);
     }
 
-    /* АРЕНА CRUSH С ГЛУБОКИМ КОСМОСОМ */
+    /* АРЕНА CRUSH С ДИНАМИЧЕСКИМ КОСМОСОМ */
     .flight-arena {
       position: relative;
       width: 100%;
       height: 310px;
       min-height: 310px;
-      background: radial-gradient(ellipse at 85% 30%, #1e2942 0%, #0d1424 50%, #030408 100%);
+      background: radial-gradient(ellipse at 85% 30%, #101828 0%, #060a12 50%, #030408 100%);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+      transition: background 1.5s ease;
     }
 
     #threeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-    /* НЕОНОВЫЙ МНОЖИТЕЛЬ */
     .mult-display {
       position: relative;
       z-index: 5;
@@ -391,7 +390,7 @@
     .history-tag.purple { background: rgba(183, 110, 255, 0.15); color: var(--accent-purple); border-color: rgba(183, 110, 255, 0.3); }
     .history-tag.gold { background: rgba(255, 209, 102, 0.2); color: var(--accent-gold); border-color: rgba(255, 209, 102, 0.4); box-shadow: 0 0 8px rgba(255, 209, 102, 0.3); }
 
-    /* ВЕРТИКАЛЬНЫЙ СТЕК ПАНЕЛЕЙ СТАВОК */
+    /* ВЕРТИКАЛЬНЫЕ ПАНЕЛИ СТАВОК */
     .vertical-bet-container {
       display: flex;
       flex-direction: column;
@@ -564,7 +563,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 190px;
+      max-height: 200px;
       overflow-y: auto;
     }
 
@@ -577,7 +576,7 @@
       padding: 6px 8px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.02);
-      transition: background 0.25s, border-color 0.25s;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .player-row.crashed-loss {
@@ -595,6 +594,12 @@
     .player-cashed {
       color: var(--accent-green);
       font-weight: 900;
+    }
+
+    .player-growing {
+      color: var(--accent-cyan);
+      font-weight: 800;
+      transition: color 0.1s;
     }
 
     .player-burned {
@@ -914,7 +919,6 @@
   <!-- РАЗДЕЛ: ЛУЧШИЕ ИГРЫ -->
   <div class="section-header">🔥 Лучшие игры</div>
   <div class="games-row">
-    <!-- КАРТОЧКА CRUSH С КРАСИВЫМ АРТОМ -->
     <div class="game-card rocket" onclick="openGame('rocket')">
       <div class="hot-badge">🔥 HOT</div>
       <div class="rocket-card-art">
@@ -974,7 +978,7 @@
     </div>
   </div>
 
-  <!-- ЭКРАН CRUSH: 3D С ЗВЕЗДНЫМ НЕБОМ -->
+  <!-- ЭКРАН CRUSH: 3D С ЭВОЛЮЦИОНИРУЮЩИМ НЕБОМ И ДИНАМИЧЕСКИМИ СТАВКАМИ -->
   <div class="game-screen" id="modal-rocket">
     <div class="screen-top-nav">
       <button class="nav-back-btn" onclick="closeGame()">←</button>
@@ -982,7 +986,7 @@
       <div style="width: 24px;"></div>
     </div>
 
-    <div class="flight-arena">
+    <div class="flight-arena" id="flightArena">
       <div id="threeCanvas"></div>
 
       <!-- КРУГОВОЙ ТАЙМЕР -->
@@ -1083,11 +1087,11 @@
       </div>
     </div>
 
-    <!-- МЕНЮ ИГРОКОВ И СГОРЕВШИХ БОТОВ -->
+    <!-- МЕНЮ ИГРОКОВ: ДИНАМИЧЕСКИЙ РОСТ В РЕАЛЬНОМ ВРЕМЕНИ -->
     <div class="players-container">
       <div class="players-header">
         <span>Игроки в раунде (<span id="totalPlayersCount">10</span>)</span>
-        <span>Статус / Икс</span>
+        <span>Текущая ставка / Выигрыш</span>
       </div>
       <div class="players-list" id="playersList"></div>
     </div>
@@ -1189,8 +1193,12 @@
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
     }
 
-    let balance = parseInt(localStorage.getItem('rg_stars_balance')) || 1000;
+    /* ---------------- НАДЁЖНОЕ ХРАНИЛИЩЕ БАЛАНСА ---------------- */
+    let rawBalance = parseInt(localStorage.getItem('rg_stars_balance'));
+    let balance = (isNaN(rawBalance) || rawBalance < 0) ? 1000 : rawBalance;
+
     function updateBalance() {
+      if (isNaN(balance) || balance < 0) balance = 0;
       document.getElementById('balance-stars').innerText = balance;
       document.getElementById('mcBalanceVal').innerText = balance;
       localStorage.setItem('rg_stars_balance', balance);
@@ -1328,25 +1336,12 @@
       let winningIndex = 1;
       let borderOffset = 0;
 
-      if (roll < 0.003) {
-        winningIndex = 0;
-        borderOffset = 0;
-      } else if (roll < 0.007) {
-        winningIndex = 4;
-        borderOffset = 0;
-      } else if (roll < 0.45) {
-        winningIndex = 1;
-        borderOffset = -19;
-      } else if (roll < 0.75) {
-        winningIndex = 3;
-        borderOffset = -19;
-      } else if (roll < 0.90) {
-        winningIndex = 7;
-        borderOffset = -18;
-      } else {
-        winningIndex = 5;
-        borderOffset = -18;
-      }
+      if (roll < 0.003) { winningIndex = 0; borderOffset = 0; }
+      else if (roll < 0.007) { winningIndex = 4; borderOffset = 0; }
+      else if (roll < 0.45) { winningIndex = 1; borderOffset = -19; }
+      else if (roll < 0.75) { winningIndex = 3; borderOffset = -19; }
+      else if (roll < 0.90) { winningIndex = 7; borderOffset = -18; }
+      else { winningIndex = 5; borderOffset = -18; }
 
       const numSectors = 8;
       const arcDeg = 360 / numSectors;
@@ -1383,8 +1378,8 @@
       }, 6200);
     }
 
-    /* ---------------- THREE.JS: ДИАГОНАЛЬНЫЙ ПОЛЕТ + ЗВЕЗДНОЕ НЕБО ---------------- */
-    let scene, camera, renderer, rocketGroup, planetMesh, starPoints, flameMesh1, flameMesh2;
+    /* ---------------- THREE.JS: ЭВОЛЮЦИЯ НЕБА + ДИАГОНАЛЬНЫЙ ПОЛЕТ ---------------- */
+    let scene, camera, renderer, rocketGroup, celestialBody, celestialCorona, starPoints, flameMesh1, flameMesh2;
     let threeInitialized = false;
 
     const START_POS = { x: -6.5, y: -4.2, z: 0 };
@@ -1422,7 +1417,7 @@
       backLight.position.set(-10, -10, -5);
       scene.add(backLight);
 
-      // 1. КОСМИЧЕСКОЕ ЗВЕЗДНОЕ НЕБО (800 МЕРЦАЮЩИХ ЗВЕЗД)
+      // 1. КОСМИЧЕСКОЕ ЗВЕЗДНОЕ НЕБО (800 ЗВЁЗД)
       const starsCount = 800;
       const starsGeo = new THREE.BufferGeometry();
       const starPositions = new Float32Array(starsCount * 3);
@@ -1443,12 +1438,30 @@
       starPoints = new THREE.Points(starsGeo, starsMat);
       scene.add(starPoints);
 
-      // 2. ДАЛЕКАЯ ТУМАННАЯ ПЛАНЕТА
-      const pGeo = new THREE.SphereGeometry(5.5, 32, 32);
-      const pMat = new THREE.MeshStandardMaterial({ color: 0x141d2e, roughness: 0.7, metalness: 0.2 });
-      planetMesh = new THREE.Mesh(pGeo, pMat);
-      planetMesh.position.set(9.5, -0.5, -8);
-      scene.add(planetMesh);
+      // 2. ДИНАМИЧЕСКИЙ КОСМИЧЕСКИЙ ОБЪЕКТ (ЛУНА ➔ СВЕРХНОВАЯ ➔ СОЛНЦЕ)
+      const cGeo = new THREE.SphereGeometry(5.0, 32, 32);
+      const cMat = new THREE.MeshStandardMaterial({
+        color: 0x141d2e,
+        roughness: 0.6,
+        metalness: 0.3,
+        emissive: 0x050c18,
+        emissiveIntensity: 0.3
+      });
+      celestialBody = new THREE.Mesh(cGeo, cMat);
+      celestialBody.position.set(9.2, -0.2, -8);
+      scene.add(celestialBody);
+
+      // Плазменная корона
+      const coronaGeo = new THREE.RingGeometry(5.2, 7.5, 32);
+      const coronaMat = new THREE.MeshBasicMaterial({
+        color: 0x00f2fe,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.15
+      });
+      celestialCorona = new THREE.Mesh(coronaGeo, coronaMat);
+      celestialCorona.position.set(9.2, -0.2, -8.1);
+      scene.add(celestialCorona);
 
       // 3. ГРУППА РАКЕТЫ
       rocketGroup = new THREE.Group();
@@ -1560,13 +1573,14 @@
     function animateThree() {
       requestAnimationFrame(animateThree);
 
-      // Медленное вращение планеты и дрейф звездного неба
-      if (planetMesh) planetMesh.rotation.y += 0.0015;
+      if (celestialBody) celestialBody.rotation.y += 0.002;
+      if (celestialCorona) celestialCorona.rotation.z += 0.003;
+
       if (starPoints) {
         starPoints.rotation.z += 0.0004;
         if (flightPhase === 'flying') {
-          starPoints.position.x -= 0.02;
-          starPoints.position.y -= 0.015;
+          starPoints.position.x -= 0.025;
+          starPoints.position.y -= 0.018;
         }
       }
 
@@ -1593,7 +1607,47 @@
       renderer.render(scene, camera);
     }
 
-    /* ---------------- ДИНАМИЧЕСКИЙ НЕОНОВЫЙ ЦВЕТ ИКСОВ ---------------- */
+    /* ---------------- ДИНАМИЧЕСКИЙ ФОН И СВЕЧЕНИЕ КОСМОСА ---------------- */
+    function updateCosmicEnvironment(mult) {
+      const arena = document.getElementById('flightArena');
+
+      if (!celestialBody || !celestialCorona) return;
+
+      if (mult >= 15.0) {
+        // ЭТАП 4 (15x+): ПЫЛАЮЩЕЕ СОЛНЦЕ / СВЕРХНОВАЯ
+        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #4a1505 0%, #1f0814 55%, #050208 100%)';
+        celestialBody.material.color.setHex(0xffaa00);
+        celestialBody.material.emissive.setHex(0xff3300);
+        celestialBody.material.emissiveIntensity = 1.2;
+        celestialCorona.material.color.setHex(0xffd166);
+        celestialCorona.material.opacity = 0.55;
+      } else if (mult >= 7.0) {
+        // ЭТАП 3 (7x-15x): СПИРАЛЬНАЯ ГАЛАКТИКА И КВАЗАР
+        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #20083b 0%, #0d0624 55%, #03040a 100%)';
+        celestialBody.material.color.setHex(0x9b51e0);
+        celestialBody.material.emissive.setHex(0x7928ca);
+        celestialBody.material.emissiveIntensity = 0.8;
+        celestialCorona.material.color.setHex(0xb76eff);
+        celestialCorona.material.opacity = 0.4;
+      } else if (mult >= 3.0) {
+        // ЭТАП 2 (3x-7x): ТУМАННОСТЬ И КРАСНЫЙ ГИГАНТ
+        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #0a233a 0%, #0a1324 55%, #03060d 100%)';
+        celestialBody.material.color.setHex(0x00b4d8);
+        celestialBody.material.emissive.setHex(0x0077b6);
+        celestialBody.material.emissiveIntensity = 0.5;
+        celestialCorona.material.color.setHex(0x00f2fe);
+        celestialCorona.material.opacity = 0.25;
+      } else {
+        // ЭТАП 1 (1x-3x): ОРБИТА ЛУНЫ
+        arena.style.background = 'radial-gradient(ellipse at 85% 30%, #101828 0%, #060a12 50%, #030408 100%)';
+        celestialBody.material.color.setHex(0x141d2e);
+        celestialBody.material.emissive.setHex(0x050c18);
+        celestialBody.material.emissiveIntensity = 0.2;
+        celestialCorona.material.color.setHex(0x00f2fe);
+        celestialCorona.material.opacity = 0.15;
+      }
+    }
+
     function updateMultiplierNeonColor(mult, isCrashed = false) {
       const display = document.getElementById('rocket-mult');
       if (isCrashed) {
@@ -1617,7 +1671,7 @@
       }
     }
 
-    /* ---------------- CRUSH: СТАВКИ, СГОРЕВШИЕ БОТЫ И ЦИКЛ ---------------- */
+    /* ---------------- CRUSH: СТАВКИ И ДИНАМИЧЕСКИЙ РОСТ ---------------- */
     let flightPhase = 'waiting';
     let waitSeconds = 5;
     let currentMultiplier = 1.00;
@@ -1769,6 +1823,7 @@
       if (row) {
         row.cashed = true;
         row.cashMult = currentMultiplier;
+        row.finalWin = win;
         renderPlayersList();
       }
 
@@ -1792,10 +1847,10 @@
     function generateBotPlayers() {
       roundPlayers = [];
       if (panelState[1].placed) {
-        roundPlayers.push({ name: 'Вы (Ставка 1)', amount: panelState[1].amount, isBot: false, id: 1, cashed: false, cashMult: 0, burned: false });
+        roundPlayers.push({ name: 'Вы (Ставка 1)', amount: panelState[1].amount, isBot: false, id: 1, cashed: false, cashMult: 0, finalWin: 0, burned: false });
       }
       if (panelState[2].placed) {
-        roundPlayers.push({ name: 'Вы (Ставка 2)', amount: panelState[2].amount, isBot: false, id: 2, cashed: false, cashMult: 0, burned: false });
+        roundPlayers.push({ name: 'Вы (Ставка 2)', amount: panelState[2].amount, isBot: false, id: 2, cashed: false, cashMult: 0, finalWin: 0, burned: false });
       }
 
       const totalRequired = 10 + Math.floor(Math.random() * 3);
@@ -1811,6 +1866,7 @@
           targetMult: targetMult,
           cashed: false,
           cashMult: 0,
+          finalWin: 0,
           burned: false
         });
         bIdx++;
@@ -1818,20 +1874,27 @@
       renderPlayersList();
     }
 
+    /* РЕНДЕР И ОБНОВЛЕНИЕ РАСТУЩИХ СТАВОК */
     function renderPlayersList() {
       const container = document.getElementById('playersList');
       container.innerHTML = '';
       document.getElementById('totalPlayersCount').innerText = roundPlayers.length;
 
-      roundPlayers.forEach(p => {
+      roundPlayers.forEach((p, idx) => {
         const div = document.createElement('div');
         div.className = `player-row ${p.burned ? 'crashed-loss' : ''}`;
+        div.id = `player_row_${idx}`;
 
-        let statusHtml = `<span>${p.amount} ⭐</span>`;
+        let statusHtml = '';
         if (p.cashed) {
-          statusHtml = `<span class="player-cashed">${p.cashMult.toFixed(2)}x (+${Math.floor(p.amount * p.cashMult)} ⭐)</span>`;
+          statusHtml = `<span class="player-cashed">${p.cashMult.toFixed(2)}x (+${p.finalWin} ⭐)</span>`;
         } else if (p.burned) {
           statusHtml = `<span class="player-burned">💥 СГОРЕЛ (-${p.amount} ⭐)</span>`;
+        } else if (flightPhase === 'flying') {
+          const currentWin = Math.floor(p.amount * currentMultiplier);
+          statusHtml = `<span class="player-growing">${p.amount} ⭐ ➔ <b>${currentWin} ⭐</b></span>`;
+        } else {
+          statusHtml = `<span>${p.amount} ⭐</span>`;
         }
 
         div.innerHTML = `
@@ -1839,9 +1902,21 @@
             <span>${p.isBot ? '🤖' : '😎'}</span>
             <span style="${p.burned ? 'color: var(--accent-red);' : ''}">${p.name}</span>
           </div>
-          <div>${statusHtml}</div>
+          <div id="player_status_${idx}">${statusHtml}</div>
         `;
         container.appendChild(div);
+      });
+    }
+
+    function updateLiveGrowingBets() {
+      roundPlayers.forEach((p, idx) => {
+        if (!p.cashed && !p.burned && flightPhase === 'flying') {
+          const statusElem = document.getElementById(`player_status_${idx}`);
+          if (statusElem) {
+            const currentWin = Math.floor(p.amount * currentMultiplier);
+            statusElem.innerHTML = `<span class="player-growing">${p.amount} ⭐ ➔ <b>${currentWin} ⭐</b></span>`;
+          }
+        }
       });
     }
 
@@ -1851,6 +1926,7 @@
         if (p.isBot && !p.cashed && currentMultiplier >= p.targetMult && currentMultiplier < crashTarget) {
           p.cashed = true;
           p.cashMult = p.targetMult;
+          p.finalWin = Math.floor(p.amount * p.targetMult);
           changed = true;
         }
       });
@@ -1873,6 +1949,8 @@
       currentMultiplier = 1.00;
       hasExtendedFlight = false;
       flightProgressNormalized = 0;
+
+      updateCosmicEnvironment(1.00);
 
       document.getElementById('rocket-mult').style.display = "none";
       document.getElementById('timerOverlay').style.display = "flex";
@@ -1936,7 +2014,15 @@
         currentMultiplier = parseFloat((currentMultiplier + step).toFixed(2));
         document.getElementById('rocket-mult').innerText = currentMultiplier.toFixed(2) + "x";
 
+        // 1. Динамический неоновый цвет икса
         updateMultiplierNeonColor(currentMultiplier, false);
+
+        // 2. Динамическая космическая эволюция фона
+        updateCosmicEnvironment(currentMultiplier);
+
+        // 3. Динамический рост ставок в реальном времени в таблице
+        updateLiveGrowingBets();
+
         flightProgressNormalized += 0.008;
 
         [1, 2].forEach(id => {
