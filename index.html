@@ -231,9 +231,7 @@
         <span>Список участников</span>
         <span id="participantsStatus">⌛ Ожидание</span>
       </div>
-      <div id="participantsList" style="display:flex; flex-direction:column; gap:6px;">
-        <!-- Динамические строки ботов -->
-      </div>
+      <div id="participantsList" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
   </div>
 
@@ -279,7 +277,7 @@
     let isCashedOut = false;
     
     let globalMult = 1.00;
-    let gamePhase = 'waiting'; // 'waiting' (таймер 5 секунд) или 'flying' (полет)
+    let gamePhase = 'waiting'; 
     let waitTimer = 5;
     let mainInterval = null;
     let currentCrashPoint = 1.00;
@@ -325,7 +323,6 @@
       document.getElementById('usdText1').innerText = (currentBet * 0.015).toFixed(2);
     }
 
-    // ИГРОВОЙ ЦИКЛ (ТАЙМЕР 5 СЕК + ПОЛЕТ + БОТЫ)
     function startEngineLoop() {
       runWaitingPhase();
     }
@@ -338,7 +335,6 @@
       document.getElementById('rocketDisplay').innerText = "5";
       document.getElementById('participantsStatus').innerText = "⌛ Ожидание";
 
-      // Генерируем ботов для раунда
       activeParticipants = botPool.sort(() => 0.5 - Math.random()).slice(0, 5).map(b => ({
         name: b.name,
         avatar: b.avatar,
@@ -367,7 +363,7 @@
         } else {
           clearInterval(timerInterval);
           document.getElementById('rocketDisplay').innerText = "GO";
-          setTimeout(() => startFlyingPhase(), 600);
+          setTimeout(() => startFlyingPhase(), 500);
         }
       }, 1000);
     }
@@ -376,14 +372,13 @@
       gamePhase = 'flying';
       document.getElementById('participantsStatus').innerText = "🎮 Игра окончена";
 
-      // Умная схема удержания (RTP 95% + улет до 1000х если игрок забрал)
       const r = Math.random();
       if (r < 0.04) {
         currentCrashPoint = 1.00;
       } else {
         const playerOut = !isBetPlaced || isCashedOut;
         if (playerOut && Math.random() < 0.4) {
-          currentCrashPoint = parseFloat((120 + Math.random() * 880).toFixed(2)); // Улет в космос до 1000х!
+          currentCrashPoint = parseFloat((120 + Math.random() * 880).toFixed(2)); 
         } else {
           currentCrashPoint = Math.max(1.05, parseFloat((0.95 / (1 - Math.random() * 0.95)).toFixed(2)));
           if (currentCrashPoint > 40) currentCrashPoint = parseFloat((2 + Math.random() * 25).toFixed(2));
@@ -394,7 +389,6 @@
         globalMult += 0.04;
         document.getElementById('rocketDisplay').innerText = globalMult.toFixed(2) + 'x';
 
-        // Боты случайно забирают выигрыш по ходу полета
         activeParticipants.forEach(p => {
           if (!p.cashed && globalMult >= (1.1 + Math.random() * 3.5)) {
             p.cashed = true;
@@ -402,7 +396,6 @@
           }
         });
 
-        // Автовывод для реального игрока
         if (isBetPlaced && !isCashedOut && document.getElementById('autoToggle1').checked && globalMult >= 2.0) {
           executeCashOut();
         }
@@ -423,7 +416,7 @@
       activeParticipants.forEach(p => {
         if (!p.cashed) {
           p.cashed = true;
-          p.cashMultiplier = 0; // Сгорел
+          p.cashMultiplier = 0; 
         }
       });
       renderParticipants();
@@ -453,7 +446,6 @@
           btn.innerText = "Отменить ставку";
           btn.style.background = "#ff4757";
 
-          // Добавляем игрока в текущий список ожидания
           activeParticipants.unshift({
             name: getSafeUser().first_name || 'Вы',
             avatar: '⭐',
@@ -489,7 +481,6 @@
       btn.innerText = `Забрано (+${winAmount} ⭐)`;
       btn.style.background = "#2ed573";
 
-      // Отмечаем игрока в списке
       const userP = activeParticipants.find(p => p.isUser);
       if (userP) {
         userP.cashed = true;
