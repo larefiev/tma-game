@@ -405,7 +405,6 @@
       tg.ready();
     }
 
-    // НОВЫЙ URL БЭКЕНДА
     const BACKEND_URL = 'https://tma-backend-production-b842.up.railway.app';
     const ADMIN_TELEGRAM_ID = '944873428';
 
@@ -624,15 +623,24 @@
         });
         const data = await res.json();
 
-        if (data.invoiceLink && tg?.openInvoice) {
-          tg.openInvoice(data.invoiceLink, (status) => {
-            if (status === 'paid') {
-              balance += amount;
-              totalDeposited += amount;
-              updateBalance();
-              closeCashierModal();
-            }
-          });
+        if (data.invoiceLink) {
+          if (tg && typeof tg.openInvoice === 'function') {
+            tg.openInvoice(data.invoiceLink, (status) => {
+              if (status === 'paid') {
+                balance += amount;
+                totalDeposited += amount;
+                updateBalance();
+                closeCashierModal();
+                alert(`🎉 Оплата прошла! Начислено +${amount} ⭐`);
+              }
+            });
+          } else if (tg && typeof tg.openTelegramLink === 'function') {
+            tg.openTelegramLink(data.invoiceLink);
+          } else {
+            window.location.href = data.invoiceLink;
+          }
+        } else {
+          alert("Ошибка: " + (data.error || "Не удалось получить инвойс"));
         }
       } catch (err) {
         alert("Ошибка создания счета: " + err.message);
@@ -658,10 +666,6 @@
       }
       if (val > balance) {
         alert("Недостаточно звёзд на балансе!");
-        return;
-      }
-      if (totalWagered < totalDeposited) {
-        alert(`Вывод невозможен: требуется отыграть 100% от депозитов (${totalWagered}/${totalDeposited} ⭐).`);
         return;
       }
 
