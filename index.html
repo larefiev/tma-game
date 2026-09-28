@@ -78,30 +78,30 @@
     .slot-col.spinning { filter: blur(4px); animation: fastSpin 0.1s linear infinite; }
     @keyframes fastSpin { 0% { transform: translateY(-15px); } 100% { transform: translateY(15px); } }
 
-    .slot-item { background: rgba(255, 255, 255, 0.04); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 26px; height: 100%; width: 100%; position: relative; transition: filter 0.3s; transform-style: preserve-3d; text-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.2); }
+    .slot-item { background: rgba(255, 255, 255, 0.04); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 26px; height: 100%; width: 100%; position: relative; transform-style: preserve-3d; text-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.2); }
     
     .slot-item.idle-3d { animation: breath3D 3s ease-in-out infinite alternate; }
     @keyframes breath3D { 0% { transform: rotateY(-10deg) rotateX(5deg) scale(0.98); } 100% { transform: rotateY(10deg) rotateX(-5deg) scale(1.02); filter: brightness(1.1); } }
     
-    .slot-item.soft-drop { animation: softDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes softDrop { 0% { transform: translateY(-100px) scale(0.8, 1.3); opacity: 0; } 60% { transform: translateY(10px) scale(1.1, 0.8); opacity: 1; } 80% { transform: translateY(-5px) scale(0.95, 1.05); } 100% { transform: translateY(0) scale(1, 1); } }
+    .slot-item.bounce-drop { animation: bounceDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes bounceDrop { 0% { transform: translateY(-100px) scale(0.8, 1.3); opacity: 0; } 60% { transform: translateY(10px) scale(1.1, 0.8); opacity: 1; } 80% { transform: translateY(-5px) scale(0.95, 1.05); } 100% { transform: translateY(0) scale(1, 1); } }
     
+    .slot-item.exact-drop { animation: exactDrop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    @keyframes exactDrop { 0% { transform: translateY(var(--drop-dist)); } 100% { transform: translateY(0); } }
+
     .slot-item.thud { animation: thudSlam 0.2s cubic-bezier(0.175, 0.885, 0.32, 1); }
     @keyframes thudSlam { 0% { transform: translateY(-8px); } 50% { transform: translateY(4px) scaleY(0.9); } 100% { transform: translateY(0) scaleY(1); } }
     
     .slot-item.pop-explode-3d { animation: popExplode3D 0.3s forwards; }
     @keyframes popExplode3D { 0% { transform: scale(1) translateZ(0); filter: brightness(1); } 40% { transform: scale(1.2) translateZ(50px); filter: brightness(1.8); } 100% { transform: scale(0) translateZ(100px); opacity: 0; } }
 
-    /* Бомбы (только scale, без font-size) */
+    /* Бомбы */
     .slot-item.bomb-idle { animation: bombPulse 1.5s infinite alternate; z-index: 6; filter: drop-shadow(0 0 10px var(--accent-red)); }
     @keyframes bombPulse { 0% { transform: scale(1) rotate(-3deg); } 100% { transform: scale(1.1) rotate(3deg); filter: drop-shadow(0 0 20px var(--accent-gold)); } }
-    
     .slot-item.bomb-aggro { animation: bombAggro 0.1s infinite; z-index: 15; filter: drop-shadow(0 0 30px var(--accent-red)); }
     @keyframes bombAggro { 0% { transform: scale(1.2) translate(-2px, 2px); } 50% { transform: scale(1.4) translate(2px, -2px); filter: brightness(2); } 100% { transform: scale(1.2) translate(-2px, -2px); } }
-    
     .slot-item.bomb-absorb { animation: bombAbsorb 0.4s forwards; z-index: 15; }
     @keyframes bombAbsorb { 0% { transform: scale(1.5); filter: brightness(2); } 100% { transform: scale(2); filter: brightness(4); opacity: 0; } }
-
     .slot-item.scatter-pulse { animation: scatterPulse 1.5s infinite; filter: drop-shadow(0 0 15px var(--accent-red)); }
     @keyframes scatterPulse { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); } }
 
@@ -194,8 +194,8 @@
   <div class="view active" id="viewHome">
     <div class="promo-banner" onclick="switchView('slot')">
       <div>
-        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Sweet Bonanza 3D</div>
-        <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Большие Бомбы и Покупка Бонуса!</div>
+        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Candy Bonanza 3D</div>
+        <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Покупка бонуса и Double Win!</div>
       </div>
       <div style="font-size: 48px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));">🍭</div>
     </div>
@@ -242,9 +242,7 @@
           <div style="font-size:14px; color:var(--accent-cyan); animation: pulseWin 1s infinite alternate;">[ Нажми чтобы начать ]</div>
         </div>
 
-        <div class="slot-grid-6x5" id="slotGrid">
-          <!-- Колонки и ячейки генерируются в JS -->
-        </div>
+        <div class="slot-grid-6x5" id="slotGrid"></div>
       </div>
     </div>
 
@@ -255,7 +253,7 @@
       <div class="ante-bet-box ui-lock" id="anteBetBox" onclick="SlotEngine.toggleDoubleWin()">
         <div>
           <div style="font-weight:800; font-size:13px; color:var(--accent-gold);">DOUBLE WIN (x2)</div>
-          <div style="font-size:11px; color:var(--text-muted);">Применяется к Бонус-Баю (Стоимость x20)</div>
+          <div style="font-size:11px; color:var(--text-muted);">Умножает бонус x2 (Стоимость x20)</div>
         </div>
         <label class="toggle-switch"><input type="checkbox" id="doubleToggle" onclick="event.stopPropagation()"><span class="slider"></span></label>
       </div>
@@ -346,7 +344,7 @@
       <div style="border-top:1px solid var(--border-color); padding-top:14px; margin-top:14px;">
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Глобальный RTP (%):</div>
         <select id="adminRtpSelect" class="input-field" style="padding:10px; font-size:14px;">
-          <option value="90" selected>Строгий (90%) - Казино забирает 15%</option>
+          <option value="90" selected>Строгий (90%) - Казино в плюсе</option>
           <option value="50">Жесткий (50%)</option>
           <option value="120">Щедрый (120%)</option>
           <option value="999">Режим Бога (Безлимит)</option>
@@ -373,7 +371,7 @@
     /* ================= APP CORE (RTP, Пул, Контроль Дохода) ================= */
     const App = (function() {
       let balance = 0; let rtp = 90; 
-      let globalSlotPool = 1000; // Стартовый буфер слота для первых игр
+      let globalSlotPool = 1000; 
       let netProfit = 0; 
 
       function updateHeader() { document.getElementById('headerBalance').innerText = Math.floor(balance); }
@@ -388,7 +386,7 @@
         deductBalance: function(amt) { if (balance >= amt && amt > 0) { balance -= amt; netProfit -= amt; updateHeader(); return true; } return false; },
         addBalance: function(amt) { if (amt > 0) { balance += amt; netProfit += amt; updateHeader(); } },
         
-        // КАЗИНО ВСЕГДА В ПЛЮСЕ: 15% уходит в невозвратный доход, 85% в пул выплат
+        // КАЗИНО ВСЕГДА В ПЛЮСЕ: 15% уходит в доход, 85% в пул
         processBetToPool: function(amount) { globalSlotPool += amount * 0.85; }, 
         getSlotPool: () => globalSlotPool,
         deductFromPool: function(amount) { globalSlotPool -= amount; },
@@ -409,7 +407,7 @@
     const SlotEngine = (function() {
       const COLS = 6, ROWS = 5;
       
-      // Справедливая базовая таблица выплат: Коэффициенты для (8-9), (10-11), (12+)
+      // Справедливая базовая таблица выплат: [8-9, 10-11, 12+]
       const paytable = { 
           '🍎':[0.1, 0.2, 0.5], 
           '🍇':[0.15, 0.3, 0.8], 
@@ -421,7 +419,6 @@
       const symDict = { '🍎':'#ff4757', '🍇':'#9b59b6', '🍉':'#2ed573', '🍌':'#ffa502', '🍒':'#ff6348', '🍬':'#70a1ff' };
       const symbols = Object.keys(paytable);
       const scatter = '🍭'; 
-      const bombSymbols = ['💣x2', '💣x5', '💣x10', '💣x25', '💣x50', '💣x100'];
       
       // Динамический шанс выпадения символов (чем дороже, тем реже)
       function getRandomSymbol() {
@@ -438,7 +435,6 @@
       let baseBet = 20; 
       let isDoubleBonus = false; 
       let isCurrentBonusDouble = false; 
-      
       let doubleChargeValue = 0;
       let isDoubleBonusTriggered = false;
 
@@ -447,8 +443,6 @@
       
       let pityValue = 0; let pityNextWin = false;
       let isNerfedBonus = false; 
-      let fsBombCooldown = 0; // Throttle bombs in FS
-      let bombsInCurrentSpin = 0;
       
       const elGrid = document.getElementById('slotGrid');
       const elWrapper = document.getElementById('slotWrapper');
@@ -509,11 +503,15 @@
         elPityFill.style.height = pityValue + '%';
       }
 
+      // Функция отрисовки ячейки с принудительным reflow для запуска CSS-анимаций
       function updateCell(c, r, sym, classes='') {
         grid[c][r] = sym;
         let el = document.getElementById(`cell-${c}-${r}`);
         if(el) {
+          el.className = 'slot-item'; 
+          void el.offsetWidth; // Принудительный сброс для старта новой анимации
           el.className = 'slot-item ' + classes;
+          
           if (sym && sym.startsWith('💣')) {
              let multVal = sym.replace('💣', '');
              el.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;">
@@ -554,7 +552,7 @@
         let winChance = isBonusBuy || freeSpinsLeft > 0 ? 0.6 : 0.3;
         let shouldWin = !forceLoss && Math.random() < winChance;
         
-        let naturalBonusChance = 0.005; // 0.5%
+        let naturalBonusChance = 0.005; 
         if (rtp === 999) naturalBonusChance = 0.5;
         else if (rtp >= 120) naturalBonusChance = 0.05;
         else if (rtp <= 50) naturalBonusChance = 0.0;
@@ -581,29 +579,6 @@
           while(placed < sCount) { let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS); if(target[c][r] !== scatter) { target[c][r] = scatter; placed++; } }
         }
 
-        // Логика бомб привязана к RTP и Cooldown
-        let bombChance = 0;
-        if (freeSpinsLeft > 0) {
-            if (fsBombCooldown > 0) bombChance = 0.05; // Маленький шанс в кулдауне
-            else bombChance = (rtp === 999) ? 0.8 : (rtp >= 120 ? 0.5 : (rtp <= 50 ? 0.15 : 0.4));
-        } else {
-            bombChance = (rtp === 999) ? 0.5 : (rtp >= 120 ? 0.1 : 0.05);
-        }
-
-        if(!forceLoss) {
-            let maxBombs = (freeSpinsLeft > 0) ? 2 : 1;
-            for(let i=0; i < maxBombs; i++) { 
-                if(Math.random() < bombChance && bombsInCurrentSpin < maxBombs) {
-                    let bSym = getBombValue();
-                    let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS);
-                    if(target[c][r] !== scatter) {
-                         target[c][r] = bSym;
-                         bombsInCurrentSpin++;
-                    }
-                }
-            }
-        }
-
         return target;
       }
 
@@ -613,7 +588,7 @@
         if (rtp <= 50 || isNerfedBonus) arr = ['💣x2', '💣x3', '💣x5', '💣x10'];
         else if (rtp === 90) arr = ['💣x2', '💣x5', '💣x10', '💣x25'];
         else if (rtp >= 120 && rtp !== 999) arr = ['💣x5', '💣x10', '💣x25', '💣x50'];
-        else arr = ['💣x10', '💣x25', '💣x50', '💣x100']; // 999
+        else arr = ['💣x10', '💣x25', '💣x50', '💣x100']; 
         return arr[Math.floor(Math.random()*arr.length)];
       }
 
@@ -632,13 +607,12 @@
             isNerfedBonus = !isDoubleBonus; 
         }
         
-        isSpinning = true; currentTumbleWin = 0; bombsInCurrentSpin = 0;
+        isSpinning = true; currentTumbleWin = 0; 
         toggleUILock(true); 
 
         elTumbleTracker.classList.remove('active'); 
         if (freeSpinsLeft > 0) {
             document.getElementById('slotTitle').innerText = `🍬 ФРИСПИНЫ: ${11-freeSpinsLeft} / 10`;
-            elWinDisplay.innerText = 'Вращение...';
         } else {
             elWinDisplay.innerText = 'Вращение...';
         }
@@ -678,6 +652,21 @@
         }
         clearInterval(spinVisInt);
         await wait(300);
+
+        // Бомбы падают сразу в сетку 
+        let bombChance = (freeSpinsLeft > 0) ? (isNerfedBonus ? 0.3 : 0.6) : 0.05;
+        let pool = App.getSlotPool();
+        if(pool >= baseBet) {
+            for(let i=0; i<3; i++) { 
+                if(Math.random() < bombChance) {
+                    let bSym = getBombValue();
+                    let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS);
+                    if(grid[c][r] !== scatter) {
+                        updateCell(c, r, bSym, freeSpinsLeft > 0 ? 'bounce-drop' : 'bomb-drop');
+                    }
+                }
+            }
+        }
 
         await processTumble();
       }
@@ -720,13 +709,7 @@
           await wait(400);
 
           let rtp = App.getRtp();
-          let bombChance = 0;
-          if (freeSpinsLeft > 0) {
-              if (fsBombCooldown > 0) bombChance = 0.05; 
-              else bombChance = (rtp === 999) ? 0.8 : (rtp >= 120 ? 0.5 : (rtp <= 50 ? 0.15 : 0.35));
-          } else {
-              bombChance = (rtp === 999) ? 0.5 : (rtp >= 120 ? 0.1 : 0.02);
-          }
+          let bombChance = (freeSpinsLeft > 0) ? (rtp === 999 ? 0.8 : (rtp >= 120 ? 0.5 : (rtp <= 50 ? 0.15 : 0.35))) : 0.02;
           let pool = App.getSlotPool();
           let forceLoss = pool < baseBet;
 
@@ -735,27 +718,24 @@
             let dropCount = ROWS - newCol.length;
             while(newCol.length < ROWS) {
                 let newSym = getRandomSymbol();
-                let maxB = (freeSpinsLeft > 0) ? 2 : 1;
-                if (Math.random() < bombChance && bombsInCurrentSpin < maxB && !forceLoss) {
-                    newSym = getBombValue();
-                    bombsInCurrentSpin++;
-                }
+                if (Math.random() < bombChance && !forceLoss) newSym = getBombValue();
                 newCol.unshift(newSym);
             }
             for(let r=0; r<ROWS; r++) {
                 let isNew = r < dropCount;
                 let animClass = isNew ? 'bounce-drop' : (dropCount > 0 ? 'exact-drop' : '');
-                updateCell(c, r, newCol[r], animClass + ' idle-3d');
+                let el = document.getElementById(`cell-${c}-${r}`);
                 if (!isNew && dropCount > 0) {
-                    let el = document.getElementById(`cell-${c}-${r}`);
-                    el.style.setProperty('--drop-dist', `${dropCount * -56}px`);
+                    el.style.setProperty('--drop-dist', `-${dropCount * 62}px`);
+                } else {
+                    el.style.removeProperty('--drop-dist');
                 }
+                updateCell(c, r, newCol[r], animClass);
             }
           }
 
           await wait(500);
           
-          // DOUBLE WIN PROGRESS METER
           if (freeSpinsLeft > 0 && isCurrentBonusDouble && !isDoubleBonusTriggered) {
               elPityFill.style.background = 'linear-gradient(to top, #e056fd, #00f2fe)';
               doubleChargeValue += 10 + Math.random() * 15; 
@@ -763,9 +743,7 @@
                   if (App.getSlotPool() > totalFSWin * 2) {
                       doubleChargeValue = 100; isDoubleBonusTriggered = true; elPityContainer.classList.add('maxed');
                       elWinDisplay.innerText = "🔥 DOUBLE WIN ЗАРЯЖЕН! 🔥"; await wait(1000);
-                  } else {
-                      doubleChargeValue = 98; 
-                  }
+                  } else { doubleChargeValue = 98; }
               }
               elPityFill.style.height = doubleChargeValue + '%';
           }
@@ -781,7 +759,7 @@
           }
 
           if (currentTumbleWin > 0) {
-            let totalMult = 1; // Дефолтный множитель
+            let totalMult = 1; 
             let bombMults = 0;
             if (bombs.length > 0) {
                for(let b of bombs) bombMults += b.val;
@@ -811,7 +789,6 @@
                }
             }
             
-            // Если бомб нет, totalMult = 1, базовый выигрыш от фруктов сохраняется!
             currentTumbleWin *= totalMult;
             
             if(pityNextWin && freeSpinsLeft === 0) {
@@ -820,9 +797,9 @@
                 await wait(1000);
             }
             
+            // Дробные значения, чтобы фрукты не давали 0
             currentTumbleWin = parseFloat(currentTumbleWin.toFixed(2)); 
             
-            // ПРОВЕРКА ПУЛА (Казино не уходит в минус)
             let pool = App.getSlotPool();
             let wasCapped = false;
             if (currentTumbleWin > pool) {
@@ -836,11 +813,8 @@
             elTumbleTracker.innerText = `${currentTumbleWin.toFixed(2)} ⭐ ${bombMults>0?'(x'+bombMults+')':''}`;
             elTumbleTracker.classList.add('pulse');
             
-            if (wasCapped) {
-                elWinDisplay.innerText = `⚠️ МАКС. ВЫПЛАТА: ${currentTumbleWin.toFixed(2)} ⭐`;
-            } else {
-                elWinDisplay.innerText = `ВЫИГРЫШ: ${currentTumbleWin.toFixed(2)} ⭐`;
-            }
+            if (wasCapped) elWinDisplay.innerText = `⚠️ МАКС. ВЫПЛАТА: ${currentTumbleWin.toFixed(2)} ⭐`;
+            else elWinDisplay.innerText = `ВЫИГРЫШ: ${currentTumbleWin.toFixed(2)} ⭐`;
             
             if(freeSpinsLeft > 0) totalFSWin += currentTumbleWin;
 
@@ -860,16 +834,9 @@
 
           elTumbleTracker.classList.remove('active');
 
-          // Логика Cooldown бомб
-          if (freeSpinsLeft > 0) {
-              if (bombsInCurrentSpin > 0) fsBombCooldown = 1 + Math.floor(Math.random()*2);
-              else if (fsBombCooldown > 0) fsBombCooldown--;
-          }
-          bombsInCurrentSpin = 0;
-
           if (sCount >= 4 && freeSpinsLeft === 0) {
             document.getElementById('fsIntro').classList.add('show');
-            return; // UI stays locked
+            return; 
           }
 
           if (freeSpinsLeft > 0) {
@@ -880,7 +847,7 @@
           if (freeSpinsLeft > 0) {
             freeSpinsLeft--;
             if (freeSpinsLeft === 0) {
-              // ИТОГИ БОНУСА
+              // В конце Фриспинов применяем DOUBLE WIN из шкалы
               if (isCurrentBonusDouble && isDoubleBonusTriggered) {
                   let extraWin = totalFSWin; 
                   let finalPool = App.getSlotPool();
@@ -894,11 +861,10 @@
               document.getElementById('slotTitle').innerText = `🍬 Candy Bonanza`;
               elSpinBtn.style.background = "var(--btn-green-gradient)";
               elSpinBtn.innerText = `🎰 КРУТИТЬ СПИН`;
-              elPityContainer.classList.remove('maxed'); 
-              elPityFill.style.height = '0%';
+              elPityContainer.classList.remove('maxed'); elPityFill.style.height = '0%';
               isNerfedBonus = false;
             } else {
-              // БЕСПЕРЕБОЙНЫЙ АВТО-СПИН (Прокидываем isAuto = true)
+              document.getElementById('slotTitle').innerText = `🍬 ФРИСПИНЫ: ${10 - freeSpinsLeft} / 10`;
               setTimeout(() => spin(false, true), 1200); 
               return;
             }
@@ -946,7 +912,7 @@
       window.startFreeSpinsMode = function() {
         document.getElementById('fsIntro').classList.remove('show');
         document.getElementById('slotWrapper').classList.add('free-spins');
-        freeSpinsLeft = 10; totalFSWin = 0; fsBombCooldown = 0; bombsInCurrentSpin = 0;
+        freeSpinsLeft = 10; totalFSWin = 0; 
         doubleChargeValue = 0; isDoubleBonusTriggered = false;
         elPityFill.style.height = '0%'; elPityContainer.classList.remove('maxed');
         elPityFill.style.background = isCurrentBonusDouble ? 'linear-gradient(to top, #e056fd, #00f2fe)' : 'linear-gradient(to top, #f39c12, #f1c40f)';
