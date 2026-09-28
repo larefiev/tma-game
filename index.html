@@ -134,9 +134,10 @@
     input:checked + .slider:before { transform: translateX(18px); }
 
     .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; }
+    .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; transition: 0.1s; }
+    .q-btn:active { background: rgba(255,255,255,0.1); }
 
-    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.1s; }
+    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; transition: transform 0.1s; }
     .btn-action:active { transform: scale(0.97); }
     .btn-disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
     .btn-spin { background: var(--btn-green-gradient); box-shadow: 0 4px 20px rgba(46, 213, 115, 0.3); }
@@ -193,7 +194,7 @@
   <div class="view active" id="viewHome">
     <div class="promo-banner" onclick="switchView('slot')">
       <div>
-        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Candy Bonanza 3D</div>
+        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Sweet Bonanza 3D</div>
         <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Покупка бонуса и Double Win!</div>
       </div>
       <div style="font-size: 48px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));">🍭</div>
@@ -404,27 +405,40 @@
       };
     })();
 
-    /* ================= SLOT ENGINE (Dynamic Paytable, Double Win, x10 Bonus Buy, Pity/Double Meter) ================= */
+    /* ================= SLOT ENGINE ================= */
     const SlotEngine = (function() {
       const COLS = 6, ROWS = 5;
       
-      // Урезанные выплаты (Основа на бомбах)
+      // СИЛЬНО УРЕЗАННАЯ ТАБЛИЦА ВЫПЛАТ (Основа на бомбах)
+      // Значения: [8-9, 10-11, 12+]
       const paytable = { '🍎':[0.02, 0.05, 0.1], '🍇':[0.03, 0.08, 0.15], '🍉':[0.05, 0.1, 0.2], '🍌':[0.08, 0.15, 0.3], '🍒':[0.1, 0.2, 0.5], '🍬':[0.2, 0.5, 1.0] };
       const symDict = { '🍎':'#ff4757', '🍇':'#9b59b6', '🍉':'#2ed573', '🍌':'#ffa502', '🍒':'#ff6348', '🍬':'#70a1ff' };
-      const symbols = Object.keys(paytable);
       const scatter = '🍭'; 
       const bombSymbols = ['💣x2', '💣x5', '💣x10', '💣x25', '💣x50', '💣x100'];
       
+      // ВЕСА СИМВОЛОВ (Дорогие падают реже)
+      function getRandomSymbol() {
+        let r = Math.random() * 100;
+        if (r < 35) return '🍎'; // 35%
+        if (r < 65) return '🍇'; // 30%
+        if (r < 82) return '🍉'; // 17%
+        if (r < 92) return '🍌'; // 10%
+        if (r < 97) return '🍒'; // 5%
+        return '🍬';             // 3%
+      }
+
       let grid = []; 
       let baseBet = 20; 
-      let isDoubleBonus = false; // Состояние ползунка Double Win
-      let isCurrentBonusDouble = false; // Зафиксированное состояние для текущей бонуски
-      let doubleChargeValue = 0; // Заряд для шкалы Double Win
-      let isDoubleBonusTriggered = false; // Сработал ли х2
+      let isDoubleBonus = false; 
+      let isCurrentBonusDouble = false; 
       
+      let doubleChargeValue = 0;
+      let isDoubleBonusTriggered = false;
+
       let freeSpinsLeft = 0; let totalFSWin = 0;
       let isSpinning = false; let currentTumbleWin = 0;
-      let pityValue = 0; let pityNextWin = false; // Pity Timer для Base Game
+      let pityValue = 0; let pityNextWin = false;
+      let isNerfedBonus = false; 
       
       const elGrid = document.getElementById('slotGrid');
       const elWrapper = document.getElementById('slotWrapper');
@@ -444,7 +458,7 @@
           grid[c] = [];
           let colDiv = document.createElement('div'); colDiv.className = 'slot-col'; colDiv.id = `col-${c}`;
           for(let r=0; r<ROWS; r++) {
-            let sym = symbols[Math.floor(Math.random()*symbols.length)]; grid[c][r] = sym;
+            let sym = getRandomSymbol(); grid[c][r] = sym;
             let cell = document.createElement('div'); cell.id = `cell-${c}-${r}`;
             colDiv.appendChild(cell);
           }
@@ -467,12 +481,24 @@
 
       function updateUI() {
         document.getElementById('slotBetText').innerText = baseBet;
-        // Покупка бонуса: x10 от ставки. Если ползунок Double Win активен -> x20.
         document.getElementById('buyCost').innerText = isDoubleBonus ? baseBet * 20 : baseBet * 10;
         document.getElementById('anteBetBox').className = isDoubleBonus ? 'ante-bet-box active' : 'ante-bet-box';
       }
 
-      // Функция отрисовки ячейки (Бомба рендерится аккуратно в две строки)
+      function updatePityMeter(isEmptyTumble) {
+        if(isEmptyTumble && freeSpinsLeft === 0) {
+          pityValue += (2 + Math.random()*4);
+          let net = App.getNetProfit();
+          if (net > -50) pityValue = Math.min(pityValue, 98);
+          else {
+            if (pityValue >= 100) { pityValue = 100; pityNextWin = true; elPityContainer.classList.add('maxed'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }
+          }
+        } else if (currentTumbleWin > 0 && pityNextWin) {
+          pityValue = 0; pityNextWin = false; elPityContainer.classList.remove('maxed');
+        }
+        elPityFill.style.height = pityValue + '%';
+      }
+
       function updateCell(c, r, sym, classes='') {
         grid[c][r] = sym;
         let el = document.getElementById(`cell-${c}-${r}`);
@@ -518,25 +544,23 @@
         let winChance = isBonusBuy || freeSpinsLeft > 0 ? 0.6 : 0.3;
         let shouldWin = !forceLoss && Math.random() < winChance;
         
-        // Натуральное выпадение бонуски в базе (зависит от RTP и Пула)
-        let naturalBonusChance = 0.005; // 0.5% по умолчанию
+        let naturalBonusChance = 0.005; // 0.5%
         if (rtp === 999) naturalBonusChance = 0.5;
         else if (rtp >= 120) naturalBonusChance = 0.05;
         else if (rtp <= 50) naturalBonusChance = 0.0;
-        if (pool > baseBet * 50) naturalBonusChance *= 2; // Увеличиваем шанс, если в пуле много денег
+        if (pool > baseBet * 50) naturalBonusChance *= 2; 
         
         let shouldScatter = isBonusBuy ? true : (!forceLoss && Math.random() < naturalBonusChance); 
 
         for(let c=0; c<COLS; c++) {
           target[c] = [];
           for(let r=0; r<ROWS; r++) {
-              let sym = symbols[Math.floor(Math.random()*symbols.length)];
-              target[c][r] = sym;
+              target[c][r] = getRandomSymbol();
           }
         }
 
         if(shouldWin && !isBonusBuy) {
-          let winSym = symbols[Math.floor(Math.random()*symbols.length)];
+          let winSym = getRandomSymbol();
           let placed = 0;
           while(placed < 8) { let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS); if(target[c][r] !== winSym && target[c][r] !== scatter) { target[c][r] = winSym; placed++; } }
         }
@@ -547,10 +571,9 @@
           while(placed < sCount) { let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS); if(target[c][r] !== scatter) { target[c][r] = scatter; placed++; } }
         }
 
-        // Бомбы падают сразу в сетку (5% шанс в базе, 40-60% в бонуске)
-        let bombChance = (freeSpinsLeft > 0) ? 0.4 : 0.05;
+        let bombChance = (freeSpinsLeft > 0) ? (isNerfedBonus ? 0.3 : 0.6) : 0.05;
         if(!forceLoss) {
-            for(let i=0; i<3; i++) { // Проверяем 3 раза шанс дропа
+            for(let i=0; i<3; i++) { 
                 if(Math.random() < bombChance) {
                     let bSym = getBombValue();
                     let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS);
@@ -564,7 +587,9 @@
 
       function getBombValue() {
         const normalBombs = ['💣x2', '💣x5', '💣x10', '💣x25', '💣x50', '💣x100'];
-        return normalBombs[Math.floor(Math.random()*normalBombs.length)];
+        const nerfedBombs = ['💣x2', '💣x3', '💣x5', '💣x10']; 
+        let poolArr = (freeSpinsLeft > 0) ? (isNerfedBonus ? nerfedBombs : normalBombs) : normalBombs;
+        return poolArr[Math.floor(Math.random()*poolArr.length)];
       }
 
       async function spin(isBonusBuy, isAuto = false) {
@@ -579,6 +604,7 @@
 
         if (isBonusBuy) {
             isCurrentBonusDouble = isDoubleBonus;
+            isNerfedBonus = !isDoubleBonus; // Дешевый бонус урезает иксы
         }
         
         isSpinning = true; currentTumbleWin = 0; 
@@ -597,7 +623,7 @@
             if(col && col.classList.contains('spinning')) {
               for(let r=0; r<ROWS; r++) {
                  let cell = document.getElementById(`cell-${c}-${r}`);
-                 if(cell && !cell.innerHTML.includes('💣')) cell.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+                 if(cell && !cell.innerHTML.includes('💣')) cell.innerText = getRandomSymbol();
               }
             }
           }
@@ -607,7 +633,6 @@
         for(let c=0; c<COLS; c++) {
           await wait(150 + (c===0?0:80));
           
-          // NEAR MISS TEASER
           if(c === 5 && scatterCount >= 3 && freeSpinsLeft === 0 && !isBonusBuy) {
              elTeaser.classList.add('show');
              if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
@@ -658,13 +683,13 @@
           if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
           
           currentTumbleWin += stepWin;
-          elTumbleTracker.innerText = `${currentTumbleWin.toFixed(2)} ⭐`;
+          elTumbleTracker.innerText = `${currentTumbleWin.toFixed(1)} ⭐`;
           elTumbleTracker.classList.add('active', 'pulse');
           setTimeout(()=>elTumbleTracker.classList.remove('pulse'), 200);
 
           await wait(400);
 
-          let bombChance = (freeSpinsLeft > 0) ? 0.4 : 0.05;
+          let bombChance = (freeSpinsLeft > 0) ? (isNerfedBonus ? 0.2 : 0.4) : 0.05;
           let pool = App.getSlotPool();
           let forceLoss = pool < baseBet;
 
@@ -672,7 +697,7 @@
             let newCol = grid[c].filter(s => s !== null);
             let dropCount = ROWS - newCol.length;
             while(newCol.length < ROWS) {
-                let newSym = symbols[Math.floor(Math.random()*symbols.length)];
+                let newSym = getRandomSymbol();
                 if (Math.random() < bombChance && !forceLoss) newSym = getBombValue();
                 newCol.unshift(newSym);
             }
@@ -680,10 +705,24 @@
           }
 
           await wait(500);
+          
+          if (freeSpinsLeft > 0 && isCurrentBonusDouble && !isDoubleBonusTriggered) {
+              elPityFill.style.background = 'linear-gradient(to top, #e056fd, #00f2fe)';
+              doubleChargeValue += 10 + Math.random() * 15; 
+              if (doubleChargeValue >= 100) {
+                  if (App.getSlotPool() > totalFSWin * 2) {
+                      doubleChargeValue = 100; isDoubleBonusTriggered = true; elPityContainer.classList.add('maxed');
+                      elWinDisplay.innerText = "🔥 DOUBLE WIN ЗАРЯЖЕН! 🔥"; await wait(1000);
+                  } else {
+                      doubleChargeValue = 98; 
+                  }
+              }
+              elPityFill.style.height = doubleChargeValue + '%';
+          }
+
           await processTumble();
 
         } else {
-          // Конец Каскада
           let sCount = 0; let bombs = [];
           for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) {
             if(grid[c][r]===scatter) sCount++;
@@ -715,36 +754,41 @@
                  elWrapper.classList.add(b.val >= 20 ? 'shake-heavy' : 'shake-light');
                  await wait(400);
                  elWrapper.className = `slot-wrapper ${freeSpinsLeft>0?'free-spins':''}`;
-                 updateCell(b.c, b.r, symbols[Math.floor(Math.random()*symbols.length)], 'bounce-drop idle-3d');
+                 updateCell(b.c, b.r, getRandomSymbol(), 'bounce-drop idle-3d');
                }
                currentTumbleWin *= bombMults;
             }
             
-            // Pity Timer (Base Game Only)
-            if(freeSpinsLeft === 0 && pityNextWin) {
+            if(pityNextWin && freeSpinsLeft === 0) {
                 currentTumbleWin *= 2;
                 elWinDisplay.innerText = "🌟 PITY TIMER x2 APPLIED! 🌟";
                 await wait(1000);
             }
             
-            currentTumbleWin = Math.ceil(currentTumbleWin); 
+            currentTumbleWin = Math.floor(currentTumbleWin); 
             
-            // ПРОВЕРКА ПУЛА (Казино не уходит в минус)
             let pool = App.getSlotPool();
-            if (currentTumbleWin > pool) currentTumbleWin = Math.floor(pool); 
+            let wasCapped = false;
+            if (currentTumbleWin > pool) {
+                currentTumbleWin = Math.floor(pool); 
+                wasCapped = true;
+            }
             
             App.deductFromPool(currentTumbleWin);
             App.addBalance(currentTumbleWin);
             
             elTumbleTracker.innerText = `${currentTumbleWin} ⭐ ${bombMults>0?'(x'+bombMults+')':''}`;
             elTumbleTracker.classList.add('pulse');
-            elWinDisplay.innerText = `ВЫИГРЫШ: ${currentTumbleWin} ⭐`;
+            
+            if (wasCapped) {
+                elWinDisplay.innerText = `⚠️ МАКС. ВЫПЛАТА: ${currentTumbleWin} ⭐`;
+            } else {
+                elWinDisplay.innerText = `ВЫИГРЫШ: ${currentTumbleWin} ⭐`;
+            }
+            
             if(freeSpinsLeft > 0) totalFSWin += currentTumbleWin;
 
-            // Сбрасываем Pity Meter
-            if (freeSpinsLeft === 0) {
-                pityValue = 0; pityNextWin = false; elPityContainer.classList.remove('maxed'); elPityFill.style.height = '0%';
-            }
+            if (freeSpinsLeft === 0) updatePityMeter(false);
 
             if(currentTumbleWin > baseBet * 5) {
               elPopup.innerText = currentTumbleWin > baseBet * 50 ? 'EPIC WIN!' : (currentTumbleWin > baseBet * 20 ? 'TASTY!' : 'NICE!');
@@ -754,62 +798,41 @@
             }
             await wait(1500);
           } else {
-            // Пустой спин
+            if (freeSpinsLeft === 0) updatePityMeter(true);
             elWinDisplay.innerText = freeSpinsLeft > 0 ? 'Пустой спин' : 'Попробуй еще раз!';
-            if (freeSpinsLeft === 0) {
-                pityValue += (2 + Math.random()*4);
-                let net = App.getNetProfit();
-                if (net > -50) pityValue = Math.min(pityValue, 98);
-                else if (pityValue >= 100) { pityValue = 100; pityNextWin = true; elPityContainer.classList.add('maxed'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }
-                elPityFill.style.background = 'linear-gradient(to top, #f39c12, #f1c40f)';
-                elPityFill.style.height = pityValue + '%';
-            }
           }
 
           elTumbleTracker.classList.remove('active');
 
-          // Обновление UI кнопок для бонуски
+          if (sCount >= 4 && freeSpinsLeft === 0) {
+            document.getElementById('fsIntro').classList.add('show');
+            return; 
+          }
+
           if (freeSpinsLeft > 0) {
               elSpinBtn.innerText = `💰 ВЫИГРЫШ: ${totalFSWin} ⭐`;
               elSpinBtn.style.background = "linear-gradient(135deg, #f1c40f, #e67e22)";
           }
 
-          // DOUBLE WIN PROGRESS METER (заменяет Pity Timer)
-          if (freeSpinsLeft > 0 && isCurrentBonusDouble && !isDoubleBonusTriggered) {
-              elPityFill.style.background = 'linear-gradient(to top, #e056fd, #00f2fe)';
-              doubleChargeValue += 8 + Math.random() * 12; 
-              if (doubleChargeValue >= 100) {
-                  if (App.getSlotPool() > totalFSWin * 2) {
-                      doubleChargeValue = 100; isDoubleBonusTriggered = true; elPityContainer.classList.add('maxed');
-                      elWinDisplay.innerText = "🔥 DOUBLE WIN ЗАРЯЖЕН! 🔥"; await wait(1000);
-                  } else {
-                      doubleChargeValue = 98; // Near miss
-                  }
-              }
-              elPityFill.style.height = doubleChargeValue + '%';
-          }
-
-          // ТРИГГЕР ФРИСПИНОВ
-          if (sCount >= 4 && freeSpinsLeft === 0) {
-            document.getElementById('fsIntro').classList.add('show');
-            return; // UI stays locked
-          }
-
           if (freeSpinsLeft > 0) {
             freeSpinsLeft--;
             if (freeSpinsLeft === 0) {
-              // ИТОГИ БОНУСА
               if (isCurrentBonusDouble && isDoubleBonusTriggered) {
-                  totalFSWin *= 2; 
-                  elWinDisplay.innerText = "🌟 DOUBLE WIN APPLIED! 🌟";
-                  await wait(1000);
+                  let extraWin = totalFSWin; 
+                  let finalPool = App.getSlotPool();
+                  if (extraWin > finalPool) extraWin = Math.floor(finalPool);
+                  App.deductFromPool(extraWin);
+                  App.addBalance(extraWin);
+                  totalFSWin += extraWin; 
               }
               showTotalWinScreen(totalFSWin);
               document.getElementById('slotWrapper').classList.remove('free-spins');
               document.getElementById('slotTitle').innerText = `🍬 Candy Bonanza`;
               elSpinBtn.style.background = "var(--btn-green-gradient)";
               elSpinBtn.innerText = `🎰 КРУТИТЬ СПИН`;
-              elPityContainer.classList.remove('maxed'); elPityFill.style.height = '0%';
+              elPityContainer.classList.remove('maxed'); 
+              elPityFill.style.height = '0%';
+              isNerfedBonus = false;
             } else {
               document.getElementById('slotTitle').innerText = `🍬 FREE SPINS (${freeSpinsLeft})`;
               setTimeout(() => spin(false, true), 1200); // БЕСПЕРЕБОЙНЫЙ АВТО-СПИН
@@ -822,7 +845,7 @@
         }
       }
 
-      async function showTotalWinScreen(amount) {
+      function showTotalWinScreen(amount) {
         const modal = document.getElementById('totalWinModal');
         const num = document.getElementById('totalWinNum');
         const btn = document.getElementById('twCollectBtn');
@@ -864,9 +887,10 @@
         elPityFill.style.height = '0%'; elPityContainer.classList.remove('maxed');
         elPityFill.style.background = isCurrentBonusDouble ? 'linear-gradient(to top, #e056fd, #00f2fe)' : 'linear-gradient(to top, #f39c12, #f1c40f)';
         document.getElementById('slotTitle').innerText = `🍬 FREE SPINS (10)`;
-        elSpinBtn.innerText = `💰 ВЫИГРЫШ: 0 ⭐`;
-        isSpinning = false; // Освобождаем
-        setTimeout(() => spin(false, true), 500); // АВТО-СТАРТ ФРИСПИНОВ
+        elSpinBtn.innerText = `💰 ВЫИГРЫШ: 0 ⭐`; 
+        elSpinBtn.style.background = "linear-gradient(135deg, #f1c40f, #e67e22)";
+        isSpinning = false; 
+        setTimeout(() => spin(false, true), 500); 
       }
 
       return {
@@ -874,6 +898,7 @@
         changeBet: function(amt) { if(isSpinning) return; if(amt === 'max') baseBet = Math.max(10, Math.floor(App.getBalance() / (isDoubleBonus?20:10))); else baseBet = Math.max(10, baseBet + amt); updateUI(); },
         play: function(isBuy) { spin(isBuy, false); },
         toggleDoubleWin: function() { if(isSpinning) return; isDoubleBonus = !isDoubleBonus; updateUI(); },
+        startFreeSpinsMode: window.startFreeSpinsMode,
         collectTotalWin: function() {
           document.getElementById('totalWinModal').classList.remove('show');
           setTimeout(()=> { document.getElementById('totalWinModal').style.display = 'none'; toggleUILock(false); isSpinning = false; }, 500);
