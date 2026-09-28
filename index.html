@@ -25,8 +25,8 @@
 
     /* HEADER & NAV */
     .header { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg-dark); position: sticky; top: 0; z-index: 100; }
-    .brand-logo { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 900; color: #00f2fe; text-transform: uppercase; letter-spacing: 1px; }
-    .balance-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 16px; font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(255,183,3,0.1); }
+    .brand-logo { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 900; color: #00f2fe; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+    .balance-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 16px; font-size: 14px; font-weight: 900; color: var(--accent-gold); display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(255,183,3,0.1); cursor: pointer; }
 
     .view { display: none; width: 100%; max-width: 480px; flex-direction: column; padding: 0 16px; gap: 14px; animation: fadeIn 0.3s ease; }
     .view.active { display: flex; }
@@ -47,7 +47,9 @@
     .slot-layout { display: flex; gap: 8px; align-items: stretch; width: 100%; height: 320px; position: relative; }
     
     .combo-meter-container { width: 18px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; position: relative; z-index: 10; box-shadow: inset 0 0 10px #000; }
-    .combo-fill { width: 100%; background: linear-gradient(to top, #f39c12, #f1c40f); transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 0%; box-shadow: 0 -5px 15px rgba(241, 196, 15, 0.8); position: relative; }
+    .combo-fill { width: 100%; background: linear-gradient(to top, #f39c12, #f1c40f); transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.5s; height: 0%; box-shadow: 0 -5px 15px rgba(241, 196, 15, 0.8); position: relative; }
+    .combo-meter-container.maxed { animation: meterGlow 1s infinite alternate; border-color: var(--accent-gold); }
+    @keyframes meterGlow { 0% { box-shadow: 0 0 10px var(--accent-gold); } 100% { box-shadow: 0 0 30px var(--accent-gold), inset 0 0 20px var(--accent-gold); } }
 
     .slot-wrapper { flex: 1; position: relative; background: var(--slot-bg-normal); border: 2px solid rgba(224, 86, 253, 0.4); border-radius: 20px; padding: 6px; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(155, 89, 182, 0.2); transition: background 0.5s ease; overflow: hidden; transform-style: preserve-3d; }
     .slot-wrapper.free-spins { background: var(--slot-bg-free); border-color: var(--accent-cyan); box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 25px rgba(0, 242, 254, 0.4); }
@@ -70,27 +72,33 @@
     .fs-intro-screen.show { opacity: 1; pointer-events: auto; }
     .fs-intro-screen.show * { pointer-events: none; }
 
-    /* ================= 6x5 Grid Optimized ================= */
+    /* 6x5 Grid Optimized */
     .slot-grid-6x5 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; position: relative; z-index: 5; height: 100%; width: 100%; }
     .slot-col { display: grid; grid-template-rows: repeat(5, 1fr); gap: 4px; position: relative; height: 100%; }
-    .slot-col.spinning { filter: blur(3px); animation: reelSpin 0.12s linear infinite; }
-    @keyframes reelSpin { 0% { transform: translateY(-15px); } 100% { transform: translateY(15px); } }
+    .slot-col.spinning { filter: blur(4px); animation: fastSpin 0.1s linear infinite; }
+    @keyframes fastSpin { 0% { transform: translateY(-15px); } 100% { transform: translateY(15px); } }
 
-    .slot-item { background: rgba(255, 255, 255, 0.04); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 32px; height: 100%; width: 100%; position: relative; transition: filter 0.3s; text-shadow: 0 5px 10px rgba(0,0,0,0.5); }
+    .slot-item { background: rgba(255, 255, 255, 0.04); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 26px; height: 100%; width: 100%; position: relative; transition: filter 0.3s; transform-style: preserve-3d; text-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.2); }
+    
+    .slot-item.idle-3d { animation: breath3D 3s ease-in-out infinite alternate; }
+    @keyframes breath3D { 0% { transform: rotateY(-10deg) rotateX(5deg) scale(0.98); } 100% { transform: rotateY(10deg) rotateX(-5deg) scale(1.02); filter: brightness(1.1); } }
+    
+    .slot-item.soft-drop { animation: softDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes softDrop { 0% { transform: translateY(-100px) scale(0.8, 1.3); opacity: 0; } 60% { transform: translateY(10px) scale(1.1, 0.8); opacity: 1; } 80% { transform: translateY(-5px) scale(0.95, 1.05); } 100% { transform: translateY(0) scale(1, 1); } }
     
     .slot-item.thud { animation: thudSlam 0.2s cubic-bezier(0.175, 0.885, 0.32, 1); }
     @keyframes thudSlam { 0% { transform: translateY(-8px); } 50% { transform: translateY(4px) scaleY(0.9); } 100% { transform: translateY(0) scaleY(1); } }
-    .slot-item.bounce-drop { animation: bounceDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes bounceDrop { 0% { transform: translateY(-80px); opacity: 0; } 70% { transform: translateY(5px); opacity: 1; } 100% { transform: translateY(0); } }
-    .slot-item.pop-explode { animation: popSquash 0.3s forwards; }
-    @keyframes popSquash { 0% { transform: scale(1); filter: brightness(1); } 40% { transform: scale(1.3) scaleY(0.7); filter: brightness(1.8); } 100% { transform: scale(0); opacity: 0; } }
-    .slot-item.dim { filter: brightness(0.3); }
+    
+    .slot-item.pop-explode-3d { animation: popExplode3D 0.4s forwards; }
+    @keyframes popExplode3D { 0% { transform: scale(1) translateZ(0); filter: brightness(1); } 40% { transform: scale(1.2) translateZ(50px); filter: brightness(1.8); } 100% { transform: scale(0) translateZ(100px); opacity: 0; } }
 
-    /* Бомбы и Скаттеры */
-    .slot-item.bomb-idle { animation: bombPulse 1.5s infinite alternate; filter: drop-shadow(0 0 10px var(--accent-red)); font-size: 34px; z-index: 6; }
+    /* Бомбы (только scale, без font-size) */
+    .slot-item.bomb-idle { animation: bombPulse 1.5s infinite alternate; z-index: 6; filter: drop-shadow(0 0 10px var(--accent-red)); }
     @keyframes bombPulse { 0% { transform: scale(1) rotate(-3deg); } 100% { transform: scale(1.1) rotate(3deg); filter: drop-shadow(0 0 20px var(--accent-gold)); } }
-    .slot-item.bomb-aggro { animation: bombAggro 0.1s infinite; font-size: 38px; z-index: 15; filter: drop-shadow(0 0 30px var(--accent-red)); }
+    
+    .slot-item.bomb-aggro { animation: bombAggro 0.1s infinite; z-index: 15; filter: drop-shadow(0 0 30px var(--accent-red)); }
     @keyframes bombAggro { 0% { transform: scale(1.2) translate(-2px, 2px); } 50% { transform: scale(1.4) translate(2px, -2px); filter: brightness(2); } 100% { transform: scale(1.2) translate(-2px, -2px); } }
+    
     .slot-item.bomb-absorb { animation: bombAbsorb 0.4s forwards; z-index: 15; }
     @keyframes bombAbsorb { 0% { transform: scale(1.5); filter: brightness(2); } 100% { transform: scale(2); filter: brightness(4); opacity: 0; } }
 
@@ -98,12 +106,14 @@
     @keyframes scatterPulse { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); } }
 
     /* Particles & VFX */
-    .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 9; opacity: 1; animation: particleFly 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-    @keyframes particleFly { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+    .particle-3d { position: absolute; border-radius: 50%; pointer-events: none; z-index: 25; opacity: 1; animation: particleFly3D 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.5); }
+    @keyframes particleFly3D { 0% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; } 100% { transform: translate3d(var(--dx), var(--dy), 100px) scale(0); opacity: 0; } }
+
     .shockwave { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.8); z-index: 20; pointer-events: none; animation: shockExpand 0.4s ease-out forwards; }
     @keyframes shockExpand { 0% { width: 20px; height: 20px; opacity: 1; border-width: 10px; } 100% { width: 300px; height: 300px; opacity: 0; border-width: 1px; } }
-    .flying-mult { position: absolute; font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--accent-gold), 0 0 10px var(--accent-red); z-index: 25; pointer-events: none; animation: flyToWin 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-    @keyframes flyToWin { 0% { transform: scale(1) translateY(0); opacity: 1; } 100% { transform: scale(0.5) translateY(-150px); opacity: 0; } }
+    
+    .flying-mult { position: absolute; font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--accent-gold), 0 0 10px var(--accent-red); z-index: 25; pointer-events: none; animation: flyToWin3D 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    @keyframes flyToWin3D { 0% { transform: scale(1) translate3d(0,0,0); opacity: 1; } 100% { transform: scale(0.5) translate3d(0,-200px, 100px); opacity: 0; } }
 
     .shake-light { animation: shakeL 0.3s ease-in-out; }
     .shake-heavy { animation: shakeH 0.6s ease-in-out; }
@@ -114,7 +124,7 @@
     .slot-controls { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
     .slot-win-display { text-align: center; font-size: 16px; font-weight: 900; color: var(--accent-gold); height: 24px; text-shadow: 0 0 10px rgba(255,183,3,0.3); }
     
-    .ante-bet-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .ante-bet-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
     .ante-bet-box.active { border-color: var(--accent-gold); background: rgba(255, 183, 3, 0.1); }
     .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -126,7 +136,7 @@
     .quick-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; }
 
-    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; transition: transform 0.1s; }
+    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.1s; }
     .btn-action:active { transform: scale(0.97); }
     .btn-disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
     .btn-spin { background: var(--btn-green-gradient); box-shadow: 0 4px 20px rgba(46, 213, 115, 0.3); }
@@ -145,6 +155,7 @@
     @keyframes flashBlast { 0% { opacity: 1; } 100% { opacity: 0; } }
     @keyframes scalePulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
     @keyframes floatBtn { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    
     .tw-coin { position: absolute; font-size: 32px; pointer-events: none; animation: flyCoin 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; transform-style: preserve-3d; }
     @keyframes flyCoin { 0% { transform: translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg); opacity: 1; } 100% { transform: translate3d(var(--tx), var(--ty), 500px) rotateY(720deg) rotateX(360deg); opacity: 0; } }
 
@@ -182,8 +193,8 @@
   <div class="view active" id="viewHome">
     <div class="promo-banner" onclick="switchView('slot')">
       <div>
-        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Sweet Bonanza 3D</div>
-        <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Покупка бонуса и Гарантия х2!</div>
+        <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:4px;">Candy Bonanza 3D</div>
+        <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.9);">Покупка бонуса и Double Win!</div>
       </div>
       <div style="font-size: 48px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));">🍭</div>
     </div>
@@ -210,7 +221,7 @@
     </div>
 
     <div class="slot-layout">
-      <!-- Pity Timer Meter -->
+      <!-- Double Win / Pity Meter -->
       <div class="combo-meter-container" id="pityMeterContainer">
         <div class="combo-fill" id="pityMeterFill"></div>
       </div>
@@ -231,7 +242,7 @@
         </div>
 
         <div class="slot-grid-6x5" id="slotGrid">
-          <!-- 6 columns generated by JS -->
+          <!-- Колонки и ячейки генерируются в JS -->
         </div>
       </div>
     </div>
@@ -239,10 +250,11 @@
     <div class="slot-controls">
       <div class="slot-win-display" id="slotWinDisplay">Вращай для победы!</div>
 
+      <!-- DOUBLE WIN работает только для бонус-бая -->
       <div class="ante-bet-box ui-lock" id="anteBetBox" onclick="SlotEngine.toggleDoubleWin()">
         <div>
           <div style="font-weight:800; font-size:13px; color:var(--accent-gold);">DOUBLE WIN (x2)</div>
-          <div style="font-size:11px; color:var(--text-muted);">Умножает бонус x2 (Стоимость бонуса x20)</div>
+          <div style="font-size:11px; color:var(--text-muted);">Применяется к Бонус-Баю (Стоимость x20)</div>
         </div>
         <label class="toggle-switch"><input type="checkbox" id="doubleToggle" onclick="event.stopPropagation()"><span class="slider"></span></label>
       </div>
@@ -360,7 +372,7 @@
     /* ================= APP CORE (RTP, Пул, Контроль Дохода) ================= */
     const App = (function() {
       let balance = 0; let rtp = 90; 
-      let globalSlotPool = 1000; // Стартовый буфер слота
+      let globalSlotPool = 1000; // Стартовый буфер слота для первых игр
       let netProfit = 0; 
 
       function updateHeader() { document.getElementById('headerBalance').innerText = Math.floor(balance); }
@@ -375,7 +387,7 @@
         deductBalance: function(amt) { if (balance >= amt && amt > 0) { balance -= amt; netProfit -= amt; updateHeader(); return true; } return false; },
         addBalance: function(amt) { if (amt > 0) { balance += amt; netProfit += amt; updateHeader(); } },
         
-        // 15% уходит казино, 85% в пул выплат
+        // КАЗИНО ВСЕГДА В ПЛЮСЕ: 15% уходит в невозвратный доход, 85% в пул выплат
         processBetToPool: function(amount) { globalSlotPool += amount * 0.85; }, 
         getSlotPool: () => globalSlotPool,
         deductFromPool: function(amount) { globalSlotPool -= amount; },
@@ -392,12 +404,12 @@
       };
     })();
 
-    /* ================= SLOT ENGINE (Dynamic Paytable, Double Win, x10 Bonus Buy) ================= */
+    /* ================= SLOT ENGINE (Dynamic Paytable, Double Win, x10 Bonus Buy, Pity/Double Meter) ================= */
     const SlotEngine = (function() {
       const COLS = 6, ROWS = 5;
       
-      // Урезанные выплаты. Игроки надеются только на бомбы.
-      const paytable = { '🍎':[0.1, 0.2, 0.5], '🍇':[0.15, 0.3, 0.6], '🍉':[0.2, 0.4, 0.8], '🍌':[0.25, 0.5, 1.0], '🍒':[0.3, 0.6, 1.5], '🍬':[0.5, 1.0, 2.0] };
+      // Урезанные выплаты (Основа на бомбах)
+      const paytable = { '🍎':[0.02, 0.05, 0.1], '🍇':[0.03, 0.08, 0.15], '🍉':[0.05, 0.1, 0.2], '🍌':[0.08, 0.15, 0.3], '🍒':[0.1, 0.2, 0.5], '🍬':[0.2, 0.5, 1.0] };
       const symDict = { '🍎':'#ff4757', '🍇':'#9b59b6', '🍉':'#2ed573', '🍌':'#ffa502', '🍒':'#ff6348', '🍬':'#70a1ff' };
       const symbols = Object.keys(paytable);
       const scatter = '🍭'; 
@@ -405,21 +417,26 @@
       
       let grid = []; 
       let baseBet = 20; 
-      let isDoubleBonus = false; 
-      let isCurrentBonusDouble = false; 
+      let isDoubleBonus = false; // Состояние ползунка Double Win
+      let isCurrentBonusDouble = false; // Зафиксированное состояние для текущей бонуски
+      let doubleChargeValue = 0; // Заряд для шкалы Double Win
+      let isDoubleBonusTriggered = false; // Сработал ли х2
       
       let freeSpinsLeft = 0; let totalFSWin = 0;
       let isSpinning = false; let currentTumbleWin = 0;
-      let pityValue = 0; let pityNextWin = false;
-      let isNerfedBonus = false; 
+      let pityValue = 0; let pityNextWin = false; // Pity Timer для Base Game
       
       const elGrid = document.getElementById('slotGrid');
       const elWrapper = document.getElementById('slotWrapper');
       const elTumbleTracker = document.getElementById('tumbleWinTracker');
       const elPopup = document.getElementById('celebrationPopup');
       const elWinDisplay = document.getElementById('slotWinDisplay');
+      const elTeaser = document.getElementById('teaserOverlay');
       const elPityFill = document.getElementById('pityMeterFill');
       const elPityContainer = document.getElementById('pityMeterContainer');
+      const elSpinBtn = document.getElementById('btnSpin');
+
+      let spinVisInt = null;
 
       function initBoard() {
         elGrid.innerHTML = ''; grid = [];
@@ -428,10 +445,15 @@
           let colDiv = document.createElement('div'); colDiv.className = 'slot-col'; colDiv.id = `col-${c}`;
           for(let r=0; r<ROWS; r++) {
             let sym = symbols[Math.floor(Math.random()*symbols.length)]; grid[c][r] = sym;
-            let cell = document.createElement('div'); cell.className = 'slot-item idle-3d'; cell.id = `cell-${c}-${r}`; cell.innerText = sym;
+            let cell = document.createElement('div'); cell.id = `cell-${c}-${r}`;
             colDiv.appendChild(cell);
           }
           elGrid.appendChild(colDiv);
+        }
+        for(let c=0; c<COLS; c++) {
+          for(let r=0; r<ROWS; r++) {
+            updateCell(c, r, grid[c][r], 'idle-3d');
+          }
         }
         updateUI();
       }
@@ -445,48 +467,43 @@
 
       function updateUI() {
         document.getElementById('slotBetText').innerText = baseBet;
-        // Покупка бонуса = x10. Если активен ползунок x2 = x20.
+        // Покупка бонуса: x10 от ставки. Если ползунок Double Win активен -> x20.
         document.getElementById('buyCost').innerText = isDoubleBonus ? baseBet * 20 : baseBet * 10;
         document.getElementById('anteBetBox').className = isDoubleBonus ? 'ante-bet-box active' : 'ante-bet-box';
       }
 
-      function updatePityMeter(isEmptyTumble) {
-        if(isEmptyTumble && freeSpinsLeft === 0) {
-          pityValue += (2 + Math.random()*4);
-          let net = App.getNetProfit();
-          if (net > -50) pityValue = Math.min(pityValue, 98);
-          else {
-            if (pityValue >= 100) { pityValue = 100; pityNextWin = true; elPityContainer.classList.add('maxed'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }
-          }
-        } else if (currentTumbleWin > 0 && pityNextWin) {
-          pityValue = 0; pityNextWin = false; elPityContainer.classList.remove('maxed');
-        }
-        elPityFill.style.height = pityValue + '%';
-      }
-
+      // Функция отрисовки ячейки (Бомба рендерится аккуратно в две строки)
       function updateCell(c, r, sym, classes='') {
         grid[c][r] = sym;
         let el = document.getElementById(`cell-${c}-${r}`);
         if(el) {
-          el.innerText = sym || '';
           el.className = 'slot-item ' + classes;
-          if(sym === scatter) el.classList.add('scatter-pulse');
-          if(sym && sym.startsWith('💣')) el.classList.add('bomb-idle');
+          if (sym && sym.startsWith('💣')) {
+             let multVal = sym.replace('💣', '');
+             el.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;">
+               <span style="font-size:24px;">💣</span>
+               <span style="font-size:11px; font-weight:900; color:var(--accent-gold); text-shadow:0 1px 3px #000; margin-top:-2px;">${multVal}</span>
+             </div>`;
+             el.classList.add('bomb-idle');
+          } else {
+             el.innerText = sym || '';
+             if(sym === scatter) el.classList.add('scatter-pulse');
+          }
         }
       }
 
-      function spawnParticles(c, r, sym) {
+      function spawnParticles3D(c, r, sym) {
         let color = symDict[sym] || '#fff';
         let el = document.getElementById(`cell-${c}-${r}`);
         if(!el) return;
         let rect = el.getBoundingClientRect(); let wrapRect = elWrapper.getBoundingClientRect();
         let centerX = rect.left - wrapRect.left + rect.width/2; let centerY = rect.top - wrapRect.top + rect.height/2;
 
-        for(let i=0; i<6; i++) {
-          let p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = color;
-          p.style.width = p.style.height = (Math.random()*6+4) + 'px';
+        for(let i=0; i<8; i++) {
+          let p = document.createElement('div'); p.className = 'particle-3d'; p.style.backgroundColor = color;
+          p.style.width = p.style.height = (Math.random()*8+6) + 'px';
           p.style.left = centerX + 'px'; p.style.top = centerY + 'px';
-          let angle = Math.random() * Math.PI * 2; let velocity = 30 + Math.random() * 50;
+          let angle = Math.random() * Math.PI * 2; let velocity = 40 + Math.random() * 60;
           p.style.setProperty('--dx', Math.cos(angle) * velocity + 'px'); p.style.setProperty('--dy', (Math.sin(angle) * velocity + 50) + 'px');
           elWrapper.appendChild(p); setTimeout(()=> p.remove(), 600);
         }
@@ -495,13 +512,20 @@
       function generateTargetGrid(isBonusBuy) {
         let target = [];
         let pool = App.getSlotPool();
+        let rtp = App.getRtp();
         let forceLoss = pool < baseBet;
 
-        let winChance = isBonusBuy || freeSpinsLeft > 0 ? 0.7 : 0.35;
+        let winChance = isBonusBuy || freeSpinsLeft > 0 ? 0.6 : 0.3;
         let shouldWin = !forceLoss && Math.random() < winChance;
-        let shouldScatter = isBonusBuy ? true : (!forceLoss && Math.random() < 0.02); 
         
-        let bombChance = (freeSpinsLeft > 0) ? (isNerfedBonus ? 0.3 : 0.6) : 0.15; // 15% шанс бомбы в базе
+        // Натуральное выпадение бонуски в базе (зависит от RTP и Пула)
+        let naturalBonusChance = 0.005; // 0.5% по умолчанию
+        if (rtp === 999) naturalBonusChance = 0.5;
+        else if (rtp >= 120) naturalBonusChance = 0.05;
+        else if (rtp <= 50) naturalBonusChance = 0.0;
+        if (pool > baseBet * 50) naturalBonusChance *= 2; // Увеличиваем шанс, если в пуле много денег
+        
+        let shouldScatter = isBonusBuy ? true : (!forceLoss && Math.random() < naturalBonusChance); 
 
         for(let c=0; c<COLS; c++) {
           target[c] = [];
@@ -523,11 +547,16 @@
           while(placed < sCount) { let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS); if(target[c][r] !== scatter) { target[c][r] = scatter; placed++; } }
         }
 
-        // Спавним бомбы сразу в сетку, чтобы они выкатывались ровно
-        if(Math.random() < bombChance && !forceLoss) {
-           let bSym = getBombValue();
-           let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS);
-           if(target[c][r] !== scatter) target[c][r] = bSym;
+        // Бомбы падают сразу в сетку (5% шанс в базе, 40-60% в бонуске)
+        let bombChance = (freeSpinsLeft > 0) ? 0.4 : 0.05;
+        if(!forceLoss) {
+            for(let i=0; i<3; i++) { // Проверяем 3 раза шанс дропа
+                if(Math.random() < bombChance) {
+                    let bSym = getBombValue();
+                    let c = Math.floor(Math.random()*COLS); let r = Math.floor(Math.random()*ROWS);
+                    if(target[c][r] !== scatter) target[c][r] = bSym;
+                }
+            }
         }
 
         return target;
@@ -535,9 +564,7 @@
 
       function getBombValue() {
         const normalBombs = ['💣x2', '💣x5', '💣x10', '💣x25', '💣x50', '💣x100'];
-        const nerfedBombs = ['💣x2', '💣x3', '💣x5', '💣x10']; 
-        let poolArr = (freeSpinsLeft > 0) ? (isNerfedBonus ? nerfedBombs : normalBombs) : normalBombs;
-        return poolArr[Math.floor(Math.random()*poolArr.length)];
+        return normalBombs[Math.floor(Math.random()*normalBombs.length)];
       }
 
       async function spin(isBonusBuy, isAuto = false) {
@@ -552,25 +579,51 @@
 
         if (isBonusBuy) {
             isCurrentBonusDouble = isDoubleBonus;
-            isNerfedBonus = !isDoubleBonus; // Дешевый бонус (x10) режет макс множитель до x10
         }
         
         isSpinning = true; currentTumbleWin = 0; 
         toggleUILock(true); 
 
         elTumbleTracker.classList.remove('active'); 
-        elWinDisplay.innerText = freeSpinsLeft > 0 ? `ФРИСПИН ${11-freeSpinsLeft}/10` : 'Вращение...';
+        if (freeSpinsLeft === 0) elWinDisplay.innerText = 'Вращение...';
         
         let targetGrid = generateTargetGrid(isBonusBuy);
 
         for(let c=0; c<COLS; c++) document.getElementById(`col-${c}`).classList.add('spinning');
+        
+        spinVisInt = setInterval(() => {
+          for(let c=0; c<COLS; c++) {
+            let col = document.getElementById(`col-${c}`);
+            if(col && col.classList.contains('spinning')) {
+              for(let r=0; r<ROWS; r++) {
+                 let cell = document.getElementById(`cell-${c}-${r}`);
+                 if(cell && !cell.innerHTML.includes('💣')) cell.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+              }
+            }
+          }
+        }, 50);
 
+        let scatterCount = 0;
         for(let c=0; c<COLS; c++) {
           await wait(150 + (c===0?0:80));
+          
+          // NEAR MISS TEASER
+          if(c === 5 && scatterCount >= 3 && freeSpinsLeft === 0 && !isBonusBuy) {
+             elTeaser.classList.add('show');
+             if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+             await wait(1500); 
+             elTeaser.classList.remove('show');
+          }
+
           document.getElementById(`col-${c}`).classList.remove('spinning');
-          for(let r=0; r<ROWS; r++) updateCell(c, r, targetGrid[c][r], 'thud idle-3d');
+          for(let r=0; r<ROWS; r++) {
+             updateCell(c, r, targetGrid[c][r], 'thud idle-3d');
+             if(targetGrid[c][r] === scatter) scatterCount++;
+          }
         }
+        clearInterval(spinVisInt);
         await wait(300);
+
         await processTumble();
       }
 
@@ -596,8 +649,8 @@
           for(let c=0; c<COLS; c++) {
             for(let r=0; r<ROWS; r++) {
               if (winningSymbols.includes(grid[c][r])) {
-                spawnParticles(c, r, grid[c][r]);
-                document.getElementById(`cell-${c}-${r}`).className = 'slot-item pop-explode';
+                spawnParticles3D(c, r, grid[c][r]);
+                document.getElementById(`cell-${c}-${r}`).className = 'slot-item pop-explode-3d';
                 grid[c][r] = null;
               }
             }
@@ -605,13 +658,13 @@
           if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
           
           currentTumbleWin += stepWin;
-          elTumbleTracker.innerText = `${currentTumbleWin.toFixed(1)} ⭐`;
+          elTumbleTracker.innerText = `${currentTumbleWin.toFixed(2)} ⭐`;
           elTumbleTracker.classList.add('active', 'pulse');
           setTimeout(()=>elTumbleTracker.classList.remove('pulse'), 200);
 
           await wait(400);
 
-          let bombChance = (freeSpinsLeft > 0) ? (isNerfedBonus ? 0.2 : 0.4) : 0.05;
+          let bombChance = (freeSpinsLeft > 0) ? 0.4 : 0.05;
           let pool = App.getSlotPool();
           let forceLoss = pool < baseBet;
 
@@ -623,7 +676,7 @@
                 if (Math.random() < bombChance && !forceLoss) newSym = getBombValue();
                 newCol.unshift(newSym);
             }
-            for(let r=0; r<ROWS; r++) updateCell(c, r, newCol[r], r < dropCount ? 'bounce-drop' : 'idle-3d');
+            for(let r=0; r<ROWS; r++) updateCell(c, r, newCol[r], r < dropCount ? 'bounce-drop idle-3d' : 'idle-3d');
           }
 
           await wait(500);
@@ -662,18 +715,19 @@
                  elWrapper.classList.add(b.val >= 20 ? 'shake-heavy' : 'shake-light');
                  await wait(400);
                  elWrapper.className = `slot-wrapper ${freeSpinsLeft>0?'free-spins':''}`;
-                 updateCell(b.c, b.r, symbols[Math.floor(Math.random()*symbols.length)], 'bounce-drop');
+                 updateCell(b.c, b.r, symbols[Math.floor(Math.random()*symbols.length)], 'bounce-drop idle-3d');
                }
                currentTumbleWin *= bombMults;
             }
             
-            if(pityNextWin) {
+            // Pity Timer (Base Game Only)
+            if(freeSpinsLeft === 0 && pityNextWin) {
                 currentTumbleWin *= 2;
                 elWinDisplay.innerText = "🌟 PITY TIMER x2 APPLIED! 🌟";
                 await wait(1000);
             }
             
-            currentTumbleWin = Math.ceil(currentTumbleWin); // Округляем в конце
+            currentTumbleWin = Math.ceil(currentTumbleWin); 
             
             // ПРОВЕРКА ПУЛА (Казино не уходит в минус)
             let pool = App.getSlotPool();
@@ -687,7 +741,10 @@
             elWinDisplay.innerText = `ВЫИГРЫШ: ${currentTumbleWin} ⭐`;
             if(freeSpinsLeft > 0) totalFSWin += currentTumbleWin;
 
-            updatePityMeter(false);
+            // Сбрасываем Pity Meter
+            if (freeSpinsLeft === 0) {
+                pityValue = 0; pityNextWin = false; elPityContainer.classList.remove('maxed'); elPityFill.style.height = '0%';
+            }
 
             if(currentTumbleWin > baseBet * 5) {
               elPopup.innerText = currentTumbleWin > baseBet * 50 ? 'EPIC WIN!' : (currentTumbleWin > baseBet * 20 ? 'TASTY!' : 'NICE!');
@@ -697,27 +754,65 @@
             }
             await wait(1500);
           } else {
-            updatePityMeter(true);
+            // Пустой спин
             elWinDisplay.innerText = freeSpinsLeft > 0 ? 'Пустой спин' : 'Попробуй еще раз!';
+            if (freeSpinsLeft === 0) {
+                pityValue += (2 + Math.random()*4);
+                let net = App.getNetProfit();
+                if (net > -50) pityValue = Math.min(pityValue, 98);
+                else if (pityValue >= 100) { pityValue = 100; pityNextWin = true; elPityContainer.classList.add('maxed'); if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }
+                elPityFill.style.background = 'linear-gradient(to top, #f39c12, #f1c40f)';
+                elPityFill.style.height = pityValue + '%';
+            }
           }
 
           elTumbleTracker.classList.remove('active');
 
+          // Обновление UI кнопок для бонуски
+          if (freeSpinsLeft > 0) {
+              elSpinBtn.innerText = `💰 ВЫИГРЫШ: ${totalFSWin} ⭐`;
+              elSpinBtn.style.background = "linear-gradient(135deg, #f1c40f, #e67e22)";
+          }
+
+          // DOUBLE WIN PROGRESS METER (заменяет Pity Timer)
+          if (freeSpinsLeft > 0 && isCurrentBonusDouble && !isDoubleBonusTriggered) {
+              elPityFill.style.background = 'linear-gradient(to top, #e056fd, #00f2fe)';
+              doubleChargeValue += 8 + Math.random() * 12; 
+              if (doubleChargeValue >= 100) {
+                  if (App.getSlotPool() > totalFSWin * 2) {
+                      doubleChargeValue = 100; isDoubleBonusTriggered = true; elPityContainer.classList.add('maxed');
+                      elWinDisplay.innerText = "🔥 DOUBLE WIN ЗАРЯЖЕН! 🔥"; await wait(1000);
+                  } else {
+                      doubleChargeValue = 98; // Near miss
+                  }
+              }
+              elPityFill.style.height = doubleChargeValue + '%';
+          }
+
+          // ТРИГГЕР ФРИСПИНОВ
           if (sCount >= 4 && freeSpinsLeft === 0) {
             document.getElementById('fsIntro').classList.add('show');
-            return; // UI locked, waiting for user to tap
+            return; // UI stays locked
           }
 
           if (freeSpinsLeft > 0) {
             freeSpinsLeft--;
             if (freeSpinsLeft === 0) {
-              if (isCurrentBonusDouble) totalFSWin *= 2; // Применяем DOUBLE WIN в конце
+              // ИТОГИ БОНУСА
+              if (isCurrentBonusDouble && isDoubleBonusTriggered) {
+                  totalFSWin *= 2; 
+                  elWinDisplay.innerText = "🌟 DOUBLE WIN APPLIED! 🌟";
+                  await wait(1000);
+              }
               showTotalWinScreen(totalFSWin);
               document.getElementById('slotWrapper').classList.remove('free-spins');
               document.getElementById('slotTitle').innerText = `🍬 Candy Bonanza`;
+              elSpinBtn.style.background = "var(--btn-green-gradient)";
+              elSpinBtn.innerText = `🎰 КРУТИТЬ СПИН`;
+              elPityContainer.classList.remove('maxed'); elPityFill.style.height = '0%';
             } else {
               document.getElementById('slotTitle').innerText = `🍬 FREE SPINS (${freeSpinsLeft})`;
-              setTimeout(() => spin(false, true), 1200); // БЕСПЕРЕБОЙНЫЙ ЦИКЛ ФРИСПИНОВ
+              setTimeout(() => spin(false, true), 1200); // БЕСПЕРЕБОЙНЫЙ АВТО-СПИН
               return;
             }
           } else {
@@ -727,7 +822,7 @@
         }
       }
 
-      function showTotalWinScreen(amount) {
+      async function showTotalWinScreen(amount) {
         const modal = document.getElementById('totalWinModal');
         const num = document.getElementById('totalWinNum');
         const btn = document.getElementById('twCollectBtn');
@@ -765,16 +860,20 @@
         document.getElementById('fsIntro').classList.remove('show');
         document.getElementById('slotWrapper').classList.add('free-spins');
         freeSpinsLeft = 10; totalFSWin = 0;
+        doubleChargeValue = 0; isDoubleBonusTriggered = false;
+        elPityFill.style.height = '0%'; elPityContainer.classList.remove('maxed');
+        elPityFill.style.background = isCurrentBonusDouble ? 'linear-gradient(to top, #e056fd, #00f2fe)' : 'linear-gradient(to top, #f39c12, #f1c40f)';
         document.getElementById('slotTitle').innerText = `🍬 FREE SPINS (10)`;
-        setTimeout(() => spin(false, true), 800); // Автостарт первого фриспина
+        elSpinBtn.innerText = `💰 ВЫИГРЫШ: 0 ⭐`;
+        isSpinning = false; // Освобождаем
+        setTimeout(() => spin(false, true), 500); // АВТО-СТАРТ ФРИСПИНОВ
       }
 
       return {
         init: initBoard,
-        changeBet: function(amt) { if(isSpinning) return; if(amt === 'max') baseBet = Math.max(10, Math.floor(App.getBalance() / (isDoubleBonus?2:1))); else baseBet = Math.max(10, baseBet + amt); updateUI(); },
+        changeBet: function(amt) { if(isSpinning) return; if(amt === 'max') baseBet = Math.max(10, Math.floor(App.getBalance() / (isDoubleBonus?20:10))); else baseBet = Math.max(10, baseBet + amt); updateUI(); },
         play: function(isBuy) { spin(isBuy, false); },
         toggleDoubleWin: function() { if(isSpinning) return; isDoubleBonus = !isDoubleBonus; updateUI(); },
-        startFreeSpinsMode: window.startFreeSpinsMode,
         collectTotalWin: function() {
           document.getElementById('totalWinModal').classList.remove('show');
           setTimeout(()=> { document.getElementById('totalWinModal').style.display = 'none'; toggleUILock(false); isSpinning = false; }, 500);
