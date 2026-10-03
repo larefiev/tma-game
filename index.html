@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Premium Casino - Sweet Bonanza 3D</title>
+  <title>Premium Casino Hub - TMA</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
@@ -41,11 +41,10 @@
     .game-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.1s; }
     .game-card:active { transform: scale(0.96); }
     .game-thumb { font-size: 44px; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); }
-    .game-name { font-size: 14px; font-weight: 800; }
+    .game-name { font-size: 14px; font-weight: 800; text-align: center; }
 
-    /* ================= СЛОТ 6x5 & ПРОГРЕССИВНАЯ ШКАЛА ================= */
+    /* ================= СЛОТ 6x5 ================= */
     .slot-layout { display: flex; gap: 8px; align-items: stretch; width: 100%; height: 320px; position: relative; }
-    
     .combo-meter-container { width: 18px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; position: relative; z-index: 10; box-shadow: inset 0 0 10px #000; }
     .combo-fill { width: 100%; background: linear-gradient(to top, #f39c12, #f1c40f); transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.5s; height: 0%; box-shadow: 0 -5px 15px rgba(241, 196, 15, 0.8); position: relative; }
     .combo-meter-container.maxed { animation: meterGlow 1s infinite alternate; border-color: var(--accent-gold); }
@@ -54,64 +53,42 @@
     .slot-wrapper { flex: 1; position: relative; background: var(--slot-bg-normal); border: 2px solid rgba(224, 86, 253, 0.4); border-radius: 20px; padding: 6px; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(155, 89, 182, 0.2); transition: background 0.5s ease; overflow: hidden; transform-style: preserve-3d; }
     .slot-wrapper.free-spins { background: var(--slot-bg-free); border-color: var(--accent-cyan); box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 25px rgba(0, 242, 254, 0.4); }
     
-    .slot-bg-clouds { position: absolute; inset: 0; background: url('data:image/svg+xml;utf8,<svg opacity="0.05" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="15" fill="%23fff"/><circle cx="50" cy="30" r="20" fill="%23fff"/><circle cx="80" cy="20" r="15" fill="%23fff"/></svg>') repeat-x; animation: cloudDrift 20s linear infinite; z-index: 1; pointer-events: none; }
-    @keyframes cloudDrift { from { background-position: 0 0; } to { background-position: 200px 0; } }
-
     .tumble-win-tracker { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 1px solid var(--accent-gold); padding: 4px 16px; border-radius: 16px; font-size: 16px; font-weight: 900; color: var(--accent-gold); z-index: 10; opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .tumble-win-tracker.active { top: 12px; opacity: 1; }
-    .tumble-win-tracker.pulse { animation: tumblePulse 0.2s ease; }
-    @keyframes tumblePulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.3); color: #fff; } 100% { transform: translateX(-50%) scale(1); } }
 
     .celebration-popup { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 8px 0 #000; z-index: 20; opacity: 0; pointer-events: none; transform: scale(0.5); }
     .celebration-popup.show { animation: popShow 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes popShow { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.1) rotate(-5deg); } 40% { transform: scale(1) rotate(0deg); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.2); } }
 
-    .teaser-overlay { position: absolute; inset: 0; background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.8) 100%); z-index: 8; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
-    .teaser-overlay.show { opacity: 1; }
-
-    /* ФРИСПИНЫ ИНТРО */
     .fs-intro-screen { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; pointer-events: none; transition: 0.3s; text-align: center; padding: 20px; cursor: pointer; }
     .fs-intro-screen.show { opacity: 1; pointer-events: auto; }
     .fs-intro-screen.show * { pointer-events: none; }
 
-    /* 6x5 Grid */
     .slot-grid-6x5 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; position: relative; z-index: 5; height: 100%; width: 100%; }
     .slot-col { display: grid; grid-template-rows: repeat(5, 1fr); gap: 4px; position: relative; height: 100%; }
     .slot-col.spinning { filter: blur(4px); animation: fastSpin 0.1s linear infinite; }
     @keyframes fastSpin { 0% { transform: translateY(-15px); } 100% { transform: translateY(15px); } }
 
-    /* Ячейки теперь не имеют text-shadow, так как внутри картинки */
     .slot-item { background: rgba(255, 255, 255, 0.04); border-radius: 8px; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; position: relative; transition: filter 0.3s; transform-style: preserve-3d; }
-    
     .slot-item.idle-3d { animation: breath3D 3s ease-in-out infinite alternate; }
     @keyframes breath3D { 0% { transform: rotateY(-10deg) rotateX(5deg) scale(0.98); } 100% { transform: rotateY(10deg) rotateX(-5deg) scale(1.02); filter: brightness(1.1); } }
-    
     .slot-item.bounce-drop { animation: bounceDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
     @keyframes bounceDrop { 0% { transform: translateY(-100px) scale(0.8, 1.3); opacity: 0; } 60% { transform: translateY(10px) scale(1.1, 0.8); opacity: 1; } 80% { transform: translateY(-5px) scale(0.95, 1.05); } 100% { transform: translateY(0) scale(1, 1); } }
-    
     .slot-item.exact-drop { animation: exactDrop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     @keyframes exactDrop { 0% { transform: translateY(var(--drop-dist)); } 100% { transform: translateY(0); } }
-
     .slot-item.thud { animation: thudSlam 0.2s cubic-bezier(0.175, 0.885, 0.32, 1); }
     @keyframes thudSlam { 0% { transform: translateY(-8px); } 50% { transform: translateY(4px) scaleY(0.9); } 100% { transform: translateY(0) scaleY(1); } }
-    
     .slot-item.pop-explode-3d { animation: popExplode3D 0.3s forwards; }
     @keyframes popExplode3D { 0% { transform: scale(1) translateZ(0); filter: brightness(1); } 40% { transform: scale(1.2) translateZ(50px); filter: brightness(1.8); } 100% { transform: scale(0) translateZ(100px); opacity: 0; } }
 
     /* Бомбы */
     .slot-item.bomb-idle { animation: bombPulse 1.5s infinite alternate; z-index: 6; }
     @keyframes bombPulse { 0% { transform: scale(1) rotate(-3deg); } 100% { transform: scale(1.1) rotate(3deg); } }
-    
     .slot-item.bomb-aggro { animation: bombAggro 0.1s infinite; z-index: 15; filter: drop-shadow(0 0 10px var(--accent-red)); }
     @keyframes bombAggro { 0% { transform: scale(1.2) translate(-2px, 2px); } 50% { transform: scale(1.4) translate(2px, -2px); filter: brightness(2); } 100% { transform: scale(1.2) translate(-2px, -2px); } }
-    
     .slot-item.bomb-absorb { animation: bombAbsorb 0.4s forwards; z-index: 15; }
     @keyframes bombAbsorb { 0% { transform: scale(1.5); filter: brightness(2); } 100% { transform: scale(2); filter: brightness(4); opacity: 0; } }
 
-    .slot-item.scatter-pulse { animation: scatterPulse 1.5s infinite; filter: drop-shadow(0 0 15px var(--accent-red)); }
-    @keyframes scatterPulse { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); } }
-
-    /* Particles & VFX */
     .particle-3d { position: absolute; border-radius: 50%; pointer-events: none; z-index: 25; opacity: 1; animation: particleFly3D 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.5); }
     @keyframes particleFly3D { 0% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; } 100% { transform: translate3d(var(--dx), var(--dy), 100px) scale(0); opacity: 0; } }
 
@@ -121,9 +98,7 @@
     .flying-mult { position: absolute; font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--accent-gold), 0 0 10px var(--accent-red); z-index: 25; pointer-events: none; animation: flyToWin3D 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
     @keyframes flyToWin3D { 0% { transform: scale(1) translate3d(0,0,0); opacity: 1; } 100% { transform: scale(0.5) translate3d(0,-200px, 100px); opacity: 0; } }
 
-    .shake-light { animation: shakeL 0.3s ease-in-out; }
     .shake-heavy { animation: shakeH 0.6s ease-in-out; }
-    @keyframes shakeL { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(3px, -3px); } 50% { transform: translate(-3px, 3px); } 75% { transform: translate(-3px, -3px); } }
     @keyframes shakeH { 0%, 100% { transform: translate(0,0) rotate(0deg); } 20% { transform: translate(8px, -8px) rotate(2deg); } 40% { transform: translate(-8px, 8px) rotate(-2deg); } 60% { transform: translate(-8px, -8px) rotate(2deg); } 80% { transform: translate(8px, 8px) rotate(-2deg); } }
 
     /* Контролы слота */
@@ -143,13 +118,55 @@
     .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; transition: 0.1s; }
     .q-btn:active { background: rgba(255,255,255,0.1); }
 
-    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; transition: transform 0.1s; }
+    .btn-action { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; color: #fff; text-transform: uppercase; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-action:active { transform: scale(0.97); }
     .btn-disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
     .btn-spin { background: var(--btn-green-gradient); box-shadow: 0 4px 20px rgba(46, 213, 115, 0.3); }
     .btn-bonus-buy { background: var(--btn-purple-gradient); box-shadow: 0 4px 20px rgba(224, 86, 253, 0.4); padding: 14px; font-size: 14px; }
 
-    /* TOTAL WIN SCREEN (FULL SCREEN) */
+    /* ================= ANDAR BAHAR ================= */
+    .ab-board { background: radial-gradient(circle at top, #1a2a22 0%, #0d1611 100%); border: 1px solid rgba(46, 213, 115, 0.3); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px; align-items: center; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
+    
+    .ab-joker-section { display: flex; flex-direction: column; align-items: center; width: 100%; padding-bottom: 16px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+    .ab-joker-label { font-size: 12px; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    
+    .ab-sides-container { display: flex; width: 100%; justify-content: space-between; gap: 16px; }
+    .ab-side { flex: 1; min-height: 160px; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); padding: 12px; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .ab-side-label { font-size: 16px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; }
+    .ab-side.andar { border-bottom: 3px solid var(--accent-cyan); }
+    .ab-side.andar .ab-side-label { color: var(--accent-cyan); }
+    .ab-side.bahar { border-bottom: 3px solid var(--accent-red); }
+    .ab-side.bahar .ab-side-label { color: var(--accent-red); }
+
+    .playing-card { width: 50px; height: 72px; background: #fff; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); position: relative; transition: 0.3s; }
+    .card-red { color: #e74c3c; }
+    .card-black { color: #2c3e50; }
+    .card-suit { font-size: 24px; line-height: 1; }
+    .card-rank { line-height: 1; }
+    
+    /* Стек карт (накладываются друг на друга) */
+    .card-stack { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; height: 100px; }
+    .card-stack .playing-card { position: absolute; top: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .card-deal-anim { animation: cardDeal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes cardDeal { 0% { transform: translateY(-50px) scale(0.5); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+    
+    .ab-winner-highlight { animation: highlightPulse 1s infinite alternate; box-shadow: 0 0 20px var(--accent-gold); border: 2px solid var(--accent-gold); z-index: 10; }
+    @keyframes highlightPulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+    .ab-bet-buttons { display: flex; gap: 10px; width: 100%; }
+    .btn-ab-andar { background: linear-gradient(135deg, #00f2fe, #4facfe); box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
+    .btn-ab-bahar { background: linear-gradient(135deg, #ff0844, #ffb199); box-shadow: 0 4px 15px rgba(255, 8, 68, 0.3); }
+
+    /* ================= РАКЕТКА (CRASH) ================= */
+    .rocket-screen { width: 100%; height: 220px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%); border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .rocket-mult { font-size: 58px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 25px rgba(255, 45, 85, 0.5); z-index: 2; letter-spacing: -1px; }
+    .history-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+    .history-strip::-webkit-scrollbar { display: none; }
+    .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 14px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .participants-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+    /* TOTAL WIN SCREEN */
     .total-win-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s; perspective: 1000px; }
     .total-win-screen.show { opacity: 1; }
     .tw-title { font-size: 32px; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 20px var(--accent-gold); margin-bottom: 20px; animation: scalePulse 1s infinite alternate; }
@@ -162,18 +179,8 @@
     @keyframes flashBlast { 0% { opacity: 1; } 100% { opacity: 0; } }
     @keyframes scalePulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
     @keyframes floatBtn { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    
     .tw-coin { position: absolute; font-size: 32px; pointer-events: none; animation: flyCoin 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; transform-style: preserve-3d; }
     @keyframes flyCoin { 0% { transform: translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg); opacity: 1; } 100% { transform: translate3d(var(--tx), var(--ty), 500px) rotateY(720deg) rotateX(360deg); opacity: 0; } }
-
-    /* ================= РАКЕТКА (CRASH) ================= */
-    .rocket-screen { width: 100%; height: 220px; background: radial-gradient(circle at center, #181d2d 0%, #07090e 100%); border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-    .rocket-mult { font-size: 58px; font-weight: 900; color: var(--accent-red); text-shadow: 0 0 25px rgba(255, 45, 85, 0.5); z-index: 2; letter-spacing: -1px; }
-    .history-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
-    .history-strip::-webkit-scrollbar { display: none; }
-    .history-pill { background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 14px; font-size: 12px; font-weight: 800; white-space: nowrap; }
-    .participants-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
-    .participant-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
 
     /* НАВИГАЦИЯ И МОДАЛКИ */
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0 24px 0; z-index: 1000; max-width: 480px; margin: 0 auto; border-top-left-radius: 28px; border-top-right-radius: 28px; }
@@ -188,7 +195,6 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="brand-logo" onclick="checkAdminAccess()">👑 Premium</div>
     <div class="header-right">
@@ -213,8 +219,60 @@
         </div>
         <div class="game-card" onclick="switchView('rocket')">
           <div class="game-thumb" style="border: 1px solid rgba(255,45,85,0.4); background: radial-gradient(circle, #1f1018 0%, #121824 100%);">🚀</div>
-          <div class="game-name">Crash</div>
+          <div class="game-name">Crash Game</div>
         </div>
+        <!-- НОВАЯ ИГРА: ANDAR BAHAR -->
+        <div class="game-card" style="grid-column: span 2;" onclick="switchView('andarBahar')">
+          <div class="game-thumb" style="border: 1px solid rgba(46,213,115,0.4); background: radial-gradient(circle, #0e2b1d 0%, #121824 100%); padding: 10px 30px;">🎴</div>
+          <div class="game-name" style="color: var(--accent-green);">Andar Bahar (Live)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ВЬЮ: ANDAR BAHAR -->
+  <div class="view" id="viewAndarBahar">
+    <div class="nav-back-row">
+      <button class="btn-back" onclick="switchView('home')">❮ Меню</button>
+      <span style="font-weight:800; font-size:15px; color:var(--accent-green);">🎴 Andar Bahar</span>
+      <div style="width: 70px;"></div>
+    </div>
+
+    <div class="ab-board">
+      <div class="ab-joker-section">
+        <div class="ab-joker-label">JOKER CARD</div>
+        <div id="abJokerSlot" style="height: 72px; width: 50px; background: rgba(0,0,0,0.5); border-radius: 6px; border: 1px dashed rgba(255,255,255,0.2);"></div>
+      </div>
+      
+      <div class="ab-sides-container">
+        <div class="ab-side andar">
+          <div class="ab-side-label">ANDAR</div>
+          <div class="card-stack" id="abAndarStack"></div>
+        </div>
+        <div class="ab-side bahar">
+          <div class="ab-side-label">BAHAR</div>
+          <div class="card-stack" id="abBaharStack"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slot-controls">
+      <div class="slot-win-display" id="abStatusDisplay" style="color:#fff;">Ожидание ставок...</div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:13px; color:var(--text-muted);">Ставка:</span>
+        <div style="display:flex; align-items:center; gap:6px; font-weight:900; font-size:22px;">⭐ <span id="abBetText">50</span></div>
+      </div>
+
+      <div class="quick-btns-grid">
+        <button class="q-btn ab-ui-lock" onclick="AndarBaharEngine.changeBet(-50)">-50</button>
+        <button class="q-btn ab-ui-lock" onclick="AndarBaharEngine.changeBet(100)">+100</button>
+        <button class="q-btn ab-ui-lock" onclick="AndarBaharEngine.changeBet('max')">MAX</button>
+      </div>
+
+      <div class="ab-bet-buttons">
+        <button class="btn-action btn-ab-andar ab-ui-lock" onclick="AndarBaharEngine.play('Andar')">ANDAR (1.9x)</button>
+        <button class="btn-action btn-ab-bahar ab-ui-lock" onclick="AndarBaharEngine.play('Bahar')">BAHAR (2.0x)</button>
       </div>
     </div>
   </div>
@@ -223,7 +281,7 @@
   <div class="view" id="viewSlot">
     <div class="nav-back-row">
       <button class="btn-back" onclick="switchView('home')">❮ Меню</button>
-      <span style="font-weight:800; font-size:15px; color:#e056fd;" id="slotTitle">🍬 Sweet Bonanza</span>
+      <span style="font-weight:800; font-size:15px; color:#e056fd;" id="slotTitle">🍬 Сладкий Слот</span>
       <div style="width: 70px;"></div>
     </div>
 
@@ -233,14 +291,12 @@
         <div class="combo-fill" id="pityMeterFill"></div>
       </div>
 
-      <!-- Сетка слота -->
       <div class="slot-wrapper" id="slotWrapper">
         <div class="slot-bg-clouds"></div>
         <div class="teaser-overlay" id="teaserOverlay"></div>
         <div class="tumble-win-tracker" id="tumbleWinTracker">0 ⭐</div>
         <div class="celebration-popup" id="celebrationPopup">NICE!</div>
 
-        <!-- Экран старта фриспинов -->
         <div class="fs-intro-screen" id="fsIntro" onclick="SlotEngine.startFreeSpinsMode()">
           <div style="font-size:40px; animation: scatterPulse 1.5s infinite;">🍭</div>
           <div style="font-size:24px; font-weight:900; color:var(--accent-gold);">BONUS TRIGGERED!</div>
@@ -248,16 +304,13 @@
           <div style="font-size:14px; color:var(--accent-cyan); animation: pulseWin 1s infinite alternate;">[ Нажми чтобы начать ]</div>
         </div>
 
-        <div class="slot-grid-6x5" id="slotGrid">
-          <!-- Колонки и ячейки генерируются в JS -->
-        </div>
+        <div class="slot-grid-6x5" id="slotGrid"></div>
       </div>
     </div>
 
     <div class="slot-controls">
       <div class="slot-win-display" id="slotWinDisplay">Вращай для победы!</div>
 
-      <!-- DOUBLE WIN работает только для бонус-бая -->
       <div class="ante-bet-box ui-lock" id="anteBetBox" onclick="SlotEngine.toggleDoubleWin()">
         <div>
           <div style="font-weight:800; font-size:13px; color:var(--accent-gold);">DOUBLE WIN (x2)</div>
@@ -378,12 +431,10 @@
 
     /* ================= APP CORE (RTP, Пул, Контроль Дохода) ================= */
     const App = (function() {
-      let balance = 0; let rtp = 90; 
+      let balance = 1000; let rtp = 90; 
       let globalSlotPool = 1000; 
       let netProfit = 0; 
-
-      let scriptSpinsCount = 0;
-      let isGivingPhase = false;
+      let scriptSpinsCount = 0; let isGivingPhase = false;
 
       function updateHeader() { document.getElementById('headerBalance').innerText = Math.floor(balance); }
 
@@ -391,36 +442,20 @@
         init: async function() {
           const u = getSafeUser();
           try { const res = await fetch(`${BACKEND_URL}/api/user/${u.id}`); if(res.ok) { const d = await res.json(); balance = d.balance || 0; } } catch(e) {}
-          updateHeader(); SlotEngine.init(); RocketEngine.init();
+          updateHeader(); SlotEngine.init(); RocketEngine.init(); AndarBaharEngine.init();
         },
         getUser: getSafeUser, getBalance: () => balance, getRtp: () => rtp, getNetProfit: () => netProfit,
         deductBalance: function(amt) { if (balance >= amt && amt > 0) { balance -= amt; netProfit -= amt; updateHeader(); return true; } return false; },
         addBalance: function(amt) { if (amt > 0) { balance += amt; netProfit += amt; updateHeader(); } },
-        
-        // КАЗИНО ВСЕГДА В ПЛЮСЕ
         processBetToPool: function(amount) { globalSlotPool += amount * 0.90; }, 
         getSlotPool: () => globalSlotPool,
         deductFromPool: function(amount) { globalSlotPool -= amount; },
-
         incrementSpin: function(baseBet) {
             scriptSpinsCount++;
-            let cycleLength = 40;
-            let currentCycle = Math.floor(scriptSpinsCount / cycleLength);
-            let step = scriptSpinsCount % cycleLength;
-
-            if (currentCycle < 3) {
-                if (step < 12) {
-                    if (netProfit > baseBet * 25) isGivingPhase = false; 
-                    else isGivingPhase = true;
-                } else {
-                    isGivingPhase = false;
-                }
-            } else {
-                isGivingPhase = false; 
-            }
+            let cycleLength = 40; let currentCycle = Math.floor(scriptSpinsCount / cycleLength); let step = scriptSpinsCount % cycleLength;
+            if (currentCycle < 3) { if (step < 12) { if (netProfit > baseBet * 25) isGivingPhase = false; else isGivingPhase = true; } else { isGivingPhase = false; } } else { isGivingPhase = false; }
         },
         isGivingPhase: () => isGivingPhase,
-
         adminGiveStars: async function() {
           const amt = parseInt(document.getElementById('adminInput').value) || 0; const target = document.getElementById('adminTargetId').value.trim(); const u = getSafeUser();
           try { const res = await fetch(`${BACKEND_URL}/api/admin/give-stars`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ adminId: u.id, targetUserId: target || u.id, amount: amt }) }); const data = await res.json(); if(data.success) { if(!target || String(target) === String(u.id)) { balance = data.newBalance; updateHeader(); } alert('Выдано успешно!'); document.getElementById('adminModal').style.display='none'; } } catch(e) {}
@@ -433,10 +468,140 @@
       };
     })();
 
+    /* ================= ANDAR BAHAR ENGINE (НОВАЯ ИГРА) ================= */
+    const AndarBaharEngine = (function() {
+      let bet = 50;
+      let isPlaying = false;
+      let deck = [];
+      let joker = null;
+      
+      const suits = ['♥', '♦', '♣', '♠'];
+      const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+
+      const elJokerSlot = document.getElementById('abJokerSlot');
+      const elAndarStack = document.getElementById('abAndarStack');
+      const elBaharStack = document.getElementById('abBaharStack');
+      const elStatus = document.getElementById('abStatusDisplay');
+      const elBetText = document.getElementById('abBetText');
+
+      function toggleUILock(locked) {
+        document.querySelectorAll('.ab-ui-lock').forEach(el => {
+          if (locked) el.classList.add('btn-disabled');
+          else el.classList.remove('btn-disabled');
+        });
+      }
+
+      function initDeck() {
+        deck = [];
+        for(let s of suits) {
+            for(let r of ranks) {
+                deck.push({suit: s, rank: r, color: (s==='♥'||s==='♦') ? 'red' : 'black'});
+            }
+        }
+        // Fisher-Yates Shuffle
+        for(let i = deck.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+      }
+
+      function createCardElement(card) {
+        let el = document.createElement('div');
+        el.className = `playing-card card-deal-anim card-${card.color}`;
+        el.innerHTML = `<span class="card-rank">${card.rank}</span><span class="card-suit">${card.suit}</span>`;
+        return el;
+      }
+
+      async function playRound(selectedSide) {
+        if(isPlaying) return;
+        
+        if(!App.deductBalance(bet)) { App.alert('Недостаточно Stars!'); return; }
+        
+        isPlaying = true;
+        toggleUILock(true);
+        elAndarStack.innerHTML = '';
+        elBaharStack.innerHTML = '';
+        elJokerSlot.innerHTML = '';
+        elStatus.innerText = `Ставка: ${selectedSide}. Раздача...`;
+        elStatus.style.color = '#fff';
+
+        initDeck();
+
+        // Draw Joker
+        joker = deck.pop();
+        let jokerEl = createCardElement(joker);
+        elJokerSlot.appendChild(jokerEl);
+        if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+        await wait(800);
+
+        let isRedJoker = joker.color === 'red';
+        let dealToAndar = !isRedJoker; // Правило: черный джокер = первый Andar
+        let matchFound = false;
+        let winner = null;
+
+        while(deck.length > 0 && !matchFound) {
+            let drawnCard = deck.pop();
+            let cardEl = createCardElement(drawnCard);
+            
+            // Смещение для наложения карт в стопке
+            let offset = (dealToAndar ? elAndarStack.children.length : elBaharStack.children.length) * 20;
+            cardEl.style.top = `${offset}px`;
+            cardEl.style.zIndex = offset;
+
+            if (dealToAndar) {
+                elAndarStack.appendChild(cardEl);
+                if (drawnCard.rank === joker.rank) { winner = 'Andar'; matchFound = true; cardEl.classList.add('ab-winner-highlight'); }
+            } else {
+                elBaharStack.appendChild(cardEl);
+                if (drawnCard.rank === joker.rank) { winner = 'Bahar'; matchFound = true; cardEl.classList.add('ab-winner-highlight'); }
+            }
+
+            if(tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            await wait(400); // Задержка между раздачами карт
+
+            if (matchFound) break;
+            dealToAndar = !dealToAndar;
+        }
+
+        await wait(500);
+
+        // Итоги
+        if (winner === selectedSide) {
+            let mult = winner === 'Andar' ? 1.9 : 2.0;
+            let winAmt = Math.floor(bet * mult);
+            App.addBalance(winAmt);
+            elStatus.innerText = `✅ ПОБЕДА! +${winAmt} ⭐`;
+            elStatus.style.color = 'var(--accent-green)';
+            if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        } else {
+            elStatus.innerText = `❌ ПРОИГРЫШ. Победил ${winner}`;
+            elStatus.style.color = 'var(--accent-red)';
+            if(tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+        }
+
+        await wait(2000);
+        isPlaying = false;
+        toggleUILock(false);
+      }
+
+      return {
+        init: function() { elBetText.innerText = bet; },
+        changeBet: function(amt) {
+            if(isPlaying) return;
+            if(amt === 'max') bet = App.getBalance();
+            else bet = Math.max(10, bet + amt);
+            elBetText.innerText = bet;
+        },
+        play: playRound
+      }
+    })();
+
     /* ================= SLOT ENGINE ================= */
     const SlotEngine = (function() {
       const COLS = 6, ROWS = 5;
       
+      // ИСПОЛЬЗУЕМ 9 СИМВОЛОВ (Иконки)
       const paytable = { 
           '🍌':[0.01, 0.02, 0.05], 
           '🍇':[0.02, 0.04, 0.08], 
@@ -444,14 +609,11 @@
           '🍉':[0.05, 0.1, 0.25],  
           '🍎':[0.1, 0.2, 0.5],    
           '🍒':[0.15, 0.3, 0.8],   
-          '🦯':[0.2, 0.5, 1.2],    
+          '💎':[0.2, 0.5, 1.2],    
           '🍩':[0.4, 1.0, 2.5],    
-          '💎':[0.8, 2.0, 5.0]     
+          '🍬':[0.8, 2.0, 5.0]     
       };
 
-      // ПРЯМЫЕ ССЫЛКИ НА ВАШИ 3D МОДЕЛИ:
-      // ВАЖНО: Замените эти плейсхолдеры на пути к вашим PNG-картинкам с прозрачным фоном, 
-      // лежащим в папке assets (например './assets/apple.png')
       const symbolImages = {
           '🍌': 'https://placehold.co/256/transparent/f1c40f?text=Banana',
           '🍇': 'https://placehold.co/256/transparent/9b59b6?text=Grape',
@@ -466,24 +628,21 @@
           'bomb': 'https://placehold.co/256/transparent/2d3436?text=Bomb'
       };
 
-      const symDict = { 
-          '🍌':'#f1c40f', '🍇':'#9b59b6', '🫐':'#8e44ad', '🍉':'#2ed573', '🍎':'#e74c3c', 
-          '🍒':'#ff4757', '🦯':'#ff7f50', '🍩':'#d35400', '💎':'#00a8ff' 
-      };
+      const symDict = { '🍌':'#f1c40f', '🍇':'#9b59b6', '🫐':'#8e44ad', '🍉':'#2ed573', '🍎':'#e74c3c', '🍒':'#ff4757', '💎':'#00a8ff', '🍩':'#e056fd', '🍬':'#ff9ff3' };
       const symbols = Object.keys(paytable);
       const scatter = '🍭'; 
       
       function getRandomSymbol() {
         let r = Math.random() * 100;
-        if (r < 25) return '🍌'; // 25% 
-        if (r < 45) return '🍇'; // 20%
-        if (r < 62) return '🫐'; // 17%
-        if (r < 75) return '🍉'; // 13%
-        if (r < 85) return '🍎'; // 10%
-        if (r < 92) return '🍒'; // 7%
-        if (r < 96) return '🦯'; // 4%
-        if (r < 98.5) return '🍩'; // 2.5%
-        return '💎';             // 1.5%
+        if (r < 25) return '🍌'; 
+        if (r < 45) return '🍇'; 
+        if (r < 62) return '🫐'; 
+        if (r < 75) return '🍉'; 
+        if (r < 85) return '🍎'; 
+        if (r < 92) return '🍒'; 
+        if (r < 96) return '💎'; 
+        if (r < 98.5) return '🍩'; 
+        return '🍬';             
       }
 
       let grid = []; 
@@ -561,18 +720,16 @@
         elPityFill.style.height = pityValue + '%';
       }
 
-      // === НОВАЯ ОТРИСОВКА ЯЧЕЕК С 3D КАРТИНКАМИ ===
       function updateCell(c, r, sym, classes='') {
         grid[c][r] = sym;
         let el = document.getElementById(`cell-${c}-${r}`);
         if(el) {
           el.className = 'slot-item'; 
-          void el.offsetWidth; // Reflow
+          void el.offsetWidth; 
           el.className = 'slot-item ' + classes;
           
           if (sym && sym.startsWith('💣')) {
              let multVal = sym.replace('💣', '');
-             // Рендер бомбы-картинки с текстом поверх
              el.innerHTML = `<div style="position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
                <img src="${symbolImages['bomb']}" onerror="this.src='https://placehold.co/256/transparent/2d3436?text=Bomb'" style="width:90%; height:90%; object-fit:contain; position:absolute; filter:drop-shadow(0 5px 10px rgba(0,0,0,0.6));">
                <span style="font-size:16px; font-weight:900; color:var(--accent-gold); text-shadow:0 2px 4px #000, 0 0 10px #000; position:absolute; bottom:5px; z-index:2;">${multVal}</span>
@@ -580,7 +737,6 @@
              el.classList.add('bomb-idle');
           } else if (sym) {
              let imgSrc = symbolImages[sym] || '';
-             // Рендер картинок фруктов
              el.innerHTML = `<img src="${imgSrc}" onerror="this.src='https://placehold.co/256/transparent/ffffff?text=${sym}'" style="width:90%; height:90%; object-fit:contain; filter:drop-shadow(0 6px 8px rgba(0,0,0,0.5));">`;
              if(sym === scatter) el.classList.add('scatter-pulse');
           } else {
@@ -685,7 +841,6 @@
 
         for(let c=0; c<COLS; c++) document.getElementById(`col-${c}`).classList.add('spinning');
         
-        // Быстрый блюр с картинками
         spinVisInt = setInterval(() => {
           for(let c=0; c<COLS; c++) {
             let col = document.getElementById(`col-${c}`);
@@ -714,16 +869,12 @@
 
           document.getElementById(`col-${c}`).classList.remove('spinning');
           for(let r=0; r<ROWS; r++) {
-             updateCell(c, r, targetGrid[c][r], 'thud');
+             updateCell(c, r, targetGrid[c][r], 'thud idle-3d');
              if(targetGrid[c][r] === scatter) scatterCount++;
           }
         }
         clearInterval(spinVisInt);
         await wait(300);
-        
-        for(let c=0; c<COLS; c++) {
-          for(let r=0; r<ROWS; r++) updateCell(c, r, targetGrid[c][r], 'idle-3d');
-        }
 
         await processTumble();
       }
@@ -818,6 +969,7 @@
           await processTumble();
 
         } else {
+          // КОНЕЦ КАСКАДА
           let sCount = 0; let bombs = [];
           for(let c=0;c<COLS;c++) for(let r=0;r<ROWS;r++) {
             if(grid[c][r]===scatter) sCount++;
@@ -840,7 +992,6 @@
 
                for(let b of bombs) {
                  document.getElementById(`cell-${b.c}-${b.r}`).className = 'slot-item bomb-absorb';
-                 
                  let sw = document.createElement('div'); sw.className='shockwave';
                  let el = document.getElementById(`cell-${b.c}-${b.r}`); let r1 = el.getBoundingClientRect(); let wRect = elWrapper.getBoundingClientRect();
                  sw.style.left = (r1.left - wRect.left + r1.width/2) + 'px'; sw.style.top = (r1.top - wRect.top + r1.height/2) + 'px';
